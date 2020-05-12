@@ -53,7 +53,7 @@ Icons show when these conditions are met:
 
 #### Wear OS demo
 Wear OS controls give you a 2.5 second confirmation delay before executing the command.
-![Wear OS cmd confirmation timeout](/github_images/wear_cmd_timeout.gif)![Wear OS cmd confirmation dialog](/github_iamges/wear_cmd_confirmation.gif) ![Wear OS cmd set charge](/github_images/wear_cmd_charge_limit.gif)
+![Wear OS cmd confirmation timeout](/github_images/wear_cmd_timeout.gif)![Wear OS cmd confirmation dialog](/github_images/wear_cmd_confirmation.gif) ![Wear OS cmd set charge](/github_images/wear_cmd_charge_limit.gif)
 
 ## TODO Features
 ### Mobile:
@@ -86,8 +86,8 @@ Wear OS controls give you a 2.5 second confirmation delay before executing the c
 		Open/Close sunroof, if vehicle_config.sun_roof_installed!=null
 
 ## Known bugs
-Autofill not working in Mobile app
-Rotary input not detected in Wear OS
+    Autofill not working in Mobile app
+    Rotary input not detected in Wear OS
 
 
 ## Changelist
