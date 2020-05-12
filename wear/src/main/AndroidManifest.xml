@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.edalfons.pewpewteslawear">
+
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <uses-feature android:name="android.hardware.type.watch" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/pptw_launcher_icon"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@android:style/Theme.DeviceDefault">
+        <activity android:name=".MyComplicationToggleReceiver"></activity>
+        <activity android:name=".MyComplicationActivity" />
+
+        <uses-library
+            android:name="com.google.android.wearable"
+            android:required="true" />
+        <!--
+               Set to true if your app is Standalone, that is, it does not require the handheld
+               app to run.
+        -->
+        <meta-data
+            android:name="com.google.android.wearable.standalone"
+            android:value="true" />
+
+        <activity
+            android:name="com.edalfons.pewpewteslawear.MyConfirmationActivity"
+            android:label="@string/title_activity_my_confirmation" />
+        <activity android:name="android.support.wearable.activity.ConfirmationActivity" />
+        <activity
+            android:name="com.edalfons.pewpewteslawear.HomeActivity"
+            android:label="@string/title_activity_home" />
+        <activity
+            android:name="com.edalfons.pewpewteslawear.CarSelectActivity"
+            android:label="@string/title_activity_car_select" />
+        <activity
+            android:name="com.edalfons.pewpewteslawear.LoginActivity2"
+            android:label="@string/title_activity_login2" />
+        <activity
+            android:name="com.edalfons.pewpewteslawear.LoginSelectActivity"
+            android:label="@string/title_activity_login_select" />
+        <activity
+            android:name="com.edalfons.pewpewteslawear.LoginActivity"
+            android:label="@string/title_activity_login" />
+        <activity
+            android:name="com.edalfons.pewpewteslawear.TeslaApiUnaccessible"
+            android:label="@string/title_activity_tesla_api_unaccessible" />
+        <activity
+            android:name="com.edalfons.pewpewteslawear.MainActivity"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>

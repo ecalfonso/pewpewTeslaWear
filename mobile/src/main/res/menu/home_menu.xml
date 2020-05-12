@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Refresh Button -->
+    <item
+        android:id="@+id/home_screen_refresh_button"
+        android:icon="@android:drawable/stat_notify_sync"
+        android:title="@string/home_screen_refresh_button"
+        app:showAsAction="ifRoom|collapseActionView" />
+
+    <!-- Menu -->
+    <!--
+    <item
+        android:id="@+id/home_menu_settings"
+        android:title="@string/home_screen_menu_item1"
+        app:showAsAction="never"
+        />
+        -->
+    <item
+        android:id="@+id/home_menu_tokens"
+        android:title="@string/home_screen_menu_item2"
+        app:showAsAction="never"
+        />
+    <item
+        android:id="@+id/home_menu_car_select"
+        android:title="@string/home_screen_menu_item3"
+        app:showAsAction="never"
+        />
+    <item
+        android:id="@+id/home_menu_logout"
+        android:title="@string/home_screen_menu_item4"
+        app:showAsAction="never"
+        />
+</menu>

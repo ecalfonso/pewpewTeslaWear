@@ -1,0 +1,123 @@
+<resources>
+    <string name="app_name">pewpewTeslaWear</string>
+    <string name="shared_pref_file_key">com.example.pewpewteslawear.PREF_FILE_KEY</string>
+    <string name="access_token">access_token</string>
+    <string name="refresh_token">refresh_token</string>
+
+    <string name="default_car_id">default_car_id</string>
+    <string name="default_car_name">default_car_name</string>
+
+    <string name="default_car_battery_level">default_car_battery_level</string>
+    <string name="default_car_battery_range">default_car_battery_range</string>
+    <string name="default_car_range_units">default_car_range_units</string>
+
+    <string name="default_car_indoor_temp">default_car_indoor_temp</string>
+    <string name="default_car_outdoor_temp">default_car_outdoor_temp</string>
+    <string name="default_car_temperature_units">default_car_temperature_units</string>
+
+    <string name="default_car_charge_state">default_car_charge_state</string>
+    <string name="default_car_charge_units">default_car_charge_units</string>
+    <string name="default_car_max_charge_level">default_car_max_charge_level</string>
+    <string name="default_car_charge_rate">default_car_charge_rate</string>
+    <string name="default_car_charge_power">default_car_charge_power</string>
+    <string name="default_car_minutes_til_charge_complete">default_car_minutes_til_charge_complete</string>
+    <string name="default_car_scheduled_charge_pending">default_car_scheduled_charge_pending</string>
+    <string name="default_car_scheduled_charge_start_time">default_car_scheduled_charge_start_time</string>
+
+    <string name="default_car_locked">default_car_locked</string>
+    <string name="default_car_door_closed">driver_doors_closed</string>
+    <string name="default_car_front_trunk_closed">front_trunk_closed</string>
+    <string name="default_car_rear_trunk_closed">rear_trunk_closed</string>
+    <string name="default_car_window_closed">window_closed</string>
+    <string name="default_car_climate_off">climate_is_off</string>
+    <string name="default_car_sentry_mode">sentry_mode</string>
+    <string name="default_car_sw_update_available">sw_update_available</string>
+
+    <string name="default_car_timestamp">default_car_timestamp</string>
+
+    <!-- Tesla API Down Screen -->
+    <string name="title_activity_tesla_api_unaccessible">TeslaApiUnaccessible</string>
+    <string name="tesla_api_unaccesible_text">Tesla API is down!</string>
+
+    <!-- Login Screen -->
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="title_activity_login2">LoginActivity2</string>
+    <string name="title_activity_login_select">LoginSelectActivity</string>
+    <string name="login_switcher_screen_button1">Credentials</string>
+    <string name="login_switcher_screen_button2">Access token</string>
+
+    <string name="login_button">Login</string>
+    <string name="credential_login_username">Username</string>
+    <string name="credential_login_password">Password</string>
+    <string name="credential_login_access_token">Access Token</string>
+    <string name="credential_login_refresh_token">Refresh Token (optional)</string>
+
+    <!-- Car Select Screen -->
+    <string name="title_activity_car_select">CarSelectActivity</string>
+    <string name="car_select_title">Select your car:</string>
+
+    <!-- Home screen -->
+    <string name="title_activity_home">HomeActivity</string>
+    <string name="battery_level">Charge: %d%%</string>
+    <string name="battery_range">Range: %.1f %s</string>
+    <string name="scheduled_charge">Charging will start at %s</string>
+    <string name="indoor_temp_c">Indoor temp: %.1fC</string>
+    <string name="indoor_temp_f">Indoor temp: %.1fF</string>
+    <string name="outdoor_temp_c">Outdoor temp: %.1fC</string>
+    <string name="outdoor_temp_f">Outdoor temp: %.1fF</string>
+    <string name="charge_eta_hrs_mins">%d hr %d min until %d%% charge</string>
+    <string name="charge_eta_mins">%d min until %d%% charge</string>
+    <string name="last_updated">Last Updated: %s</string>
+
+    <string name="car_status_tv">Car alerts:</string>
+    <string name="imgview_desc_unlocked">unlocked icon</string>
+    <string name="imgview_desc_doors_open">doors open icon</string>
+    <string name="imgview_desc_frunk_open">frunk open icon</string>
+    <string name="imgview_desc_trunk_open">trunk open icon</string>
+    <string name="imgview_desc_windows_open">windows open icon</string>
+    <string name="imgview_desc_sw_update_available">sw update available icon</string>
+    <string name="imgview_desc_climate">climate icon</string>
+    <string name="imgview_desc_sentry_mode">sentry mode icon</string>
+
+    <string name="commands_key_str">COMMAND</string>
+
+    <string name="lock_button">LOCK</string>
+    <string name="unlock_button">UNLOCK</string>
+    <string name="climate_on_button">CLIMATE ON</string>
+    <string name="climate_off_button">CLIMATE OFF</string>
+    <string name="actuate_frunk_button">ACTUATE FRUNK</string>
+    <string name="actuate_trunk_button">ACTUATE TRUNK</string>
+    <string name="vent_window_button">VENT WINDOWS</string>
+    <string name="close_window_button">CLOSE WINDOWS</string>
+    <string name="sentry_mode_on_button">TURN ON SENTRY MODE</string>
+    <string name="sentry_mode_off_button">TURN OFF SENTRY MODE</string>
+    <string name="start_charge_button">START CHARGE</string>
+    <string name="stop_charge_button">STOP CHARGE</string>
+    <string name="open_charge_port_button">OPEN CHARGE PORT</string>
+    <string name="close_charge_port_button">CLOSE CHARGE PORT</string>
+    <string name="set_charge_limit_button">SET CHARGE LIMIT</string>
+    <string name="activate_homelink_button">ACTIVATE HOMELINK</string>
+
+    <string name="frunk_open_title">Are you sure you want to open the Frunk?</string>
+    <string name="frunk_open_button">Open Frunk</string>
+    <string name="trunk_open_title">Are you sure you want to open the Trunk?</string>
+    <string name="trunk_open_button">Open Trunk</string>
+    <string name="set_charge_limit_title">Set charge limit</string>
+    <string name="activate_homelink_title">Are you sure you want to activate Homelink?</string>
+    <string name="activate_homelink_button2">Activate Homelink</string>
+
+    <!-- Confirmation activity -->
+    <string name="title_activity_my_confirmation">MyConfirmationActivity</string>
+
+    <!-- Nav Drawer -->
+    <string name="nav_drawer_refresh">Refresh</string>
+    <string name="nav_drawer_car_select">Car select</string>
+    <string name="nav_drawer_logout">Logout</string>
+    <string name="nav_drawer_logout_title">Are you sure you want to logout?</string>
+
+    <!--
+    This string is used for square devices and overridden by hello_world in
+    values-round/strings.xml for round devices.
+    -->
+    <string name="hello_world">Hello Square World!</string>
+</resources>

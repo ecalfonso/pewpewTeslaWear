@@ -1,0 +1,4 @@
+rootProject.name='pewpewTeslaWear'
+include ':mobile'
+include ':wear'
+include ':TeslaApi'

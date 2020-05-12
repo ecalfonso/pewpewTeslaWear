@@ -1,0 +1,128 @@
+<resources>
+    # App related
+    <string name="app_name">pewpewTesla</string>
+    <string name="app_name_subtitle">pewpewTesla-subtitle</string>
+    <string name="shared_pref_file_key">com.example.pewpewteslawear.PREF_FILE_KEY</string>
+    <string name="access_token">access_token</string>
+    <string name="refresh_token">refresh_token</string>
+
+    <string name="default_car_id">default_car_id</string>
+    <string name="default_car_name">default_car_name</string>
+
+    <string name="default_car_battery_level">default_car_battery_level</string>
+    <string name="default_car_battery_range">default_car_battery_range</string>
+    <string name="default_car_range_units">default_car_range_units</string>
+
+    <string name="default_car_indoor_temp">default_car_indoor_temp</string>
+    <string name="default_car_outdoor_temp">default_car_outdoor_temp</string>
+    <string name="default_car_temperature_units">default_car_temperature_units</string>
+
+    <string name="default_car_charge_state">default_car_charge_state</string>
+    <string name="default_car_charge_units">default_car_charge_units</string>
+    <string name="default_car_max_charge_level">default_car_max_charge_level</string>
+    <string name="default_car_charge_rate">default_car_charge_rate</string>
+    <string name="default_car_charge_power">default_car_charge_power</string>
+    <string name="default_car_minutes_til_charge_complete">default_car_minutes_til_charge_complete</string>
+    <string name="default_car_scheduled_charge_pending">default_car_scheduled_charge_pending</string>
+    <string name="default_car_scheduled_charge_start_time">default_car_scheduled_charge_start_time</string>
+
+    <string name="default_car_locked">default_car_locked</string>
+    <string name="default_car_door_closed">driver_doors_closed</string>
+    <string name="default_car_front_trunk_closed">front_trunk_closed</string>
+    <string name="default_car_rear_trunk_closed">rear_trunk_closed</string>
+    <string name="default_car_window_closed">window_closed</string>
+    <string name="default_car_climate_off">climate_is_off</string>
+    <string name="default_car_sentry_mode">sentry_mode</string>
+    <string name="default_car_sw_update_available">sw_update_available</string>
+
+    <string name="default_car_timestamp">default_car_timestamp</string>
+
+    <string name="positive_open_button">Open</string>
+    <string name="positive_actuate_button">Actuate</string>
+    <string name="positive_set_button">Set</string>
+    <string name="positive_homelink_button">Activate Homelink</string>
+    <string name="negative_cancel_button">Cancel</string>
+    <string name="negative_close_button">Close</string>
+
+    # Tesla API Down Screen
+    <string name="tesla_api_unaccesible_text">Tesla API is down!</string>
+    <string name="imageview_accesibility_string">Some image</string>
+
+    # Login Screen
+    <string name="login_screen_button1_text">Login with Tesla Credentials</string>
+    <string name="login_screen_button2_text">Login with Access Token</string>
+
+    <string name="login_screen_username_hint_text">Tesla Username</string>
+    <string name="login_screen_password_hint_text">Tesla Password</string>
+    <string name="login_screen_access_token_hint_text">Tesla Access Token</string>
+    <string name="login_screen_refresh_token_hint_text">Tesla Refresh Token (Optional)</string>
+
+    # Home Screen
+    <string name="home_screen_main_card_battery">Battery Level: %d%% | Battery Range: %.1f %s</string>
+    <string name="home_screen_main_card_temperature">Indoor temp: %.1f%s | Outdoor temp: %.1f%s</string>
+    <string name="home_screen_main_card_scheduled_charge">Charging will start at %s</string>
+    <string name="home_screen_main_card_charge_eta_hrs_mins">%d hr %d min until %d%% charge</string>
+    <string name="home_screen_main_card_charge_eta_mins">%d min until %d%% charge</string>
+    <string name="home_screen_main_card_last_updated">Last updated: %s</string>
+
+    <string name="imgview_desc_unlocked">unlocked icon</string>
+    <string name="imgview_desc_doors_open">doors open icon</string>
+    <string name="imgview_desc_frunk_open">frunk open icon</string>
+    <string name="imgview_desc_trunk_open">trunk open icon</string>
+    <string name="imgview_desc_windows_open">windows open icon</string>
+    <string name="imgview_desc_sw_update_available">sw update available icon</string>
+    <string name="imgview_desc_climate">climate icon</string>
+    <string name="imgview_desc_sentry_mode">sentry mode icon</string>
+
+    # Home Screen Buttons
+    <string name="home_screen_button_lock">LOCK</string>
+    <string name="home_screen_button_unlock">UNLOCK</string>
+
+    <string name="home_screen_button_windows_close">CLOSE\nWINDOWS</string>
+    <string name="home_screen_button_windows_vent">VENT\nWINDOWS</string>
+
+    <string name="home_screen_button_open_frunk">OPEN FRUNK</string>
+    <string name="home_screen_button_open_frunk_dialog_message">Are you sure you want to open the Frunk?</string>
+
+    <string name="home_screen_button_open_trunk">OPEN TRUNK</string>
+    <string name="home_screen_button_open_trunk_dialog_message">Are you sure you want to open the Trunk?</string>
+
+    <string name="home_screen_button_charge_limit">SET\nCHARGE LIMIT</string>
+    <string name="home_screen_button_charge_limit_dialog_message">Enter new charge limit from 50–100%</string>
+
+    <string name="home_screen_button_homelink">ACTIVATE\nHOMELINK</string>
+    <string name="home_screen_button_open_homelink_dialog_message">Are you sure you want to trigger Homelink?</string>
+
+    <string name="home_screen_button_charge_port_open">OPEN CHARGE PORT</string>
+    <string name="home_screen_button_charge_port_close">CLOSE CHARGE PORT</string>
+
+    <string name="home_screen_button_charge_start">START CHARGE</string>
+    <string name="home_screen_button_charge_stop">STOP CHARGE</string>
+
+    <string name="home_screen_button_sentry_on">TURN ON\nSENTRY MODE</string>
+    <string name="home_screen_button_sentry_off">TURN OFF\nSENTRY MODE</string>
+
+    <string name="home_screen_button_climate_on">TURN ON\nCLIMATE</string>
+    <string name="home_screen_button_climate_off">TURN OFF\nCLIMATE</string>
+
+    # Home Screen Menu
+    <string name="home_screen_refresh_button">Refresh</string>
+    <string name="home_screen_menu">Menu</string>
+    <string name="home_screen_menu_item1">Settings (NA)</string>
+    <string name="home_screen_menu_item2">View Tokens</string>
+    <string name="home_screen_menu_item3">Car Select</string>
+    <string name="home_screen_menu_item4">Logout</string>
+
+    # Token Screen
+    <string name="token_screen_text1">Current Access Token:</string>
+    <string name="token_screen_text2">Current Refresh Token:</string>
+    <string name="token_screen_text1_hint">No Access Token!</string>
+    <string name="token_screen_text2hint">No Refresh Token!</string>
+
+    # Car Select
+    <string name="logout_button">LOGOUT</string>
+
+    # Debug
+    <string name="token_screen_poison_atoken_button">Poison Access Token</string>
+    <string name="token_screen_poison_default_id_s_button">Poison Default id_s</string>
+</resources>
