@@ -150,6 +150,9 @@ public class HomeActivity extends WearableActivity {
             scrollView.smoothScrollTo(0, 0);
         }
 
+        /* requestFocus for Rotary input */
+        scrollView.requestFocus();
+
         /* Start Data access */
         checkVehicleWakeStatusThread();
     }
