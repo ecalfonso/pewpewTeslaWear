@@ -41,6 +41,7 @@ public class LoginActivity2 extends WearableActivity {
                     case LOGIN_GOOD:
                         Intent car_select_activity = new Intent(getApplicationContext(),
                                 CarSelectActivity.class);
+                        car_select_activity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(car_select_activity);
                         finish();
                         break;
