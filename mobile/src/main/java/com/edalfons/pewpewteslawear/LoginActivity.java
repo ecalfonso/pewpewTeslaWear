@@ -4,9 +4,11 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,6 +31,11 @@ public class LoginActivity extends AppCompatActivity {
     private Handler uiHandler = null;
 
     SharedPreferences sharedPref;
+
+    private TextView username_text;
+    private TextView password_text;
+    private TextView access_token_text;
+    private TextView refresh_token_text;
 
     @SuppressLint("HandlerLeak")
     @Override
@@ -61,12 +68,18 @@ public class LoginActivity extends AppCompatActivity {
             }
         };
 
+        username_text = findViewById(R.id.editText2);
+        password_text = findViewById(R.id.editText);
+
+        /* Set Autofill support for username/password TextViews for Android Oreo+ */
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O) {
+            username_text.setAutofillHints(View.AUTOFILL_HINT_USERNAME);
+            password_text.setAutofillHints(View.AUTOFILL_HINT_PASSWORD);
+        }
+
         /* Login button */
         final Button login_button = findViewById(R.id.button);
         login_button.setOnClickListener(v -> {
-            TextView username_text = findViewById(R.id.editText2);
-            TextView password_text = findViewById(R.id.editText);
-
             /* Empty field check */
             if (username_text.getText().toString().matches("") ||
                 password_text.getText().toString().matches("")) {
@@ -83,12 +96,12 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        access_token_text = findViewById(R.id.editText3);
+        refresh_token_text = findViewById(R.id.editText4);
+
         /* Access token button*/
         final Button token_button = findViewById(R.id.button2);
         token_button.setOnClickListener(v -> {
-            TextView access_token_text = findViewById(R.id.editText3);
-            TextView refresh_token_text = findViewById(R.id.editText4);
-
             /* Empty field check */
             String aToken = access_token_text.getText().toString();
             String rToken = refresh_token_text.getText().toString();
