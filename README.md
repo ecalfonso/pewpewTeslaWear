@@ -1,5 +1,4 @@
-# pewpewTeslaWear
-![Icon](/wear/src/main/res/mipmap-xhdpi/pptw_launcher_icon.png)
+# pewpewTeslaWear ![Icon](/wear/src/main/res/mipmap-mdpi/pptw_launcher_icon.png)
 A personal project for controlling your Tesla vehicle(s) through your Android phone and/or Wear OS smartwatch using the unofficial Tesla API.
 
 This is by no means perfect or optimized, most code was taken from various StackOverflow threads to get to a working state. 
@@ -93,14 +92,14 @@ Wear OS controls give you a 2.5 second confirmation delay before executing the c
     TBD
 
 ## Changelist
-1.0.1:
-    common: new app icon
-    common: Move start of data update to onResume()
-    common: Clear previous vehicle data when new vehicle is selected
-    mobile: Fix AutoFill
-    wear: Fix RotaryInput
-    wear: Reset back to top of home screen on re-open
-    wear: Properly close LoginSelectorActivity when login is good
+### 1.0.1:
+	common: new app icon
+	common: Move start of data update to onResume()
+	common: Clear previous vehicle data when new vehicle is selected
+	mobile: Fix AutoFill
+	wear: Fix RotaryInput
+	wear: Reset back to top of home screen on re-open
+	wear: Properly close LoginSelectorActivity when login is good
 
-1.0.0:
+### 1.0.0:
 	Initial implementation
