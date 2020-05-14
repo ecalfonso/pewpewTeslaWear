@@ -1,4 +1,5 @@
 # pewpewTeslaWear
+![Icon](/wear/src/main/res/mipmap-xhdpi/pptw_launcher_icon.png)
 A personal project for controlling your Tesla vehicle(s) through your Android phone and/or Wear OS smartwatch using the unofficial Tesla API.
 
 This is by no means perfect or optimized, most code was taken from various StackOverflow threads to get to a working state. 
@@ -14,6 +15,8 @@ Login with your Tesla credentials or with an Access token. Optionally include yo
 
 #### Wear OS login:
 ![Wear OS login](/github_images/wear_login.gif)
+
+<b>Tesla username/password is not saved.</b> Only the Access and Refresh tokens are stored.
 
 ### View vehicle status in app
 View Vehicle name, Battery charge/range remaining, Indoor/Outdoor temperature, Charging status and time of last data update.
@@ -61,14 +64,11 @@ Wear OS controls give you a 2.5 second confirmation delay before executing the c
 
 ## TODO Features
 ### Mobile:
-	Fix Autofill
 	Add Widgets
 	Add Shortcuts
 	Implement permanent notification
 
 ### Wear:
-	Properly close LoginSelectorActivity
-	Fix RotaryInput
 	Implement Complications
 	Implement Tile
 	Implement sync access/refresh token from phone
@@ -77,7 +77,7 @@ Wear OS controls give you a 2.5 second confirmation delay before executing the c
 		Custom confirmation time delay 
 		
 ### Common
-	move updateData(), updateHomescreen() on onResume()
+    Move from static views to List/Adapters
 	Set climate for driver/passenger
 	Show current climate setting 
 	Include STANDARD/MAX in set charge limit dialog
@@ -90,10 +90,17 @@ Wear OS controls give you a 2.5 second confirmation delay before executing the c
 		Open/Close sunroof, if vehicle_config.sun_roof_installed!=null
 
 ## Known bugs
-    Autofill not working in Mobile app
-    Rotary input not detected in Wear OS
-
+    TBD
 
 ## Changelist
+1.0.1:
+    common: new app icon
+    common: Move start of data update to onResume()
+    common: Clear previous vehicle data when new vehicle is selected
+    mobile: Fix AutoFill
+    wear: Fix RotaryInput
+    wear: Reset back to top of home screen on re-open
+    wear: Properly close LoginSelectorActivity when login is good
+
 1.0.0:
 	Initial implementation
