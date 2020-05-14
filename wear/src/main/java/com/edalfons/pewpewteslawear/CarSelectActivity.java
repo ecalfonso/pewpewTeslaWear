@@ -158,17 +158,14 @@ public class CarSelectActivity extends WearableActivity {
 
                         final Button car_select_logout_button = findViewById(R.id.car_select_logout_button);
                         car_select_logout_button.setVisibility(View.VISIBLE);
-                        car_select_logout_button.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                SharedPreferences.Editor editor = sharedPref.edit();
-                                editor.clear();
-                                editor.apply();
+                        car_select_logout_button.setOnClickListener(v -> {
+                            SharedPreferences.Editor editor = sharedPref.edit();
+                            editor.clear();
+                            editor.apply();
 
-                                Intent i = new Intent(getApplicationContext(), LoginSelectActivity.class);
-                                startActivity(i);
-                                finish();
-                            }
+                            Intent i = new Intent(getApplicationContext(), LoginSelectActivity.class);
+                            startActivity(i);
+                            finish();
                         });
 
                         break;
