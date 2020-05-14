@@ -87,6 +87,7 @@ public class HomeActivity extends WearableActivity {
             public void handleMessage(Message msg) {
                 switch (msg.what) {
                     case VEHICLE_ASLEEP:
+                        showRefreshGraphic(true);
                         wakeVehicleThread();
                         break;
                     case VEHICLE_AWAKE:
@@ -98,11 +99,13 @@ public class HomeActivity extends WearableActivity {
                         Toast.makeText(HomeActivity.this,
                                 "Unable to wake up vehicle!",
                                 Toast.LENGTH_SHORT).show();
+                        showRefreshGraphic(false);
                         break;
                     case DATA_NOT_UPDATED:
                         Toast.makeText(HomeActivity.this,
                                 "Data NOT updated",
                                 Toast.LENGTH_SHORT).show();
+                        showRefreshGraphic(false);
                         break;
                     case DATA_UPDATED:
                         showRefreshGraphic(false);
@@ -134,9 +137,13 @@ public class HomeActivity extends WearableActivity {
 
         /* Update home screen during onCreate with saved data */
         updateHomeScreen();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
 
         /* Start Data access */
-        showRefreshGraphic(true);
         checkVehicleWakeStatusThread();
     }
 
@@ -144,7 +151,7 @@ public class HomeActivity extends WearableActivity {
         switch (i) {
             case 0: // Refresh
                 showRefreshGraphic(true);
-                updateVehicleDataThread();
+                wakeVehicleThread();
                 break;
             case 1: // Car Select
                 Intent car_sel_intent = new Intent(HomeActivity.this, CarSelectActivity.class);
