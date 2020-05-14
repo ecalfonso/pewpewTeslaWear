@@ -98,7 +98,13 @@ public class HomeActivity extends AppCompatActivity {
         setCardViewOnClickListeners();
 
         updateHomeScreen();
+    }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        /* Start data access */
         checkVehicleWakeStatusThread();
     }
 
@@ -127,7 +133,7 @@ public class HomeActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(),
                         "Refreshing",
                         Toast.LENGTH_SHORT).show();
-                updateVehicleDataThread();
+                checkVehicleWakeStatusThread();
                 return true;
             case R.id.home_menu_tokens:
                 // Load Token activity
