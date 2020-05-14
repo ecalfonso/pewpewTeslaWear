@@ -81,9 +81,18 @@ public class CarSelectActivity extends AppCompatActivity {
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int position) {
             ((TeslaVehicleViewHolder) holder).bindData(data.get(position));
             ((TeslaVehicleViewHolder) holder).mView.setOnClickListener(v -> {
-                /* Set default_car_id_s based on user input */
                 SharedPreferences.Editor editor = sharedPref.edit();
 
+                /* Save current access/refresh token and clear out previous data
+                *  For cases when we switch between cars
+                */
+                String aToken = sharedPref.getString(getString(R.string.access_token), "");
+                String rToken = sharedPref.getString(getString(R.string.refresh_token), "");
+                editor.clear();
+
+                /* Replace tokens and set name and id_s */
+                editor.putString(getString(R.string.access_token), aToken);
+                editor.putString(getString(R.string.refresh_token), rToken);
                 editor.putString(getString(R.string.default_car_id),
                         data.get(position).getId_s());
                 editor.putString(getString(R.string.default_car_name),
