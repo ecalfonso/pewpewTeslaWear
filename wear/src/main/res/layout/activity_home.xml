@@ -20,6 +20,7 @@
         android:animateLayoutChanges="true">
 
         <ScrollView
+            android:id="@+id/home_screen_scrollview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:animateLayoutChanges="true"
@@ -509,6 +510,6 @@
         android:layout_height="match_parent"
         android:animateLayoutChanges="true"
         android:background="#CC0000"
-        app:navigationStyle="singlePage"></androidx.wear.widget.drawer.WearableNavigationDrawerView>
+        app:navigationStyle="singlePage" />
 
 </androidx.wear.widget.drawer.WearableDrawerLayout>

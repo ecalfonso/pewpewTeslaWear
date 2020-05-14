@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.NumberPicker;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -142,6 +143,12 @@ public class HomeActivity extends WearableActivity {
     @Override
     public void onResume() {
         super.onResume();
+
+        /* Scroll to top if not already there */
+        final ScrollView scrollView = findViewById(R.id.home_screen_scrollview);
+        if (scrollView.getScrollY() > 0) {
+            scrollView.smoothScrollTo(0, 0);
+        }
 
         /* Start Data access */
         checkVehicleWakeStatusThread();
