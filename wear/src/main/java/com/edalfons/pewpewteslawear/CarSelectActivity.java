@@ -23,6 +23,7 @@ import androidx.wear.widget.WearableLinearLayoutManager;
 import androidx.wear.widget.WearableRecyclerView;
 
 import com.edalfons.common.TeslaApi;
+import com.edalfons.common.CarSelectItem;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -32,43 +33,25 @@ import java.net.HttpURLConnection;
 import java.util.ArrayList;
 
 public class CarSelectActivity extends WearableActivity {
-    public static class TeslaVehicle {
-        String display_name;
-        String id_s;
-
-        TeslaVehicle(String n, String i) {
-            this.display_name = n;
-            this.id_s = i;
-        }
-
-        String getDisplay_name() {
-            return display_name;
-        }
-
-        String getId_s() {
-            return id_s;
-        }
-    }
-
-    public static class TeslaVehicleViewHolder extends WearableRecyclerView.ViewHolder {
+    public static class CarSelectItemViewHolder extends WearableRecyclerView.ViewHolder {
         private TextView Title;
         private View mView;
 
-        TeslaVehicleViewHolder(final View itemView) {
+        CarSelectItemViewHolder(final View itemView) {
             super(itemView);
             Title = itemView.findViewById(R.id.simple_text);
             mView = itemView;
         }
 
-        void bindData(final TeslaVehicle tv) {
-            Title.setText(tv.display_name);
+        void bindData(final CarSelectItem tv) {
+            Title.setText(tv.getDisplay_name());
         }
     }
 
-    public class TeslaVehicleAdapter extends WearableRecyclerView.Adapter {
-        private ArrayList<TeslaVehicle> data;
+    public class CarSelectItemAdapter extends WearableRecyclerView.Adapter {
+        private ArrayList<CarSelectItem> data;
 
-        TeslaVehicleAdapter(ArrayList<TeslaVehicle> vehicles) {
+        CarSelectItemAdapter(ArrayList<CarSelectItem> vehicles) {
             this.data = vehicles;
         }
 
@@ -76,13 +59,13 @@ public class CarSelectActivity extends WearableActivity {
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             final View view = LayoutInflater.from(parent.getContext()).inflate(viewType, parent, false);
-            return new TeslaVehicleViewHolder(view);
+            return new CarSelectItemViewHolder(view);
         }
 
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int position) {
-            ((TeslaVehicleViewHolder) holder).bindData(data.get(position));
-            ((TeslaVehicleViewHolder) holder).mView.setOnClickListener(v -> {
+            ((CarSelectItemViewHolder) holder).bindData(data.get(position));
+            ((CarSelectItemViewHolder) holder).mView.setOnClickListener(v -> {
                 SharedPreferences.Editor editor = sharedPref.edit();
 
                 /* Save current access/refresh token and clear out previous data
@@ -127,8 +110,8 @@ public class CarSelectActivity extends WearableActivity {
     /* Child listener to handle UI changes */
     private Handler uiHandler = null;
 
-    private ArrayList<TeslaVehicle> vehicles;
-    private TeslaVehicleAdapter adapter;
+    private ArrayList<CarSelectItem> vehicles;
+    private CarSelectItemAdapter adapter;
 
     SharedPreferences sharedPref;
 
@@ -192,7 +175,7 @@ public class CarSelectActivity extends WearableActivity {
         view.addItemDecoration(dividerItemDecoration);
 
         vehicles = new ArrayList<>();
-        adapter = new TeslaVehicleAdapter(vehicles);
+        adapter = new CarSelectItemAdapter(vehicles);
         view.setAdapter(adapter);
 
         /* Get Vehicle list */
@@ -224,7 +207,7 @@ public class CarSelectActivity extends WearableActivity {
                             list = tApi.resp.getJSONArray("response");
                             for (i = 0; i < count; i++) {
                                 v = list.getJSONObject(i);
-                                vehicles.add(new TeslaVehicle(v.getString("display_name"),
+                                vehicles.add(new CarSelectItem(v.getString("display_name"),
                                         v.getString("id_s")));
                             }
                             msg.what = VEHICLE_LIST_OBTAINED;
