@@ -37,6 +37,6 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
-    implementation project(path: ':TeslaApi')
+    implementation project(path: ':common')
     implementation 'com.google.android.material:material:1.2.0-alpha06'
 }

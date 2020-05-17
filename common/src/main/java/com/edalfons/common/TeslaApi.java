@@ -1,4 +1,4 @@
-package com.edalfons.teslaapi;
+package com.edalfons.common;
 
 import org.json.JSONException;
 import org.json.JSONObject;

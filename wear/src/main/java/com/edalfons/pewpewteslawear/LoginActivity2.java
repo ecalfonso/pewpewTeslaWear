@@ -12,7 +12,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.edalfons.teslaapi.TeslaApi;
+import com.edalfons.common.TeslaApi;
 
 import java.net.HttpURLConnection;
 

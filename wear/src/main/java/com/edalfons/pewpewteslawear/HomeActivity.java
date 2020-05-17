@@ -21,7 +21,7 @@ import android.widget.Toast;
 
 import androidx.wear.widget.drawer.WearableNavigationDrawerView;
 
-import com.edalfons.teslaapi.TeslaApi;
+import com.edalfons.common.TeslaApi;
 
 import org.json.JSONException;
 import org.json.JSONObject;

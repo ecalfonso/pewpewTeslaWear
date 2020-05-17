@@ -22,7 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.wear.widget.WearableLinearLayoutManager;
 import androidx.wear.widget.WearableRecyclerView;
 
-import com.edalfons.teslaapi.TeslaApi;
+import com.edalfons.common.TeslaApi;
 
 import org.json.JSONArray;
 import org.json.JSONException;

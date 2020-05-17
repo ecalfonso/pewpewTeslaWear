@@ -19,7 +19,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.edalfons.teslaapi.TeslaApi;
+import com.edalfons.common.TeslaApi;
 
 import org.json.JSONArray;
 import org.json.JSONException;
