@@ -36,7 +36,7 @@ public class CarSelectActivity extends AppCompatActivity {
 
         CarSelectItemViewHolder(final View itemView) {
             super(itemView);
-            Title = itemView.findViewById(R.id.simple_text);
+            Title = itemView.findViewById(R.id.car_select_text_mobile_id);
             mView = itemView;
         }
 
@@ -95,7 +95,7 @@ public class CarSelectActivity extends AppCompatActivity {
 
         @Override
         public int getItemViewType(final int position) {
-            return R.layout.item_simple_itemview;
+            return R.layout.item_car_select;
         }
     }
 

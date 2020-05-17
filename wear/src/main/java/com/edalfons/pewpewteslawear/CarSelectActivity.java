@@ -16,14 +16,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.wear.widget.WearableLinearLayoutManager;
 import androidx.wear.widget.WearableRecyclerView;
 
-import com.edalfons.common.TeslaApi;
 import com.edalfons.common.CarSelectItem;
+import com.edalfons.common.TeslaApi;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -39,7 +37,7 @@ public class CarSelectActivity extends WearableActivity {
 
         CarSelectItemViewHolder(final View itemView) {
             super(itemView);
-            Title = itemView.findViewById(R.id.simple_text);
+            Title = itemView.findViewById(R.id.car_select_text_wear_id);
             mView = itemView;
         }
 
@@ -98,7 +96,7 @@ public class CarSelectActivity extends WearableActivity {
 
         @Override
         public int getItemViewType(final int position) {
-            return R.layout.item_simple_itemview;
+            return R.layout.item_car_select;
         }
     }
 
@@ -169,10 +167,6 @@ public class CarSelectActivity extends WearableActivity {
         WearableRecyclerView view = findViewById(R.id.car_select_layout);
         view.setEdgeItemsCenteringEnabled(true);
         view.setLayoutManager(new WearableLinearLayoutManager(this));
-
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(this,
-                LinearLayoutManager.VERTICAL);
-        view.addItemDecoration(dividerItemDecoration);
 
         vehicles = new ArrayList<>();
         adapter = new CarSelectItemAdapter(vehicles);

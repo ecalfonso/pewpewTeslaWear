@@ -34,4 +34,5 @@ dependencies {
     implementation 'androidx.wear:wear:1.0.0'
     compileOnly 'com.google.android.wearable:wearable:2.6.0'
     implementation project(path: ':common')
+    implementation 'androidx.cardview:cardview:1.0.0'
 }
