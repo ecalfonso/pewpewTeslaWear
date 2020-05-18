@@ -61,7 +61,7 @@
                         android:text="@string/home_screen_main_card_temperature" />
 
                     <TextView
-                        android:id="@+id/main_card_charger_status"
+                        android:id="@+id/main_card_drive_charge_status"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/home_screen_main_card_charge_eta_hrs_mins"

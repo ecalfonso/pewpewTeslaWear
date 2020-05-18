@@ -344,8 +344,11 @@ public class HomeActivity extends AppCompatActivity {
         t.start();
     }
 
-    @SuppressLint({"SetTextI18n", "StringFormatInvalid"})
+    @SuppressLint({"SetTextI18n", "StringFormatInvalid", "SimpleDateFormat", "StringFormatMatches"})
     private void updateHomeScreen() {
+        Date date;
+        SimpleDateFormat sdf;
+
         /* Car name */
         final TextView car_name = findViewById(R.id.main_card_car_name);
         car_name.setText(sharedPref.getString(getString(R.string.default_car_name), ""));
@@ -373,51 +376,63 @@ public class HomeActivity extends AppCompatActivity {
         }
 
         /* Charger status */
-        final TextView charger_status_tv = findViewById(R.id.main_card_charger_status);
+        final TextView drive_charge_tv = findViewById(R.id.main_card_drive_charge_status);
+
+        String drive_state = sharedPref.getString(getString(com.edalfons.common_code.R.string.default_car_drive_state), "Parked");
         String charge_state = sharedPref.getString(getString(R.string.default_car_charge_state), "Disconnected");
-        /* Car doesn't have charger plugged in */
-        assert charge_state != null;
-        if (charge_state.matches("Disconnected")) {
-            if (charger_status_tv.getVisibility() != View.GONE) {
-                charger_status_tv.setVisibility(View.GONE);
-            }
-        }
-        /* Car plugged but not charging */
-        else if (charge_state.matches("Stopped")) {
-            if (sharedPref.getBoolean(getString(R.string.default_car_scheduled_charge_pending), false)) {
-                Date date =
-                        new java.util.Date(sharedPref
-                                .getLong(getString(R.string.default_car_scheduled_charge_start_time), 0L) * 1000);
-                @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new java.text.SimpleDateFormat("h:mma");
-                charger_status_tv.setText(String.format(getString(R.string.home_screen_main_card_scheduled_charge), sdf.format(date)));
-                if (charger_status_tv.getVisibility() != View.VISIBLE) {
-                    charger_status_tv.setVisibility(View.VISIBLE);
+
+        /* Check drive status */
+        assert drive_state != null;
+        if (drive_state.matches("Parked")) {
+            /* Car doesn't have charger plugged in */
+            assert charge_state != null;
+            if (charge_state.matches("Disconnected")) {
+                if (drive_charge_tv.getVisibility() != View.GONE) {
+                    drive_charge_tv.setVisibility(View.GONE);
                 }
             }
-        }
-        /* Car is charging */
-        else if (charge_state.matches("Charging")) {
-            int minutes_rem = sharedPref.getInt(getString(R.string.default_car_minutes_til_charge_complete), 0);
-            int hours = minutes_rem / 60;
-            int mins = minutes_rem % 60;
-            if (hours > 0) {
-                charger_status_tv.setText(String.format(getString(R.string.home_screen_main_card_charge_eta_hrs_mins),
-                        hours, mins,
-                        sharedPref.getInt(getString(R.string.default_car_max_charge_level), 0)));
-            } else {
-                charger_status_tv.setText(String.format(getString(R.string.home_screen_main_card_charge_eta_mins),
-                        mins,
-                        sharedPref.getInt(getString(R.string.default_car_max_charge_level), 0)));
+            /* Car plugged but not charging */
+            else if (charge_state.matches("Stopped")) {
+                if (sharedPref.getBoolean(getString(R.string.default_car_scheduled_charge_pending), false)) {
+                    date =
+                            new java.util.Date(sharedPref
+                                    .getLong(getString(R.string.default_car_scheduled_charge_start_time), 0L) * 1000);
+                    sdf = new java.text.SimpleDateFormat("h:mma");
+                    drive_charge_tv.setText(String.format(getString(R.string.home_screen_main_card_scheduled_charge), sdf.format(date)));
+                    if (drive_charge_tv.getVisibility() != View.VISIBLE) {
+                        drive_charge_tv.setVisibility(View.VISIBLE);
+                    }
+                }
             }
-            if (charger_status_tv.getVisibility() != View.VISIBLE) {
-                charger_status_tv.setVisibility(View.VISIBLE);
+            /* Car is charging */
+            else if (charge_state.matches("Charging")) {
+                int minutes_rem = sharedPref.getInt(getString(R.string.default_car_minutes_til_charge_complete), 0);
+                int hours = minutes_rem / 60;
+                int mins = minutes_rem % 60;
+                if (hours > 0) {
+                    drive_charge_tv.setText(String.format(getString(R.string.home_screen_main_card_charge_eta_hrs_mins),
+                            hours, mins,
+                            sharedPref.getInt(getString(R.string.default_car_max_charge_level), 0)));
+                } else {
+                    drive_charge_tv.setText(String.format(getString(R.string.home_screen_main_card_charge_eta_mins),
+                            mins,
+                            sharedPref.getInt(getString(R.string.default_car_max_charge_level), 0)));
+                }
+                if (drive_charge_tv.getVisibility() != View.VISIBLE) {
+                    drive_charge_tv.setVisibility(View.VISIBLE);
+                }
+            }
+        } else {
+            drive_charge_tv.setText(String.format(getString(R.string.drive_state), drive_state));
+            if (drive_charge_tv.getVisibility() != View.VISIBLE) {
+                drive_charge_tv.setVisibility(View.VISIBLE);
             }
         }
 
         /* Time stamp */
         final TextView last_update_tv = findViewById(R.id.main_card_last_updated);
-        Date date = new java.util.Date(sharedPref.getLong(getString(R.string.default_car_timestamp), 0L));
-        @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new java.text.SimpleDateFormat("h:mm a E MMM d");
+        date = new java.util.Date(sharedPref.getLong(getString(R.string.default_car_timestamp), 0L));
+        sdf = new java.text.SimpleDateFormat("MMM d @ h:mma");
         sdf.setTimeZone(java.util.TimeZone.getDefault());
         last_update_tv.setText(String.format(getString(R.string.home_screen_main_card_last_updated), sdf.format(date)));
 

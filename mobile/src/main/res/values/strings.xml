@@ -20,6 +20,7 @@
     <string name="home_screen_main_card_scheduled_charge">Charging will start at %s</string>
     <string name="home_screen_main_card_charge_eta_hrs_mins">%d hr %d min until %d%% charge</string>
     <string name="home_screen_main_card_charge_eta_mins">%d min until %d%% charge</string>
+    <string name="drive_state">Car is %d</string>
     <string name="home_screen_main_card_last_updated">Last updated: %s</string>
 
     <string name="positive_open_button">Open</string>
