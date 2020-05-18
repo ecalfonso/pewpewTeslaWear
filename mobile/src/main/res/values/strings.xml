@@ -2,12 +2,6 @@
     # App related
     <string name="app_name">pewpewTesla</string>
     <string name="app_name_subtitle">pewpewTesla-subtitle</string>
-    <string name="shared_pref_file_key">com.example.pewpewteslawear.PREF_FILE_KEY</string>
-    <string name="access_token">access_token</string>
-    <string name="refresh_token">refresh_token</string>
-
-    <string name="default_car_id">default_car_id</string>
-    <string name="default_car_name">default_car_name</string>
 
     <string name="default_car_battery_level">default_car_battery_level</string>
     <string name="default_car_battery_range">default_car_battery_range</string>

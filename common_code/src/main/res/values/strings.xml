@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="shared_pref_file_key">com.edalfons.pewpewteslawear.PREF_FILE_KEY</string>
+    <string name="access_token">access_token</string>
+    <string name="refresh_token">refresh_token</string>
+
+    <string name="default_car_id">default_car_id</string>
+    <string name="default_car_name">default_car_name</string>
+</resources>

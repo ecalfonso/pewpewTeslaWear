@@ -7,20 +7,16 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.edalfons.common_code.TeslaApi;
 import com.edalfons.common_code.CarSelectItem;
+import com.edalfons.common_code.TeslaApi;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -30,82 +26,13 @@ import java.net.HttpURLConnection;
 import java.util.ArrayList;
 
 public class CarSelectActivity extends AppCompatActivity {
-    public static class CarSelectItemViewHolder extends RecyclerView.ViewHolder {
-        private TextView Title;
-        private View mView;
-
-        CarSelectItemViewHolder(final View itemView) {
-            super(itemView);
-            Title = itemView.findViewById(R.id.car_select_text_mobile_id);
-            mView = itemView;
-        }
-
-        void bindData(final CarSelectItem tv) {
-            Title.setText(tv.getDisplay_name());
-        }
-    }
-
-    public class CarSelectItemAdapter extends RecyclerView.Adapter {
-        private ArrayList<CarSelectItem> data;
-
-        CarSelectItemAdapter(ArrayList<CarSelectItem> vehicles) {
-            this.data = vehicles;
-        }
-
-        @NonNull
-        @Override
-        public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            final View view = LayoutInflater.from(parent.getContext()).inflate(viewType, parent, false);
-            return new CarSelectItemViewHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int position) {
-            ((CarSelectItemViewHolder) holder).bindData(data.get(position));
-            ((CarSelectItemViewHolder) holder).mView.setOnClickListener(v -> {
-                SharedPreferences.Editor editor = sharedPref.edit();
-
-                /* Save current access/refresh token and clear out previous data
-                *  For cases when we switch between cars
-                */
-                String aToken = sharedPref.getString(getString(R.string.access_token), "");
-                String rToken = sharedPref.getString(getString(R.string.refresh_token), "");
-                editor.clear();
-
-                /* Replace tokens and set name and id_s */
-                editor.putString(getString(R.string.access_token), aToken);
-                editor.putString(getString(R.string.refresh_token), rToken);
-                editor.putString(getString(R.string.default_car_id),
-                        data.get(position).getId_s());
-                editor.putString(getString(R.string.default_car_name),
-                        data.get(position).getDisplay_name());
-                editor.apply();
-
-                Intent home_activity = new Intent(getApplicationContext(),
-                        HomeActivity.class);
-                startActivity(home_activity);
-                finish();
-            });
-        }
-
-        @Override
-        public int getItemCount() {
-            return data.size();
-        }
-
-        @Override
-        public int getItemViewType(final int position) {
-            return R.layout.item_car_select;
-        }
-    }
-
     /* UI Handler State Machine Macros */
     private static final int VEHICLE_LIST_OBTAINED = 0;
     private static final int VEHICLE_LIST_EMPTY = 1;
     private static final int VEHICLE_LIST_FAIL = 2;
 
     private ArrayList<CarSelectItem> vehicles;
-    private CarSelectItemAdapter adapter;
+    private MobileCarSelectItemAdapter adapter;
 
     /* Child listener to handle UI changes */
     private Handler uiHandler = null;
@@ -162,7 +89,7 @@ public class CarSelectActivity extends AppCompatActivity {
         view.setLayoutManager(new LinearLayoutManager(this));
 
         vehicles = new ArrayList<>();
-        adapter = new CarSelectItemAdapter(vehicles);
+        adapter = new MobileCarSelectItemAdapter(this, vehicles);
 
         view.setAdapter(adapter);
 

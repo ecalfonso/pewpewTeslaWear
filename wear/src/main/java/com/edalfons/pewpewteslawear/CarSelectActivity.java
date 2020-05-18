@@ -8,15 +8,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.wearable.activity.WearableActivity;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.wear.widget.WearableLinearLayoutManager;
 import androidx.wear.widget.WearableRecyclerView;
 
@@ -31,75 +27,6 @@ import java.net.HttpURLConnection;
 import java.util.ArrayList;
 
 public class CarSelectActivity extends WearableActivity {
-    public static class CarSelectItemViewHolder extends WearableRecyclerView.ViewHolder {
-        private TextView Title;
-        private View mView;
-
-        CarSelectItemViewHolder(final View itemView) {
-            super(itemView);
-            Title = itemView.findViewById(R.id.car_select_text_wear_id);
-            mView = itemView;
-        }
-
-        void bindData(final CarSelectItem tv) {
-            Title.setText(tv.getDisplay_name());
-        }
-    }
-
-    public class CarSelectItemAdapter extends WearableRecyclerView.Adapter {
-        private ArrayList<CarSelectItem> data;
-
-        CarSelectItemAdapter(ArrayList<CarSelectItem> vehicles) {
-            this.data = vehicles;
-        }
-
-        @NonNull
-        @Override
-        public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            final View view = LayoutInflater.from(parent.getContext()).inflate(viewType, parent, false);
-            return new CarSelectItemViewHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int position) {
-            ((CarSelectItemViewHolder) holder).bindData(data.get(position));
-            ((CarSelectItemViewHolder) holder).mView.setOnClickListener(v -> {
-                SharedPreferences.Editor editor = sharedPref.edit();
-
-                /* Save current access/refresh token and clear out previous data
-                 *  For cases when we switch between cars
-                 */
-                String aToken = sharedPref.getString(getString(R.string.access_token), "");
-                String rToken = sharedPref.getString(getString(R.string.refresh_token), "");
-                editor.clear();
-
-                /* Replace tokens and set name and id_s */
-                editor.putString(getString(R.string.access_token), aToken);
-                editor.putString(getString(R.string.refresh_token), rToken);
-                editor.putString(getString(R.string.default_car_id),
-                        data.get(position).getId_s());
-                editor.putString(getString(R.string.default_car_name),
-                        data.get(position).getDisplay_name());
-                editor.apply();
-
-                Intent home_activity = new Intent(getApplicationContext(),
-                        HomeActivity.class);
-                startActivity(home_activity);
-                finish();
-            });
-        }
-
-        @Override
-        public int getItemCount() {
-            return data.size();
-        }
-
-        @Override
-        public int getItemViewType(final int position) {
-            return R.layout.item_car_select;
-        }
-    }
-
     /* UI Handler State Machine Macros */
     private static final int VEHICLE_LIST_OBTAINED = 0;
     private static final int VEHICLE_LIST_EMPTY = 1;
@@ -109,7 +36,7 @@ public class CarSelectActivity extends WearableActivity {
     private Handler uiHandler = null;
 
     private ArrayList<CarSelectItem> vehicles;
-    private CarSelectItemAdapter adapter;
+    private WearCarSelectItemAdapter adapter;
 
     SharedPreferences sharedPref;
 
@@ -169,7 +96,7 @@ public class CarSelectActivity extends WearableActivity {
         view.setLayoutManager(new WearableLinearLayoutManager(this));
 
         vehicles = new ArrayList<>();
-        adapter = new CarSelectItemAdapter(vehicles);
+        adapter = new WearCarSelectItemAdapter(this, vehicles);
         view.setAdapter(adapter);
 
         /* Get Vehicle list */
