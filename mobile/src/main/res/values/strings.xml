@@ -22,15 +22,6 @@
     <string name="home_screen_main_card_charge_eta_mins">%d min until %d%% charge</string>
     <string name="home_screen_main_card_last_updated">Last updated: %s</string>
 
-    <string name="imgview_desc_unlocked">unlocked icon</string>
-    <string name="imgview_desc_doors_open">doors open icon</string>
-    <string name="imgview_desc_frunk_open">frunk open icon</string>
-    <string name="imgview_desc_trunk_open">trunk open icon</string>
-    <string name="imgview_desc_windows_open">windows open icon</string>
-    <string name="imgview_desc_sw_update_available">sw update available icon</string>
-    <string name="imgview_desc_climate">climate icon</string>
-    <string name="imgview_desc_sentry_mode">sentry mode icon</string>
-
     <string name="positive_open_button">Open</string>
     <string name="positive_actuate_button">Actuate</string>
     <string name="positive_set_button">Set</string>

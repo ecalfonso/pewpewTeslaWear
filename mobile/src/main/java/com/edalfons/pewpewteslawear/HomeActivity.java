@@ -16,13 +16,16 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.edalfons.common_code.CarAlertItem;
+import com.edalfons.common_code.CarAlertItemAdapter;
 import com.edalfons.common_code.TeslaApi;
 
 import org.json.JSONException;
@@ -30,9 +33,28 @@ import org.json.JSONObject;
 
 import java.net.HttpURLConnection;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class HomeActivity extends AppCompatActivity {
+    /* Dictionary of Car Alerts */
+    private static final Map<String, CarAlertItem> alertsDict = new HashMap<String, CarAlertItem>() {{
+        put("unlocked",     new CarAlertItem(R.drawable.unlocked, "Car is unlocked!"));
+        put("doors_open",   new CarAlertItem(R.drawable.door_open, "A door is open!"));
+        put("frunk_open",   new CarAlertItem(R.drawable.frunk_open, "Frunk is open!"));
+        put("trunk_open",   new CarAlertItem(R.drawable.trunk_open, "Trunk is open!"));
+        put("windows_open", new CarAlertItem(R.drawable.windows_open2, "Windows are open!"));
+        put("sw_update",    new CarAlertItem(R.drawable.sw_update, "Software update available!"));
+        put("sentry_on",    new CarAlertItem(R.drawable.sentry_icon, "Sentry mode is on!"));
+        put("climate_on",   new CarAlertItem(R.drawable.climate_on, "Climate is running!"));
+    }};
+
+    /* Car Alerts */
+    private ArrayList<CarAlertItem> alerts;
+    private CarAlertItemAdapter adapter;
+
     /* UI Handler State Machine Macros */
     private static final int VEHICLE_ASLEEP = 0;
     private static final int VEHICLE_AWAKE = 1;
@@ -94,6 +116,15 @@ public class HomeActivity extends AppCompatActivity {
                 getString(R.string.shared_pref_file_key), Context.MODE_PRIVATE);
         access_token = sharedPref.getString(getString(R.string.access_token), "");
         id_s = sharedPref.getString(getString(R.string.default_car_id), "");
+
+        /* Car Alerts */
+        RecyclerView car_alerts_recyclerview = findViewById(R.id.car_alerts_recyclerview);
+        car_alerts_recyclerview.setLayoutManager(new LinearLayoutManager(this,
+                RecyclerView.HORIZONTAL, false));
+
+        alerts = new ArrayList<>();
+        adapter = new CarAlertItemAdapter(this, alerts);
+        car_alerts_recyclerview.setAdapter(adapter);
 
         setCardViewOnClickListeners();
 
@@ -393,85 +424,67 @@ public class HomeActivity extends AppCompatActivity {
         /*
          * Dynamic Car Alerts
          */
+        alerts.clear();
+
         boolean locked = sharedPref.getBoolean(getString(R.string.default_car_locked), false);
-        final ImageView unlocked_imgview = findViewById(R.id.unlocked_imgview);
         if (!locked) {
-            unlocked_imgview.setVisibility(View.VISIBLE);
+            alerts.add(alertsDict.get("unlocked"));
         } else {
-            if (unlocked_imgview.getVisibility() != View.GONE) {
-                unlocked_imgview.setVisibility(View.GONE);
-            }
+            alerts.remove(alertsDict.get("unlocked"));
         }
 
         boolean doors_closed = sharedPref.getBoolean(getString(R.string.default_car_door_closed), false);
-        final ImageView door_opened_imgview = findViewById(R.id.doors_open_imgview);
         if (!doors_closed) {
-            door_opened_imgview.setVisibility(View.VISIBLE);
+            alerts.add(alertsDict.get("doors_open"));
         } else {
-            if (door_opened_imgview.getVisibility() != View.GONE) {
-                door_opened_imgview.setVisibility(View.GONE);
-            }
+            alerts.remove(alertsDict.get("doors_open"));
         }
 
         boolean frunk_closed = sharedPref.getBoolean(getString(R.string.default_car_front_trunk_closed), false);
-        final ImageView frunk_open_imgview = findViewById(R.id.frunk_open_imgview);
         if (!frunk_closed) {
-            frunk_open_imgview.setVisibility(View.VISIBLE);
+            alerts.add(alertsDict.get("frunk_open"));
         } else {
-            if (frunk_open_imgview.getVisibility() != View.GONE) {
-                frunk_open_imgview.setVisibility(View.GONE);
-            }
+            alerts.remove(alertsDict.get("frunk_open"));
         }
 
         boolean trunk_closed = sharedPref.getBoolean(getString(R.string.default_car_rear_trunk_closed), false);
-        final ImageView trunk_open_imgview = findViewById(R.id.trunk_open_imgview);
         if (!trunk_closed) {
-            trunk_open_imgview.setVisibility(View.VISIBLE);
+            alerts.add(alertsDict.get("trunk_open"));
         } else {
-            if (trunk_open_imgview.getVisibility() != View.GONE) {
-                trunk_open_imgview.setVisibility(View.GONE);
-            }
+            alerts.remove(alertsDict.get("trunk_open"));
         }
 
         boolean windows_closed = sharedPref.getBoolean(getString(R.string.default_car_window_closed), false);
-        final ImageView windows_open_imgview = findViewById(R.id.windows_open_imgview);
         if (!windows_closed) {
-            windows_open_imgview.setVisibility(View.VISIBLE);
+            alerts.add(alertsDict.get("windows_open"));
         } else {
-            if (windows_open_imgview.getVisibility() != View.GONE) {
-                windows_open_imgview.setVisibility(View.GONE);
-            }
+            alerts.remove(alertsDict.get("windows_open"));
         }
 
         boolean sw_update = sharedPref.getBoolean(getString(R.string.default_car_sw_update_available), true);
-        final ImageView sw_update_imgview = findViewById(R.id.sw_update_imgview);
         if (sw_update) {
-            sw_update_imgview.setVisibility(View.VISIBLE);
+            alerts.add(alertsDict.get("sw_update"));
         } else {
-            if (sw_update_imgview.getVisibility() != View.GONE) {
-                sw_update_imgview.setVisibility(View.GONE);
-            }
+            alerts.remove(alertsDict.get("sw_update"));
         }
 
         boolean sentry_mode = sharedPref.getBoolean(getString(R.string.default_car_sentry_mode), true);
-        final ImageView sentry_mode_imgview = findViewById(R.id.sentry_mode_imgview);
+
         if (sentry_mode) {
-            sentry_mode_imgview.setVisibility(View.VISIBLE);
+            alerts.add(alertsDict.get("sentry_on"));
         } else {
-            if (sentry_mode_imgview.getVisibility() != View.GONE) {
-                sentry_mode_imgview.setVisibility(View.GONE);
-            }
+            alerts.remove(alertsDict.get("sentry_on"));
         }
 
         boolean climate_off = sharedPref.getBoolean(getString(R.string.default_car_climate_off), false);
-        final ImageView climate_on_imgview = findViewById(R.id.climate_on_imgview);
+
         if (!climate_off) {
-            climate_on_imgview.setVisibility(View.VISIBLE);
+            alerts.add(alertsDict.get("climate_on"));
         } else {
-            if (climate_on_imgview.getVisibility() != View.GONE) {
-                climate_on_imgview.setVisibility(View.GONE);
-            }
+            alerts.remove(alertsDict.get("climate_on"));
         }
+
+        adapter.notifyDataSetChanged();
     }
 
     private void setCardViewOnClickListeners() {

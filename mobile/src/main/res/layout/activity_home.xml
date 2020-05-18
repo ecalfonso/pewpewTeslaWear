@@ -82,72 +82,14 @@
                     android:layout_height="match_parent"
                     android:layout_weight="3"
                     android:animateLayoutChanges="true"
+                    android:gravity="center"
                     android:orientation="horizontal">
 
-                    <ImageView
-                        android:id="@+id/unlocked_imgview"
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/car_alerts_recyclerview"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:contentDescription="@string/imgview_desc_unlocked"
-                        app:srcCompat="@drawable/unlocked"
-                        tools:ignore="NestedWeights" />
-
-                    <ImageView
-                        android:id="@+id/doors_open_imgview"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:contentDescription="@string/imgview_desc_doors_open"
-                        app:srcCompat="@drawable/door_open" />
-
-                    <ImageView
-                        android:id="@+id/frunk_open_imgview"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:contentDescription="@string/imgview_desc_frunk_open"
-                        app:srcCompat="@drawable/frunk_open" />
-
-                    <ImageView
-                        android:id="@+id/trunk_open_imgview"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:contentDescription="@string/imgview_desc_trunk_open"
-                        app:srcCompat="@drawable/trunk_open" />
-
-                    <ImageView
-                        android:id="@+id/windows_open_imgview"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:contentDescription="@string/imgview_desc_windows_open"
-                        app:srcCompat="@drawable/windows_open2" />
-
-                    <ImageView
-                        android:id="@+id/sw_update_imgview"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:contentDescription="@string/imgview_desc_sw_update_available"
-                        app:srcCompat="@drawable/sw_update" />
-
-                    <ImageView
-                        android:id="@+id/sentry_mode_imgview"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:contentDescription="@string/imgview_desc_sentry_mode"
-                        app:srcCompat="@drawable/sentry_icon" />
-
-                    <ImageView
-                        android:id="@+id/climate_on_imgview"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:contentDescription="@string/imgview_desc_climate"
-                        app:srcCompat="@drawable/climate_on" />
+                        android:animateLayoutChanges="false" />
                 </LinearLayout>
             </LinearLayout>
 
