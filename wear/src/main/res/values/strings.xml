@@ -24,15 +24,13 @@
 
     <!-- Home screen -->
     <string name="title_activity_home">HomeActivity</string>
-    <string name="battery_level">Charge: %d%%</string>
-    <string name="battery_range">Range: %.1f %s</string>
+    <string name="battery_level">Battery: %d%% | %.1f %s</string>
     <string name="scheduled_charge">Charging will start at %s</string>
-    <string name="indoor_temp_c">Indoor temp: %.1fC</string>
-    <string name="indoor_temp_f">Indoor temp: %.1fF</string>
-    <string name="outdoor_temp_c">Outdoor temp: %.1fC</string>
-    <string name="outdoor_temp_f">Outdoor temp: %.1fF</string>
+    <string name="indoor_temp">Indoor temp: %.1f%s</string>
+    <string name="outdoor_temp">Outdoor temp: %.1f%s</string>
     <string name="charge_eta_hrs_mins">%d hr %d min until %d%% charge</string>
     <string name="charge_eta_mins">%d min until %d%% charge</string>
+    <string name="drive_state">Car is %d</string>
     <string name="last_updated">Last Updated: %s</string>
 
     <string name="car_status_tv">Car alerts:</string>

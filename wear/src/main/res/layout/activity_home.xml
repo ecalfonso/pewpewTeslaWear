@@ -50,6 +50,7 @@
                     android:visibility="gone" />
 
                 <LinearLayout
+                    android:id="@+id/car_info_linearlayout"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:animateLayoutChanges="true"
@@ -64,40 +65,11 @@
                         android:textSize="20sp" />
 
                     <TextView
-                        android:id="@+id/car_battery_level_tv"
+                        android:id="@+id/car_battery_tv"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/battery_level"
                         android:textAppearance="@android:style/TextAppearance.Material.Small" />
-
-                    <TextView
-                        android:id="@+id/car_battery_range_tv"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/battery_range"
-                        android:textAppearance="@android:style/TextAppearance.Material.Small" />
-
-                    <TextView
-                        android:id="@+id/indoor_temp_tv"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/indoor_temp_c"
-                        android:textAppearance="@android:style/TextAppearance.Material.Small" />
-
-                    <TextView
-                        android:id="@+id/outdoor_temp_tv"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/outdoor_temp_c"
-                        android:textAppearance="@android:style/TextAppearance.Material.Small" />
-
-                    <TextView
-                        android:id="@+id/charger_tv"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/charge_eta_hrs_mins"
-                        android:textAppearance="@android:style/TextAppearance.Material.Small"
-                        android:visibility="gone" />
 
                     <TextView
                         android:id="@+id/last_updated_tv"
@@ -111,7 +83,7 @@
                 </LinearLayout>
 
                 <View
-                    android:id="@+id/divider2"
+                    android:id="@+id/main_divider_1"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_marginVertical="8dp"
@@ -126,10 +98,11 @@
                     android:text="@string/car_status_tv"
                     android:textAppearance="@android:style/TextAppearance.Material.Large"
                     android:textSize="16sp"
-                    android:visibility="gone"
+                    android:visibility="visible"
                     tools:ignore="SmallSp" />
 
                 <LinearLayout
+                    android:id="@+id/car_alerts_linearlayout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -139,11 +112,13 @@
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/car_alerts_recyclerview"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content">
+
+                    </androidx.recyclerview.widget.RecyclerView>
                 </LinearLayout>
 
                 <View
-                    android:id="@+id/divider3"
+                    android:id="@+id/main_divider_2"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_marginVertical="8dp"
@@ -151,6 +126,60 @@
                     android:visibility="gone" />
 
                 <LinearLayout
+                    android:id="@+id/drive_charge_status_linearlayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:animateLayoutChanges="true"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/drive_charge_tv"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/charge_eta_hrs_mins"
+                        android:textAppearance="@android:style/TextAppearance.Material.Small"
+                        android:visibility="gone" />
+                </LinearLayout>
+
+                <View
+                    android:id="@+id/main_divider_3"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginVertical="8dp"
+                    android:background="?android:attr/listDivider"
+                    android:visibility="gone" />
+
+                <LinearLayout
+                    android:id="@+id/temperature_linearlayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/indoor_temp_tv"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/indoor_temp"
+                        android:textAppearance="@android:style/TextAppearance.Material.Small" />
+
+                    <TextView
+                        android:id="@+id/outdoor_temp_tv"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/outdoor_temp"
+                        android:textAppearance="@android:style/TextAppearance.Material.Small" />
+                </LinearLayout>
+
+                <View
+                    android:id="@+id/main_divider_4"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginVertical="8dp"
+                    android:background="?android:attr/listDivider"
+                    android:visibility="visible" />
+
+                <LinearLayout
+                    android:id="@+id/commands_linearlayout"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:animateLayoutChanges="true"

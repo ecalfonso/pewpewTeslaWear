@@ -231,24 +231,104 @@ public class HomeActivity extends WearableActivity {
         navDrawer.getController().peekDrawer();
     }
 
-    @SuppressLint("StringFormatInvalid")
+    @SuppressLint({"StringFormatInvalid", "SimpleDateFormat", "StringFormatMatches"})
     public void updateHomeScreen() {
+        Date date;
+        SimpleDateFormat sdf;
+
         /*
-        LinearLayout 1
+        car_info_linearlayout
         Upper part of the view
          */
         final TextView car_name_tv = findViewById(R.id.car_name_tv);
         car_name_tv.setText(sharedPref.getString(getString(R.string.default_car_name), ""));
 
-        final TextView battery_charge_tv = findViewById(R.id.car_battery_level_tv);
+        final TextView battery_charge_tv = findViewById(R.id.car_battery_tv);
         battery_charge_tv.setText(String.format(getString(R.string.battery_level),
-                sharedPref.getInt(getString(R.string.default_car_battery_level), -1)));
-
-        final TextView battery_range_tv = findViewById(R.id.car_battery_range_tv);
-        battery_range_tv.setText(String.format(getString(R.string.battery_range),
+                sharedPref.getInt(getString(R.string.default_car_battery_level), -1),
                 sharedPref.getFloat(getString(R.string.default_car_battery_range), -1),
                 sharedPref.getString(getString(R.string.default_car_range_units), "unit")));
 
+        final TextView last_update_tv = findViewById(R.id.last_updated_tv);
+        date = new java.util.Date(sharedPref.getLong(getString(R.string.default_car_timestamp), 0L));
+        sdf = new java.text.SimpleDateFormat("MMM d @ h:mma");
+        sdf.setTimeZone(java.util.TimeZone.getDefault());
+        last_update_tv.setText(String.format(getString(R.string.last_updated), sdf.format(date)));
+
+
+        /*
+        drive_charge_status_linearlayout
+         */
+        final TextView drive_charge_tv = findViewById(R.id.drive_charge_tv);
+        final View main_divider_3 = findViewById(R.id.main_divider_3);
+
+        String drive_state = sharedPref.getString(getString(com.edalfons.common_code.R.string.default_car_drive_state), "Parked");
+        String charge_state = sharedPref.getString(getString(R.string.default_car_charge_state), "Disconnected");
+
+        /* Check drive_status */
+        assert drive_state != null;
+        if (drive_state.matches("Parked")) {
+            /* Car doesn't have charger plugged in */
+            assert charge_state != null;
+            if (charge_state.matches("Disconnected")) {
+                if (drive_charge_tv.getVisibility() != View.GONE) {
+                    drive_charge_tv.setVisibility(View.GONE);
+                }
+                if (main_divider_3.getVisibility() != View.GONE) {
+                    main_divider_3.setVisibility(View.GONE);
+                }
+            }
+            /* Car plugged but not charging */
+            else if (charge_state.matches("Stopped")) {
+                if (sharedPref.getBoolean(getString(R.string.default_car_scheduled_charge_pending), false)) {
+                    date =
+                            new java.util.Date(sharedPref
+                                    .getLong(getString(R.string.default_car_scheduled_charge_start_time), 0L) * 1000);
+                    sdf = new java.text.SimpleDateFormat("h:mma");
+                    drive_charge_tv.setText(String.format(getString(R.string.scheduled_charge), sdf.format(date)));
+                    if (drive_charge_tv.getVisibility() != View.VISIBLE) {
+                        drive_charge_tv.setVisibility(View.VISIBLE);
+                    }
+                    if (main_divider_3.getVisibility() != View.VISIBLE) {
+                        main_divider_3.setVisibility(View.VISIBLE);
+                    }
+                }
+            }
+            /* Car is charging */
+            else if (charge_state.matches("Charging")) {
+                int minutes_rem = sharedPref.getInt(getString(R.string.default_car_minutes_til_charge_complete), 0);
+                int hours = minutes_rem / 60;
+                int mins = minutes_rem % 60;
+                if (hours > 0) {
+                    drive_charge_tv.setText(String.format(getString(R.string.charge_eta_hrs_mins),
+                            hours, mins,
+                            sharedPref.getInt(getString(R.string.default_car_max_charge_level), 0)));
+                } else {
+                    drive_charge_tv.setText(String.format(getString(R.string.charge_eta_mins),
+                            mins,
+                            sharedPref.getInt(getString(R.string.default_car_max_charge_level), 0)));
+                }
+                if (drive_charge_tv.getVisibility() != View.VISIBLE) {
+                    drive_charge_tv.setVisibility(View.VISIBLE);
+                }
+                if (main_divider_3.getVisibility() != View.VISIBLE) {
+                    main_divider_3.setVisibility(View.VISIBLE);
+                }
+            }
+        } else {
+            drive_charge_tv.setText(String.format(getString(R.string.drive_state), drive_state));
+            if (drive_charge_tv.getVisibility() != View.VISIBLE) {
+                drive_charge_tv.setVisibility(View.VISIBLE);
+            }
+            if (main_divider_3.getVisibility() != View.VISIBLE) {
+                main_divider_3.setVisibility(View.VISIBLE);
+            }
+        }
+
+
+        /*
+        temperature_linearlayout
+         */
         final TextView indoor_temp_tv = findViewById(R.id.indoor_temp_tv);
         final TextView outdoor_temp_tv = findViewById(R.id.outdoor_temp_tv);
         String temp_unit = sharedPref.getString(getString(R.string.default_car_temperature_units), "C");
@@ -256,64 +336,19 @@ public class HomeActivity extends WearableActivity {
         float outdoor_temp = sharedPref.getFloat(getString(R.string.default_car_outdoor_temp), 0);
         assert temp_unit != null;
         if (temp_unit.matches("C")) {
-            indoor_temp_tv.setText(String.format(getString(R.string.indoor_temp_c), indoor_temp));
-            outdoor_temp_tv.setText(String.format(getString(R.string.outdoor_temp_c), outdoor_temp));
+            indoor_temp_tv.setText(String.format(getString(R.string.indoor_temp),
+                    indoor_temp, temp_unit));
+            outdoor_temp_tv.setText(String.format(getString(R.string.outdoor_temp),
+                    outdoor_temp, temp_unit));
         } else {
-            indoor_temp_tv.setText(String.format(getString(R.string.indoor_temp_f),
-                    (indoor_temp * 9/5) + 32));
-            outdoor_temp_tv.setText(String.format(getString(R.string.outdoor_temp_f),
-                    (outdoor_temp * 9/5) + 32));
+            indoor_temp_tv.setText(String.format(getString(R.string.indoor_temp),
+                    (indoor_temp * 9/5) + 32, temp_unit));
+            outdoor_temp_tv.setText(String.format(getString(R.string.outdoor_temp),
+                    (outdoor_temp * 9/5) + 32, temp_unit));
         }
-
-        final TextView charger_status_tv = findViewById(R.id.charger_tv);
-        String charge_state = sharedPref.getString(getString(R.string.default_car_charge_state), "Disconnected");
-        /* Car doesn't have charger plugged in */
-        assert charge_state != null;
-        if (charge_state.matches("Disconnected")) {
-            if (charger_status_tv.getVisibility() != View.GONE) {
-                charger_status_tv.setVisibility(View.GONE);
-            }
-        }
-        /* Car plugged but not charging */
-        else if (charge_state.matches("Stopped")) {
-            if (sharedPref.getBoolean(getString(R.string.default_car_scheduled_charge_pending), false)) {
-                Date date =
-                        new java.util.Date(sharedPref
-                                .getLong(getString(R.string.default_car_scheduled_charge_start_time), 0L) * 1000);
-                @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new java.text.SimpleDateFormat("h:mma");
-                charger_status_tv.setText(String.format(getString(R.string.scheduled_charge), sdf.format(date)));
-                if (charger_status_tv.getVisibility() != View.VISIBLE) {
-                    charger_status_tv.setVisibility(View.VISIBLE);
-                }
-            }
-        }
-        /* Car is charging */
-        else if (charge_state.matches("Charging")) {
-            int minutes_rem = sharedPref.getInt(getString(R.string.default_car_minutes_til_charge_complete), 0);
-            int hours = minutes_rem / 60;
-            int mins = minutes_rem % 60;
-            if (hours > 0) {
-                charger_status_tv.setText(String.format(getString(R.string.charge_eta_hrs_mins),
-                        hours, mins,
-                        sharedPref.getInt(getString(R.string.default_car_max_charge_level), 0)));
-            } else {
-                charger_status_tv.setText(String.format(getString(R.string.charge_eta_mins),
-                        mins,
-                        sharedPref.getInt(getString(R.string.default_car_max_charge_level), 0)));
-            }
-            if (charger_status_tv.getVisibility() != View.VISIBLE) {
-                charger_status_tv.setVisibility(View.VISIBLE);
-            }
-        }
-
-        final TextView last_update_tv = findViewById(R.id.last_updated_tv);
-        Date date = new java.util.Date(sharedPref.getLong(getString(R.string.default_car_timestamp), 0L));
-        @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new java.text.SimpleDateFormat("h:mm a E MMM d");
-        sdf.setTimeZone(java.util.TimeZone.getDefault());
-        last_update_tv.setText(String.format(getString(R.string.last_updated), sdf.format(date)));
 
         /*
-        LinearLayout 2
+        car_alerts_linearlayout
         Dynamic car alerts
          */
         alerts.clear();
@@ -377,16 +412,16 @@ public class HomeActivity extends WearableActivity {
         adapter.notifyDataSetChanged();
 
         final TextView car_status_tv = findViewById(R.id.car_status_tv);
-        final View divider = findViewById(R.id.divider3);
+        final View main_divider_2 = findViewById(R.id.main_divider_2);
         if (alerts.size() > 0) {
             car_status_tv.setVisibility(View.VISIBLE);
-            divider.setVisibility(View.VISIBLE);
+            main_divider_2.setVisibility(View.VISIBLE);
         } else {
             if (car_status_tv.getVisibility() != View.GONE) {
                 car_status_tv.setVisibility(View.GONE);
             }
-            if (divider.getVisibility() != View.GONE) {
-                divider.setVisibility(View.GONE);
+            if (main_divider_2.getVisibility() != View.GONE) {
+                main_divider_2.setVisibility(View.GONE);
             }
         }
     }
@@ -450,6 +485,7 @@ public class HomeActivity extends WearableActivity {
                         JSONObject gui_settings = data.getJSONObject("gui_settings");
                         JSONObject vehicle_state = data.getJSONObject("vehicle_state");
                         JSONObject climate_state = data.getJSONObject("climate_state");
+                        JSONObject drive_state = data.getJSONObject("drive_state");
 
                         /* Save data to sharedPref */
                         editor.putString(getString(R.string.default_car_name),
@@ -522,6 +558,16 @@ public class HomeActivity extends WearableActivity {
                         editor.putBoolean(getString(R.string.default_car_sw_update_available),
                                 !vehicle_state.getJSONObject("software_update")
                                         .getString("status").matches(""));
+
+                        if (drive_state.isNull("drive_state")) {
+                            editor.putString(getString(R.string.default_car_drive_state), "Parked");
+                        } else if (drive_state.getString("drive_state").matches("D")) {
+                            editor.putString(getString(R.string.default_car_drive_state), "Driving");
+                        } else if (drive_state.getString("drive_state").matches("R")) {
+                            editor.putString(getString(R.string.default_car_drive_state), "Reversing");
+                        } else if (drive_state.getString("drive_state").matches("N")) {
+                            editor.putString(getString(R.string.default_car_drive_state), "In Neutral");
+                        }
 
                         editor.putLong(getString(R.string.default_car_timestamp),
                                 vehicle_state.getLong("timestamp"));

@@ -33,6 +33,8 @@
     <string name="default_car_sentry_mode">sentry_mode</string>
     <string name="default_car_sw_update_available">sw_update_available</string>
 
+    <string name="default_car_drive_state">default_car_drive_state</string>
+
     <string name="default_car_timestamp">default_car_timestamp</string>
 
     <!-- contentDescription for item_car_alert.xml -->
