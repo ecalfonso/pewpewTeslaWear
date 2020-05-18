@@ -15,7 +15,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.edalfons.common.TeslaApi;
+import com.edalfons.common_code.TeslaApi;
 
 import org.json.JSONException;
 

@@ -19,8 +19,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.edalfons.common.TeslaApi;
-import com.edalfons.common.CarSelectItem;
+import com.edalfons.common_code.TeslaApi;
+import com.edalfons.common_code.CarSelectItem;
 
 import org.json.JSONArray;
 import org.json.JSONException;

@@ -9,7 +9,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.wearable.activity.WearableActivity;
 
-import com.edalfons.common.TeslaApi;
+import com.edalfons.common_code.TeslaApi;
 
 import org.json.JSONArray;
 import org.json.JSONException;

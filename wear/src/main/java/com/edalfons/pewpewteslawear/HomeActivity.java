@@ -26,8 +26,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.wear.widget.drawer.WearableNavigationDrawerView;
 
-import com.edalfons.common.CarAlertItem;
-import com.edalfons.common.TeslaApi;
+import com.edalfons.common_code.CarAlertItem;
+import com.edalfons.common_code.TeslaApi;
 
 import org.json.JSONException;
 import org.json.JSONObject;

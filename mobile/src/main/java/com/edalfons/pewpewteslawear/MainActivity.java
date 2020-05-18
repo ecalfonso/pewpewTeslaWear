@@ -10,7 +10,7 @@ import android.os.Message;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.edalfons.common.TeslaApi;
+import com.edalfons.common_code.TeslaApi;
 
 import org.json.JSONArray;
 import org.json.JSONException;

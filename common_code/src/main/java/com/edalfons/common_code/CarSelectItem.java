@@ -1,4 +1,4 @@
-package com.edalfons.common;
+package com.edalfons.common_code;
 
 public class CarSelectItem {
     private String display_name;

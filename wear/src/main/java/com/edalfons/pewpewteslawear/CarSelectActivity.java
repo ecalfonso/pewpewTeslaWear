@@ -20,8 +20,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.wear.widget.WearableLinearLayoutManager;
 import androidx.wear.widget.WearableRecyclerView;
 
-import com.edalfons.common.CarSelectItem;
-import com.edalfons.common.TeslaApi;
+import com.edalfons.common_code.CarSelectItem;
+import com.edalfons.common_code.TeslaApi;
 
 import org.json.JSONArray;
 import org.json.JSONException;

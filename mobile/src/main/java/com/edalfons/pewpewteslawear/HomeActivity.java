@@ -23,7 +23,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
-import com.edalfons.common.TeslaApi;
+import com.edalfons.common_code.TeslaApi;
 
 import org.json.JSONException;
 import org.json.JSONObject;
