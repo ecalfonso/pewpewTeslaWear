@@ -6,4 +6,6 @@
 
     <string name="default_car_id">default_car_id</string>
     <string name="default_car_name">default_car_name</string>
+
+    <string name="imgview_desc">contentDesc for imgview</string>
 </resources>

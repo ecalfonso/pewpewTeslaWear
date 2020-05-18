@@ -9,11 +9,11 @@ public class CarAlertItem {
         this.helper_text = text;
     }
 
-    public int getDrawable_id() {
+    int getDrawable_id() {
         return drawable_id;
     }
 
-    public String getHelper_text() {
+    String getHelper_text() {
         return helper_text;
     }
 }

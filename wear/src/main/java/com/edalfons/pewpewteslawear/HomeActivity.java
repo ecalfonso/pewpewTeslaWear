@@ -11,22 +11,19 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.wearable.activity.ConfirmationActivity;
 import android.support.wearable.activity.WearableActivity;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.NumberPicker;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.wear.widget.drawer.WearableNavigationDrawerView;
 
 import com.edalfons.common_code.CarAlertItem;
+import com.edalfons.common_code.CarAlertItemAdapter;
 import com.edalfons.common_code.TeslaApi;
 
 import org.json.JSONException;
@@ -40,56 +37,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class HomeActivity extends WearableActivity {
-    public static class CarAlertItemViewHolder extends RecyclerView.ViewHolder {
-        private View mView;
-        private ImageView imgView;
-
-        CarAlertItemViewHolder(final View itemView) {
-            super(itemView);
-            mView = itemView;
-            imgView = itemView.findViewById(R.id.car_alerts_imgview_wear_id);
-        }
-
-
-        void bindData(final CarAlertItem item) {
-            imgView.setImageResource(item.getDrawable_id());
-        }
-    }
-
-    public class CarAlertItemAdapter extends RecyclerView.Adapter {
-        private ArrayList<CarAlertItem> data;
-
-        CarAlertItemAdapter(ArrayList<CarAlertItem> items) {
-            this.data = items;
-        }
-
-        @NonNull
-        @Override
-        public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            final View view = LayoutInflater.from(parent.getContext()).inflate(viewType, parent, false);
-            return new CarAlertItemViewHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-            ((CarAlertItemViewHolder) holder).bindData(data.get(position));
-            ((CarAlertItemViewHolder) holder).mView.setOnClickListener(v ->
-                    Toast.makeText(HomeActivity.this,
-                            data.get(position).getHelper_text(),
-                            Toast.LENGTH_SHORT).show());
-        }
-
-        @Override
-        public int getItemCount() {
-            return data.size();
-        }
-
-        @Override
-        public int getItemViewType(final int position) {
-            return R.layout.item_car_alert;
-        }
-    }
-
     /* Dictionary of Car Alerts */
     private static final Map<String, CarAlertItem> alertsDict = new HashMap<String, CarAlertItem>() {{
         put("unlocked",     new CarAlertItem(R.drawable.unlocked, "Car is unlocked!"));
@@ -213,7 +160,7 @@ public class HomeActivity extends WearableActivity {
                 RecyclerView.HORIZONTAL, false));
 
         alerts = new ArrayList<>();
-        adapter = new CarAlertItemAdapter(alerts);
+        adapter = new CarAlertItemAdapter(this, alerts);
         car_alerts_recyclerview.setAdapter(adapter);
 
         /* Set onClickListeners for the buttons */
