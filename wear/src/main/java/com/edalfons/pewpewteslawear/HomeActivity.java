@@ -11,7 +11,9 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.wearable.activity.ConfirmationActivity;
 import android.support.wearable.activity.WearableActivity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.NumberPicker;
 import android.widget.ProgressBar;
@@ -19,8 +21,12 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.wear.widget.drawer.WearableNavigationDrawerView;
 
+import com.edalfons.common.CarAlertItem;
 import com.edalfons.common.TeslaApi;
 
 import org.json.JSONException;
@@ -28,9 +34,74 @@ import org.json.JSONObject;
 
 import java.net.HttpURLConnection;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class HomeActivity extends WearableActivity {
+    public static class CarAlertItemViewHolder extends RecyclerView.ViewHolder {
+        private View mView;
+        private ImageView imgView;
+
+        CarAlertItemViewHolder(final View itemView) {
+            super(itemView);
+            mView = itemView;
+            imgView = itemView.findViewById(R.id.car_alerts_imgview_wear_id);
+        }
+
+
+        void bindData(final CarAlertItem item) {
+            imgView.setImageResource(item.getDrawable_id());
+        }
+    }
+
+    public class CarAlertItemAdapter extends RecyclerView.Adapter {
+        private ArrayList<CarAlertItem> data;
+
+        CarAlertItemAdapter(ArrayList<CarAlertItem> items) {
+            this.data = items;
+        }
+
+        @NonNull
+        @Override
+        public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            final View view = LayoutInflater.from(parent.getContext()).inflate(viewType, parent, false);
+            return new CarAlertItemViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+            ((CarAlertItemViewHolder) holder).bindData(data.get(position));
+            ((CarAlertItemViewHolder) holder).mView.setOnClickListener(v ->
+                    Toast.makeText(HomeActivity.this,
+                            data.get(position).getHelper_text(),
+                            Toast.LENGTH_SHORT).show());
+        }
+
+        @Override
+        public int getItemCount() {
+            return data.size();
+        }
+
+        @Override
+        public int getItemViewType(final int position) {
+            return R.layout.item_car_alert;
+        }
+    }
+
+    /* Dictionary of Car Alerts */
+    private static final Map<String, CarAlertItem> alertsDict = new HashMap<String, CarAlertItem>() {{
+        put("unlocked",     new CarAlertItem(R.drawable.unlocked, "Car is unlocked!"));
+        put("doors_open",   new CarAlertItem(R.drawable.door_open, "A door is open!"));
+        put("frunk_open",   new CarAlertItem(R.drawable.frunk_open, "Frunk is open!"));
+        put("trunk_open",   new CarAlertItem(R.drawable.trunk_open, "Trunk is open!"));
+        put("windows_open", new CarAlertItem(R.drawable.windows_open2, "Windows are open!"));
+        put("sw_update",    new CarAlertItem(R.drawable.sw_update, "Software update available!"));
+        put("sentry_on",    new CarAlertItem(R.drawable.sentry_icon, "Sentry mode is on!"));
+        put("climate_on",   new CarAlertItem(R.drawable.climate_on, "Climate is running!"));
+    }};
+
     /* UI Handler State Machine Macros */
     private static final int VEHICLE_ASLEEP = 0;
     private static final int VEHICLE_AWAKE = 1;
@@ -68,6 +139,9 @@ public class HomeActivity extends WearableActivity {
 
     /* Nav drawer */
     private WearableNavigationDrawerView navDrawer;
+
+    private ArrayList<CarAlertItem> alerts;
+    private CarAlertItemAdapter adapter;
 
     @SuppressLint("HandlerLeak")
     @Override
@@ -132,6 +206,15 @@ public class HomeActivity extends WearableActivity {
 
         navDrawer.setAdapter(new NavItemAdapter(mNavItems));
         navDrawer.addOnItemSelectedListener(HomeActivity.this::onNavItemSelected);
+
+        /* Car Alerts */
+        RecyclerView car_alerts_recyclerview = findViewById(R.id.car_alerts_recyclerview);
+        car_alerts_recyclerview.setLayoutManager(new LinearLayoutManager(this,
+                RecyclerView.HORIZONTAL, false));
+
+        alerts = new ArrayList<>();
+        adapter = new CarAlertItemAdapter(alerts);
+        car_alerts_recyclerview.setAdapter(adapter);
 
         /* Set onClickListeners for the buttons */
         setCmdButtonOnClickListeners();
@@ -286,98 +369,69 @@ public class HomeActivity extends WearableActivity {
         LinearLayout 2
         Dynamic car alerts
          */
-        int imgview_count = 0;
+        alerts.clear();
         boolean locked = sharedPref.getBoolean(getString(R.string.default_car_locked), false);
-        final ImageView unlocked_imgview = findViewById(R.id.unlocked_imgview);
         if (!locked) {
-            unlocked_imgview.setVisibility(View.VISIBLE);
-            imgview_count++;
+            alerts.add(alertsDict.get("unlocked"));
         } else {
-            if (unlocked_imgview.getVisibility() != View.GONE) {
-                unlocked_imgview.setVisibility(View.GONE);
-            }
+            alerts.remove(alertsDict.get("unlocked"));
         }
 
         boolean doors_closed = sharedPref.getBoolean(getString(R.string.default_car_door_closed), false);
-        final ImageView door_opened_imgview = findViewById(R.id.doors_open_imgview);
         if (!doors_closed) {
-            door_opened_imgview.setVisibility(View.VISIBLE);
-            imgview_count++;
+            alerts.add(alertsDict.get("doors_open"));
         } else {
-            if (door_opened_imgview.getVisibility() != View.GONE) {
-                door_opened_imgview.setVisibility(View.GONE);
-            }
+            alerts.remove(alertsDict.get("doors_open"));
         }
 
         boolean frunk_closed = sharedPref.getBoolean(getString(R.string.default_car_front_trunk_closed), false);
-        final ImageView frunk_open_imgview = findViewById(R.id.frunk_open_imgview);
         if (!frunk_closed) {
-            frunk_open_imgview.setVisibility(View.VISIBLE);
-            imgview_count++;
+            alerts.add(alertsDict.get("frunk_open"));
         } else {
-            if (frunk_open_imgview.getVisibility() != View.GONE) {
-                frunk_open_imgview.setVisibility(View.GONE);
-            }
+            alerts.remove(alertsDict.get("frunk_open"));
         }
 
         boolean trunk_closed = sharedPref.getBoolean(getString(R.string.default_car_rear_trunk_closed), false);
-        final ImageView trunk_open_imgview = findViewById(R.id.trunk_open_imgview);
         if (!trunk_closed) {
-            trunk_open_imgview.setVisibility(View.VISIBLE);
-            imgview_count++;
+            alerts.add(alertsDict.get("trunk_open"));
         } else {
-            if (trunk_open_imgview.getVisibility() != View.GONE) {
-                trunk_open_imgview.setVisibility(View.GONE);
-            }
+            alerts.remove(alertsDict.get("trunk_open"));
         }
 
         boolean windows_closed = sharedPref.getBoolean(getString(R.string.default_car_window_closed), false);
-        final ImageView windows_open_imgview = findViewById(R.id.windows_open_imgview);
         if (!windows_closed) {
-            windows_open_imgview.setVisibility(View.VISIBLE);
-            imgview_count++;
+            alerts.add(alertsDict.get("windows_open"));
         } else {
-            if (windows_open_imgview.getVisibility() != View.GONE) {
-                windows_open_imgview.setVisibility(View.GONE);
-            }
+            alerts.remove(alertsDict.get("windows_open"));
         }
 
         boolean sw_update = sharedPref.getBoolean(getString(R.string.default_car_sw_update_available), true);
-        final ImageView sw_update_imgview = findViewById(R.id.sw_update_imgview);
         if (sw_update) {
-            sw_update_imgview.setVisibility(View.VISIBLE);
-            imgview_count++;
+            alerts.add(alertsDict.get("sw_update"));
         } else {
-            if (sw_update_imgview.getVisibility() != View.GONE) {
-                sw_update_imgview.setVisibility(View.GONE);
-            }
+            alerts.remove(alertsDict.get("sw_update"));
         }
 
         boolean sentry_mode = sharedPref.getBoolean(getString(R.string.default_car_sentry_mode), true);
-        final ImageView sentry_mode_imgview = findViewById(R.id.sentry_mode_imgview);
         if (sentry_mode) {
-            sentry_mode_imgview.setVisibility(View.VISIBLE);
-            imgview_count++;
+            alerts.add(alertsDict.get("sentry_on"));
         } else {
-            if (sentry_mode_imgview.getVisibility() != View.GONE) {
-                sentry_mode_imgview.setVisibility(View.GONE);
-            }
+            alerts.remove(alertsDict.get("sentry_on"));
         }
 
         boolean climate_off = sharedPref.getBoolean(getString(R.string.default_car_climate_off), false);
-        final ImageView climate_on_imgview = findViewById(R.id.climate_on_imgview);
+
         if (!climate_off) {
-            climate_on_imgview.setVisibility(View.VISIBLE);
-            imgview_count++;
+            alerts.add(alertsDict.get("climate_on"));
         } else {
-            if (climate_on_imgview.getVisibility() != View.GONE) {
-                climate_on_imgview.setVisibility(View.GONE);
-            }
+            alerts.remove(alertsDict.get("climate_on"));
         }
+
+        adapter.notifyDataSetChanged();
 
         final TextView car_status_tv = findViewById(R.id.car_status_tv);
         final View divider = findViewById(R.id.divider3);
-        if (imgview_count > 0) {
+        if (alerts.size() > 0) {
             car_status_tv.setVisibility(View.VISIBLE);
             divider.setVisibility(View.VISIBLE);
         } else {

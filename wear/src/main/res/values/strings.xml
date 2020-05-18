@@ -70,14 +70,7 @@
     <string name="last_updated">Last Updated: %s</string>
 
     <string name="car_status_tv">Car alerts:</string>
-    <string name="imgview_desc_unlocked">unlocked icon</string>
-    <string name="imgview_desc_doors_open">doors open icon</string>
-    <string name="imgview_desc_frunk_open">frunk open icon</string>
-    <string name="imgview_desc_trunk_open">trunk open icon</string>
-    <string name="imgview_desc_windows_open">windows open icon</string>
-    <string name="imgview_desc_sw_update_available">sw update available icon</string>
-    <string name="imgview_desc_climate">climate icon</string>
-    <string name="imgview_desc_sentry_mode">sentry mode icon</string>
+    <string name="imgview_desc">contentDesc for imgview</string>
 
     <string name="commands_key_str">COMMAND</string>
 
