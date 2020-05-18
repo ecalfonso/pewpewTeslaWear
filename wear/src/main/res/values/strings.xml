@@ -1,34 +1,6 @@
 <resources>
     <string name="app_name">pewpewTeslaWear</string>
 
-    <string name="default_car_battery_level">default_car_battery_level</string>
-    <string name="default_car_battery_range">default_car_battery_range</string>
-    <string name="default_car_range_units">default_car_range_units</string>
-
-    <string name="default_car_indoor_temp">default_car_indoor_temp</string>
-    <string name="default_car_outdoor_temp">default_car_outdoor_temp</string>
-    <string name="default_car_temperature_units">default_car_temperature_units</string>
-
-    <string name="default_car_charge_state">default_car_charge_state</string>
-    <string name="default_car_charge_units">default_car_charge_units</string>
-    <string name="default_car_max_charge_level">default_car_max_charge_level</string>
-    <string name="default_car_charge_rate">default_car_charge_rate</string>
-    <string name="default_car_charge_power">default_car_charge_power</string>
-    <string name="default_car_minutes_til_charge_complete">default_car_minutes_til_charge_complete</string>
-    <string name="default_car_scheduled_charge_pending">default_car_scheduled_charge_pending</string>
-    <string name="default_car_scheduled_charge_start_time">default_car_scheduled_charge_start_time</string>
-
-    <string name="default_car_locked">default_car_locked</string>
-    <string name="default_car_door_closed">driver_doors_closed</string>
-    <string name="default_car_front_trunk_closed">front_trunk_closed</string>
-    <string name="default_car_rear_trunk_closed">rear_trunk_closed</string>
-    <string name="default_car_window_closed">window_closed</string>
-    <string name="default_car_climate_off">climate_is_off</string>
-    <string name="default_car_sentry_mode">sentry_mode</string>
-    <string name="default_car_sw_update_available">sw_update_available</string>
-
-    <string name="default_car_timestamp">default_car_timestamp</string>
-
     <!-- Tesla API Down Screen -->
     <string name="title_activity_tesla_api_unaccessible">TeslaApiUnaccessible</string>
     <string name="tesla_api_unaccesible_text">Tesla API is down!</string>
