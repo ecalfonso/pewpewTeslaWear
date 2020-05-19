@@ -37,20 +37,29 @@ public class InfoActivity extends AppCompatActivity {
         assert access_token != null;
         if (!access_token.matches("")) {
             access_token_tv.setText(getString(R.string.info_screen_tap_to_reveal));
-            access_token_tv.setOnClickListener(v -> access_token_tv.setText(access_token));
+            access_token_tv.setOnClickListener(v -> {
+                access_token_tv.setText(access_token);
+                access_token_tv.setTextIsSelectable(true);
+            });
         }
 
         assert refresh_token != null;
         if (!refresh_token.matches("")) {
             refresh_token_tv.setText(getString(R.string.info_screen_tap_to_reveal));
-            refresh_token_tv.setOnClickListener(v -> refresh_token_tv.setText(refresh_token));
+            refresh_token_tv.setOnClickListener(v -> {
+                refresh_token_tv.setText(refresh_token);
+                refresh_token_tv.setTextIsSelectable(true);
+            });
         }
 
         odometer_tv.setText(String.format(getString(R.string.info_screen_odometer), odometer, range_unit));
 
         assert vin != null;
         vin_tv.setText(vin.substring(0, vin.length() - 6).concat("XXXXXX"));
-        vin_tv.setOnClickListener(v -> vin_tv.setText(vin));
+        vin_tv.setOnClickListener(v -> {
+            vin_tv.setText(vin);
+            vin_tv.setTextIsSelectable(true);
+        });
 
         sw_version_tv.setText(sw_version);
     }

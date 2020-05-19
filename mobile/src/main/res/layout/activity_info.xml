@@ -101,6 +101,7 @@
                 android:selectAllOnFocus="true"
                 android:text="@string/info_screen_odometer"
                 android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:textIsSelectable="true"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/info_screen_odometer_title_tv" />
 
@@ -145,6 +146,7 @@
                 android:selectAllOnFocus="true"
                 android:text="@string/info_screen_sw_version"
                 android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:textIsSelectable="true"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/info_screen_sw_version_title_tv" />
         </androidx.constraintlayout.widget.ConstraintLayout>
