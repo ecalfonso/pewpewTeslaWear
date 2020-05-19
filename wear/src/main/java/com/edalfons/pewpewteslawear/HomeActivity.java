@@ -184,6 +184,7 @@ public class HomeActivity extends WearableActivity {
         scrollView.requestFocus();
 
         /* Start Data access */
+        showRefreshGraphic(true);
         checkVehicleWakeStatusThread();
     }
 
@@ -191,7 +192,7 @@ public class HomeActivity extends WearableActivity {
         switch (i) {
             case 0: // Refresh
                 showRefreshGraphic(true);
-                wakeVehicleThread();
+                checkVehicleWakeStatusThread();
                 break;
             case 1: // Car Select
                 Intent car_sel_intent = new Intent(HomeActivity.this, CarSelectActivity.class);
