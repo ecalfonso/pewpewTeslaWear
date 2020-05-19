@@ -92,6 +92,13 @@ Wear OS controls give you a 2.5 second confirmation delay before executing the c
     TBD
 
 ## Changelist
+### 1.0.2:
+	Improve CarSelect activities for mobile and wear
+	Move CarAlerts from static images/views to a list/adapter
+	Wear: Reorganize home screen
+	Mobile: Change Tokenscreen to Car Info screen
+	Create common code directory for mobile and wear	
+
 ### 1.0.1:
 	common: new app icon
 	common: Move start of data update to onResume()
