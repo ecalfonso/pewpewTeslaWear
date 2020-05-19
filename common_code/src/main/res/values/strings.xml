@@ -35,6 +35,10 @@
 
     <string name="default_car_drive_state">default_car_drive_state</string>
 
+    <string name="default_car_odometer">default_car_odometer</string>
+    <string name="default_car_vin">default_car_vin</string>
+    <string name="default_car_sw_version">default_car_sw_version</string>
+
     <string name="default_car_timestamp">default_car_timestamp</string>
 
     <!-- contentDescription for item_car_alert.xml -->

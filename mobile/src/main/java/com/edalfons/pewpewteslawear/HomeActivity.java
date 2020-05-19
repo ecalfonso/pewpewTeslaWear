@@ -166,11 +166,11 @@ public class HomeActivity extends AppCompatActivity {
                         Toast.LENGTH_SHORT).show();
                 checkVehicleWakeStatusThread();
                 return true;
-            case R.id.home_menu_tokens:
-                // Load Token activity
-                Intent token_activity_intent = new Intent(getApplicationContext(),
-                        TokenActivity.class);
-                startActivity(token_activity_intent);
+            case R.id.home_menu_car_info:
+                // Load Info activity
+                Intent info_activity_intent = new Intent(getApplicationContext(),
+                        InfoActivity.class);
+                startActivity(info_activity_intent);
                 return true;
             case R.id.home_menu_car_select:
                 // Load Car Select activity
@@ -255,6 +255,7 @@ public class HomeActivity extends AppCompatActivity {
                         JSONObject gui_settings = data.getJSONObject("gui_settings");
                         JSONObject vehicle_state = data.getJSONObject("vehicle_state");
                         JSONObject climate_state = data.getJSONObject("climate_state");
+                        JSONObject drive_state = data.getJSONObject("drive_state");
 
                         /* Save data to sharedPref */
                         editor.putString(getString(R.string.default_car_name),
@@ -327,6 +328,23 @@ public class HomeActivity extends AppCompatActivity {
                         editor.putBoolean(getString(R.string.default_car_sw_update_available),
                                 !vehicle_state.getJSONObject("software_update")
                                         .getString("status").matches(""));
+
+                        if (drive_state.isNull("drive_state")) {
+                            editor.putString(getString(R.string.default_car_drive_state), "Parked");
+                        } else if (drive_state.getString("drive_state").matches("D")) {
+                            editor.putString(getString(R.string.default_car_drive_state), "Driving");
+                        } else if (drive_state.getString("drive_state").matches("R")) {
+                            editor.putString(getString(R.string.default_car_drive_state), "Reversing");
+                        } else if (drive_state.getString("drive_state").matches("N")) {
+                            editor.putString(getString(R.string.default_car_drive_state), "In Neutral");
+                        }
+
+                        editor.putInt(getString(R.string.default_car_odometer),
+                                vehicle_state.getInt("odometer"));
+                        editor.putString(getString(R.string.default_car_vin),
+                                data.getString("vin"));
+                        editor.putString(getString(R.string.default_car_sw_version),
+                                vehicle_state.getString("car_version"));
 
                         editor.putLong(getString(R.string.default_car_timestamp),
                                 vehicle_state.getLong("timestamp"));

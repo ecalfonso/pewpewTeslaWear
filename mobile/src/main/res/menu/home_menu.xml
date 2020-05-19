@@ -18,7 +18,7 @@
         />
         -->
     <item
-        android:id="@+id/home_menu_tokens"
+        android:id="@+id/home_menu_car_info"
         android:title="@string/home_screen_menu_item2"
         app:showAsAction="never"
         />

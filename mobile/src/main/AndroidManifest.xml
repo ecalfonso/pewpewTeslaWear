@@ -13,7 +13,7 @@
         android:theme="@style/AppTheme"
         android:allowBackup="false">
         <activity android:name="com.edalfons.pewpewteslawear.CarSelectActivity" />
-        <activity android:name="com.edalfons.pewpewteslawear.TokenActivity" />
+        <activity android:name="com.edalfons.pewpewteslawear.InfoActivity" />
         <activity android:name="com.edalfons.pewpewteslawear.HomeActivity" />
         <activity android:name="com.edalfons.pewpewteslawear.LoginActivity" />
         <activity android:name="com.edalfons.pewpewteslawear.MainActivity">

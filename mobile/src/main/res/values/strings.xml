@@ -65,19 +65,22 @@
     <string name="home_screen_refresh_button">Refresh</string>
     <string name="home_screen_menu">Menu</string>
     <string name="home_screen_menu_item1">Settings (NA)</string>
-    <string name="home_screen_menu_item2">View Tokens</string>
+    <string name="home_screen_menu_item2">View Car Info</string>
     <string name="home_screen_menu_item3">Car Select</string>
     <string name="home_screen_menu_item4">Logout</string>
 
-    <!-- Token Screen -->
-    <string name="token_screen_text1">Current Access Token:</string>
-    <string name="token_screen_text2">Current Refresh Token:</string>
-    <string name="token_screen_text1_hint">No Access Token!</string>
-    <string name="token_screen_text2hint">No Refresh Token!</string>
-
-    <!-- Debug -->
-    <string name="token_screen_poison_atoken_button">Poison Access Token</string>
-    <string name="token_screen_poison_default_id_s_button">Poison Default id_s</string>
+    <!-- Info Screen -->
+    <string name="info_screen_access_token_title">Current Access Token:</string>
+    <string name="info_screen_access_token">No access token!</string>
+    <string name="info_screen_refresh_token_title">Current Refresh Token:</string>
+    <string name="info_screen_refresh_token">No refresh token!</string>
+    <string name="info_screen_odometer_title">Odometer:</string>
+    <string name="info_screen_odometer">%d %s</string>
+    <string name="info_screen_vin_title">VIN:</string>
+    <string name="info_screen_vin">5YJ3E1EA5KFXXXXXX</string>
+    <string name="info_screen_sw_version_title">SW Version:</string>
+    <string name="info_screen_sw_version">2020.1.2.3 abc123</string>
+    <string name="info_screen_tap_to_reveal">Tap to reveal</string>
 
     <!-- Misc -->
     <string name="logout_button">LOGOUT</string>
