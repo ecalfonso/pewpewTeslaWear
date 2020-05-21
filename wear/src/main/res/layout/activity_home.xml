@@ -112,7 +112,8 @@
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/car_alerts_recyclerview"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        android:overScrollMode="never">
 
                     </androidx.recyclerview.widget.RecyclerView>
                 </LinearLayout>
