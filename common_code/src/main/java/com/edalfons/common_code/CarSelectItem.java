@@ -1,8 +1,8 @@
 package com.edalfons.common_code;
 
 public class CarSelectItem {
-    private String display_name;
-    private String id_s;
+    private final String display_name;
+    private final String id_s;
 
     public CarSelectItem(String n, String i) {
         this.display_name = n;

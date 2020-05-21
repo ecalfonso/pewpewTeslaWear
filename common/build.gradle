@@ -5,6 +5,3 @@ dependencies {
     implementation 'org.json:json:20190722'
 
 }
-
-sourceCompatibility = "7"
-targetCompatibility = "7"

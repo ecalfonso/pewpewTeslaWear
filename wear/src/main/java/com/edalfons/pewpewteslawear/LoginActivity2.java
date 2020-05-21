@@ -78,8 +78,8 @@ public class LoginActivity2 extends WearableActivity {
     }
 
     private class LoginThread extends Thread {
-        private String aToken;
-        private String rToken;
+        private final String aToken;
+        private final String rToken;
 
         private LoginThread(String a, String r) {
             this.aToken = a;

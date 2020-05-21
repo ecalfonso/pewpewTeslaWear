@@ -15,9 +15,9 @@ import com.edalfons.common_code.CarSelectItem;
 
 import java.util.ArrayList;
 
-public class MobileCarSelectItemAdapter extends RecyclerView.Adapter {
-    private ArrayList<CarSelectItem> data;
-    private Context mContext;
+class MobileCarSelectItemAdapter extends RecyclerView.Adapter {
+    private final ArrayList<CarSelectItem> data;
+    private final Context mContext;
 
     MobileCarSelectItemAdapter(Context ctx, ArrayList<CarSelectItem> vehicles) {
         this.mContext = ctx;
@@ -78,8 +78,8 @@ public class MobileCarSelectItemAdapter extends RecyclerView.Adapter {
 }
 
 class MobileCarSelectItemViewHolder extends RecyclerView.ViewHolder {
-    private TextView Title;
-    View mView;
+    private final TextView Title;
+    final View mView;
 
     MobileCarSelectItemViewHolder(final View itemView) {
         super(itemView);

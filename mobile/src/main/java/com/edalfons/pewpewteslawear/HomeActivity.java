@@ -67,9 +67,9 @@ public class HomeActivity extends AppCompatActivity {
     /* Child listener to handle UI changes */
     private Handler uiHandler = null;
 
-    String access_token;
-    String id_s;
-    SharedPreferences sharedPref;
+    private String access_token;
+    private String id_s;
+    private SharedPreferences sharedPref;
 
     @SuppressLint("HandlerLeak")
     @Override
@@ -196,7 +196,7 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
-    public void wakeVehicleThread() {
+    private void wakeVehicleThread() {
         Thread t = new Thread() {
             @Override
             public void run() {
@@ -216,7 +216,7 @@ public class HomeActivity extends AppCompatActivity {
         t.start();
     }
 
-    public void checkVehicleWakeStatusThread() {
+    private void checkVehicleWakeStatusThread() {
         Thread t = new Thread() {
             @Override
             public void run() {
@@ -875,7 +875,7 @@ public class HomeActivity extends AppCompatActivity {
 
     private void setChargeLimitThread(int input) {
         class ChargeLimitThread extends Thread {
-            private int limit;
+            private final int limit;
             private ChargeLimitThread(int in) {this.limit = in;}
 
             public void run() {

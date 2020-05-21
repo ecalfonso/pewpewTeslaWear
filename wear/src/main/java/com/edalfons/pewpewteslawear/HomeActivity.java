@@ -233,7 +233,7 @@ public class HomeActivity extends WearableActivity {
     }
 
     @SuppressLint({"StringFormatInvalid", "SimpleDateFormat", "StringFormatMatches"})
-    public void updateHomeScreen() {
+    private void updateHomeScreen() {
         Date date;
         SimpleDateFormat sdf;
 
@@ -427,7 +427,7 @@ public class HomeActivity extends WearableActivity {
         }
     }
 
-    public void wakeVehicleThread() {
+    private void wakeVehicleThread() {
         Thread t = new Thread() {
             @Override
             public void run() {
@@ -447,7 +447,7 @@ public class HomeActivity extends WearableActivity {
         t.start();
     }
 
-    public void checkVehicleWakeStatusThread() {
+    private void checkVehicleWakeStatusThread() {
         Thread t = new Thread() {
             @Override
             public void run() {
@@ -464,7 +464,7 @@ public class HomeActivity extends WearableActivity {
         t.start();
     }
 
-    public void updateVehicleDataThread() {
+    private void updateVehicleDataThread() {
         Thread t = new Thread() {
             @Override
             public void run() {
@@ -586,7 +586,7 @@ public class HomeActivity extends WearableActivity {
         t.start();
     }
 
-    public void showRefreshGraphic(boolean show) {
+    private void showRefreshGraphic(boolean show) {
         /* Start refresh graphic */
         final View upper_blank_space = findViewById(R.id.upper_blank_space);
         final ProgressBar refresh_graphic = findViewById(R.id.refresh_view);
@@ -600,7 +600,7 @@ public class HomeActivity extends WearableActivity {
         }
     }
 
-    public void setCmdButtonOnClickListeners() {
+    private void setCmdButtonOnClickListeners() {
         final TextView lock = findViewById(R.id.lock_tv);
         lock.setOnClickListener(v -> {
             Intent i = new Intent(getApplicationContext(), MyConfirmationActivity.class);
@@ -1141,7 +1141,7 @@ public class HomeActivity extends WearableActivity {
 
     private void setChargeLimitThread(int input) {
         class ChargeLimitThread extends Thread {
-            private int limit;
+            private final int limit;
             private ChargeLimitThread(int in) {this.limit = in;}
 
             public void run() {

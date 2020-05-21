@@ -38,7 +38,7 @@ public class CarSelectActivity extends WearableActivity {
     private ArrayList<CarSelectItem> vehicles;
     private WearCarSelectItemAdapter adapter;
 
-    SharedPreferences sharedPref;
+    private SharedPreferences sharedPref;
 
     @SuppressLint("HandlerLeak")
     @Override

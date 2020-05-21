@@ -37,7 +37,7 @@ public class CarSelectActivity extends AppCompatActivity {
     /* Child listener to handle UI changes */
     private Handler uiHandler = null;
 
-    SharedPreferences sharedPref;
+    private SharedPreferences sharedPref;
 
     @SuppressLint("HandlerLeak")
     @Override

@@ -81,8 +81,8 @@ public class LoginActivity extends WearableActivity {
     }
 
     private class LoginThread extends Thread {
-        private String username;
-        private String password;
+        private final String username;
+        private final String password;
 
         private LoginThread(String u, String p) {
             this.username = u;

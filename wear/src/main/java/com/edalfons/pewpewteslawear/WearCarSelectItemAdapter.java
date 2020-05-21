@@ -16,9 +16,9 @@ import com.edalfons.common_code.CarSelectItem;
 
 import java.util.ArrayList;
 
-public class WearCarSelectItemAdapter extends WearableRecyclerView.Adapter {
-    private ArrayList<CarSelectItem> data;
-    private Context mContext;
+class WearCarSelectItemAdapter extends WearableRecyclerView.Adapter {
+    private final ArrayList<CarSelectItem> data;
+    private final Context mContext;
 
     WearCarSelectItemAdapter(Context ctx, ArrayList<CarSelectItem> vehicles) {
         this.mContext = ctx;
@@ -76,8 +76,8 @@ public class WearCarSelectItemAdapter extends WearableRecyclerView.Adapter {
 }
 
 class WearCarSelectItemViewHolder extends WearableRecyclerView.ViewHolder {
-    private TextView Title;
-    View mView;
+    private final TextView Title;
+    final View mView;
 
     WearCarSelectItemViewHolder(final View itemView) {
         super(itemView);

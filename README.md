@@ -1,4 +1,4 @@
-# pewpewTeslaWear ![Icon](/wear/src/main/res/mipmap-mdpi/pptw_launcher_icon.png)
+# pewpewTeslaWear ![Icon](/wear/src/main/res/mipmap-mdpi/pptw_launcher_icon.webp)
 A personal project for controlling your Tesla vehicle(s) through your Android phone and/or Wear OS smartwatch using the unofficial Tesla API.
 
 This is by no means perfect or optimized, most code was taken from various StackOverflow threads to get to a working state. 

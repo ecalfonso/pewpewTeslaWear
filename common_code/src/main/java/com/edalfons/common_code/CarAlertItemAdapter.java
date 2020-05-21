@@ -13,8 +13,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 public class CarAlertItemAdapter extends RecyclerView.Adapter {
-    private ArrayList<CarAlertItem> data;
-    private Context mContext;
+    private final ArrayList<CarAlertItem> data;
+    private final Context mContext;
 
     public CarAlertItemAdapter(Context ctx, ArrayList<CarAlertItem> items) {
         this.mContext = ctx;
@@ -49,8 +49,8 @@ public class CarAlertItemAdapter extends RecyclerView.Adapter {
 }
 
 class CarAlertItemViewHolder extends RecyclerView.ViewHolder {
-    View mView;
-    private ImageView imgView;
+    final View mView;
+    private final ImageView imgView;
 
     CarAlertItemViewHolder(final View itemView) {
         super(itemView);

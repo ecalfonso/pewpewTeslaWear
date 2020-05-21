@@ -30,7 +30,7 @@ public class LoginActivity extends AppCompatActivity {
     /* Child listener to handle UI changes */
     private Handler uiHandler = null;
 
-    SharedPreferences sharedPref;
+    private SharedPreferences sharedPref;
 
     private TextView username_text;
     private TextView password_text;

@@ -13,12 +13,12 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
 public class TeslaApi {
-    private String access_token;
+    private final String access_token;
     public int respCode = HttpURLConnection.HTTP_UNAUTHORIZED;
     public JSONObject resp = null;
 
-    private String client_id = "81527cff06843c8634fdc09e8ac0abefb46ac849f38fe1e431c2ef2106796384";
-    private String client_secret = "c7257eb71a564034f9419ee651c7d0e5f7aa6bfbd18bafb5c5c033b093bb2fa3";
+    private final String client_id = "81527cff06843c8634fdc09e8ac0abefb46ac849f38fe1e431c2ef2106796384";
+    private final String client_secret = "c7257eb71a564034f9419ee651c7d0e5f7aa6bfbd18bafb5c5c033b093bb2fa3";
 
     public TeslaApi(String aToken) {
         this.access_token = aToken;

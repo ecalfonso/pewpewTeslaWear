@@ -1,8 +1,8 @@
 package com.edalfons.common_code;
 
 public class CarAlertItem {
-    private int drawable_id;
-    private String helper_text;
+    private final int drawable_id;
+    private final String helper_text;
 
     public CarAlertItem(int id, String text) {
         this.drawable_id = id;
