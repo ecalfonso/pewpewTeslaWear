@@ -94,6 +94,7 @@ public class CarSelectActivity extends WearableActivity {
         WearableRecyclerView view = findViewById(R.id.car_select_layout);
         view.setEdgeItemsCenteringEnabled(true);
         view.setLayoutManager(new WearableLinearLayoutManager(this));
+        view.requestFocus();
 
         vehicles = new ArrayList<>();
         adapter = new WearCarSelectItemAdapter(this, vehicles);
