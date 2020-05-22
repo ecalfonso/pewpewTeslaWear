@@ -13,468 +13,457 @@
     >
 
     <!-- Home screen -->
-    <androidx.wear.widget.BoxInsetLayout
+    <ScrollView
+        android:id="@+id/home_screen_scrollview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:animateLayoutChanges="true">
+        android:animateLayoutChanges="true"
+        android:focusable="auto"
+        android:focusableInTouchMode="true"
+        android:focusedByDefault="true"
+        app:boxedEdges="left|none|right"
+        tools:ignore="MissingPrefix">
 
-        <ScrollView
-            android:id="@+id/home_screen_scrollview"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:animateLayoutChanges="true"
-            android:focusable="auto"
-            android:focusableInTouchMode="true"
-            android:focusedByDefault="true"
-            app:boxedEdges="left|none|right"
-            tools:ignore="MissingPrefix">
+            android:orientation="vertical">
 
-            <LinearLayout
+            <Space
+                android:id="@+id/upper_space"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/screen_percentage_15" />
+
+            <ProgressBar
+                android:id="@+id/refresh_view"
+                style="?android:attr/progressBarStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:id="@+id/car_info_linearlayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:animateLayoutChanges="true"
                 android:orientation="vertical">
 
-                <View
-                    android:id="@+id/upper_blank_space"
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/screen_percentage_15"
-                    android:visibility="visible" />
-
-                <ProgressBar
-                    android:id="@+id/refresh_view"
-                    style="?android:attr/progressBarStyle"
+                <TextView
+                    android:id="@+id/car_name_tv"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:visibility="gone" />
+                    android:text="@string/default_car_name"
+                    android:textAppearance="@android:style/TextAppearance.Material.Large"
+                    android:textSize="20sp" />
 
-                <LinearLayout
-                    android:id="@+id/car_info_linearlayout"
+                <TextView
+                    android:id="@+id/car_battery_tv"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:animateLayoutChanges="true"
-                    android:orientation="vertical">
+                    android:layout_height="wrap_content"
+                    android:text="@string/battery_level"
+                    android:textAppearance="@android:style/TextAppearance.Material.Small" />
 
-                    <TextView
-                        android:id="@+id/car_name_tv"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/default_car_name"
-                        android:textAppearance="@android:style/TextAppearance.Material.Large"
-                        android:textSize="20sp" />
+                <TextView
+                    android:id="@+id/last_updated_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/last_updated"
+                    android:textSize="10sp"
+                    tools:ignore="SmallSp" />
 
-                    <TextView
-                        android:id="@+id/car_battery_tv"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/battery_level"
-                        android:textAppearance="@android:style/TextAppearance.Material.Small" />
+            </LinearLayout>
 
-                    <TextView
-                        android:id="@+id/last_updated_tv"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:text="@string/last_updated"
-                        android:textSize="10sp"
-                        tools:ignore="SmallSp" />
+            <View
+                android:id="@+id/main_divider_1"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginVertical="8dp"
+                android:background="?android:attr/listDivider" />
 
-                </LinearLayout>
+            <TextView
+                android:id="@+id/car_status_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/car_status_tv"
+                android:textAppearance="@android:style/TextAppearance.Material.Large"
+                android:textSize="16sp"
+                android:visibility="visible"
+                tools:ignore="SmallSp" />
+
+            <LinearLayout
+                android:id="@+id/car_alerts_linearlayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:animateLayoutChanges="true"
+                android:orientation="horizontal">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/car_alerts_recyclerview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:overScrollMode="never">
+
+                </androidx.recyclerview.widget.RecyclerView>
+            </LinearLayout>
+
+            <View
+                android:id="@+id/main_divider_2"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginVertical="8dp"
+                android:background="?android:attr/listDivider"
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:id="@+id/drive_charge_status_linearlayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:animateLayoutChanges="true"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/drive_charge_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/charge_eta_hrs_mins"
+                    android:textAppearance="@android:style/TextAppearance.Material.Small"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+            <View
+                android:id="@+id/main_divider_3"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginVertical="8dp"
+                android:background="?android:attr/listDivider"
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:id="@+id/temperature_linearlayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/indoor_temp_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/indoor_temp"
+                    android:textAppearance="@android:style/TextAppearance.Material.Small" />
+
+                <TextView
+                    android:id="@+id/outdoor_temp_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/outdoor_temp"
+                    android:textAppearance="@android:style/TextAppearance.Material.Small" />
+            </LinearLayout>
+
+            <View
+                android:id="@+id/main_divider_4"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginVertical="8dp"
+                android:background="?android:attr/listDivider"
+                android:visibility="visible" />
+
+            <LinearLayout
+                android:id="@+id/commands_linearlayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:animateLayoutChanges="true"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/lock_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:gravity="center_horizontal"
+                    android:text="@string/lock_button"
+                    android:textSize="24sp" />
 
                 <View
-                    android:id="@+id/main_divider_1"
+                    android:id="@+id/divider4"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_marginVertical="8dp"
                     android:background="?android:attr/listDivider" />
 
                 <TextView
-                    android:id="@+id/car_status_tv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="@string/car_status_tv"
-                    android:textAppearance="@android:style/TextAppearance.Material.Large"
-                    android:textSize="16sp"
-                    android:visibility="visible"
-                    tools:ignore="SmallSp" />
-
-                <LinearLayout
-                    android:id="@+id/car_alerts_linearlayout"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/unlock_tv"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:animateLayoutChanges="true"
-                    android:orientation="horizontal">
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/car_alerts_recyclerview"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:overScrollMode="never">
-
-                    </androidx.recyclerview.widget.RecyclerView>
-                </LinearLayout>
+                    android:clickable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:gravity="center_horizontal"
+                    android:text="@string/unlock_button"
+                    android:textSize="24sp" />
 
                 <View
-                    android:id="@+id/main_divider_2"
+                    android:id="@+id/divider5"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_marginVertical="8dp"
-                    android:background="?android:attr/listDivider"
-                    android:visibility="gone" />
+                    android:background="?android:attr/listDivider" />
 
-                <LinearLayout
-                    android:id="@+id/drive_charge_status_linearlayout"
+                <TextView
+                    android:id="@+id/climate_on_tv"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:animateLayoutChanges="true"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/drive_charge_tv"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/charge_eta_hrs_mins"
-                        android:textAppearance="@android:style/TextAppearance.Material.Small"
-                        android:visibility="gone" />
-                </LinearLayout>
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:gravity="center_horizontal"
+                    android:text="@string/climate_on_button"
+                    android:textSize="24sp" />
 
                 <View
-                    android:id="@+id/main_divider_3"
+                    android:id="@+id/divider6"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_marginVertical="8dp"
-                    android:background="?android:attr/listDivider"
-                    android:visibility="gone" />
+                    android:background="?android:attr/listDivider" />
 
-                <LinearLayout
-                    android:id="@+id/temperature_linearlayout"
+                <TextView
+                    android:id="@+id/climate_off_tv"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/indoor_temp_tv"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/indoor_temp"
-                        android:textAppearance="@android:style/TextAppearance.Material.Small" />
-
-                    <TextView
-                        android:id="@+id/outdoor_temp_tv"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/outdoor_temp"
-                        android:textAppearance="@android:style/TextAppearance.Material.Small" />
-                </LinearLayout>
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:gravity="center_horizontal"
+                    android:text="@string/climate_off_button"
+                    android:textSize="24sp" />
 
                 <View
-                    android:id="@+id/main_divider_4"
+                    android:id="@+id/divider7"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_marginVertical="8dp"
-                    android:background="?android:attr/listDivider"
-                    android:visibility="visible" />
+                    android:background="?android:attr/listDivider" />
 
-                <LinearLayout
-                    android:id="@+id/commands_linearlayout"
+                <TextView
+                    android:id="@+id/frunk_tv"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:animateLayoutChanges="true"
-                    android:orientation="vertical">
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:gravity="center_horizontal"
+                    android:text="@string/actuate_frunk_button"
+                    android:textSize="24sp" />
 
-                    <TextView
-                        android:id="@+id/lock_tv"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:clickable="true"
-                        android:foreground="?android:attr/selectableItemBackground"
-                        android:gravity="center_horizontal"
-                        android:text="@string/lock_button"
-                        android:textSize="24sp" />
+                <View
+                    android:id="@+id/divider8"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginVertical="8dp"
+                    android:background="?android:attr/listDivider" />
 
-                    <View
-                        android:id="@+id/divider4"
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginVertical="8dp"
-                        android:background="?android:attr/listDivider" />
+                <TextView
+                    android:id="@+id/trunk_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:gravity="center_horizontal"
+                    android:text="@string/actuate_trunk_button"
+                    android:textSize="24sp" />
 
-                    <TextView
-                        android:id="@+id/unlock_tv"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:clickable="true"
-                        android:foreground="?android:attr/selectableItemBackground"
-                        android:gravity="center_horizontal"
-                        android:text="@string/unlock_button"
-                        android:textSize="24sp" />
+                <View
+                    android:id="@+id/divider9"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginVertical="8dp"
+                    android:background="?android:attr/listDivider" />
 
-                    <View
-                        android:id="@+id/divider5"
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginVertical="8dp"
-                        android:background="?android:attr/listDivider" />
+                <TextView
+                    android:id="@+id/vent_window_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:gravity="center_horizontal"
+                    android:text="@string/vent_window_button"
+                    android:textSize="24sp" />
 
-                    <TextView
-                        android:id="@+id/climate_on_tv"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:clickable="true"
-                        android:foreground="?android:attr/selectableItemBackground"
-                        android:gravity="center_horizontal"
-                        android:text="@string/climate_on_button"
-                        android:textSize="24sp" />
+                <View
+                    android:id="@+id/divider10"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginVertical="8dp"
+                    android:background="?android:attr/listDivider" />
 
-                    <View
-                        android:id="@+id/divider6"
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginVertical="8dp"
-                        android:background="?android:attr/listDivider" />
+                <TextView
+                    android:id="@+id/close_window_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:gravity="center_horizontal"
+                    android:text="@string/close_window_button"
+                    android:textSize="24sp" />
 
-                    <TextView
-                        android:id="@+id/climate_off_tv"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:clickable="true"
-                        android:foreground="?android:attr/selectableItemBackground"
-                        android:gravity="center_horizontal"
-                        android:text="@string/climate_off_button"
-                        android:textSize="24sp" />
+                <View
+                    android:id="@+id/divider11"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginVertical="8dp"
+                    android:background="?android:attr/listDivider" />
 
-                    <View
-                        android:id="@+id/divider7"
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginVertical="8dp"
-                        android:background="?android:attr/listDivider" />
+                <TextView
+                    android:id="@+id/sentry_mode_on_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:gravity="center_horizontal"
+                    android:text="@string/sentry_mode_on_button"
+                    android:textSize="24sp" />
 
-                    <TextView
-                        android:id="@+id/frunk_tv"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:clickable="true"
-                        android:foreground="?android:attr/selectableItemBackground"
-                        android:gravity="center_horizontal"
-                        android:text="@string/actuate_frunk_button"
-                        android:textSize="24sp" />
+                <View
+                    android:id="@+id/divider12"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginVertical="8dp"
+                    android:background="?android:attr/listDivider" />
 
-                    <View
-                        android:id="@+id/divider8"
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginVertical="8dp"
-                        android:background="?android:attr/listDivider" />
+                <TextView
+                    android:id="@+id/sentry_mode_off_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:gravity="center_horizontal"
+                    android:text="@string/sentry_mode_off_button"
+                    android:textSize="24sp" />
 
-                    <TextView
-                        android:id="@+id/trunk_tv"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:clickable="true"
-                        android:foreground="?android:attr/selectableItemBackground"
-                        android:gravity="center_horizontal"
-                        android:text="@string/actuate_trunk_button"
-                        android:textSize="24sp" />
+                <View
+                    android:id="@+id/divider13"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginVertical="8dp"
+                    android:background="?android:attr/listDivider" />
 
-                    <View
-                        android:id="@+id/divider9"
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginVertical="8dp"
-                        android:background="?android:attr/listDivider" />
+                <TextView
+                    android:id="@+id/start_charge_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:gravity="center_horizontal"
+                    android:text="@string/start_charge_button"
+                    android:textSize="24sp" />
 
-                    <TextView
-                        android:id="@+id/vent_window_tv"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:clickable="true"
-                        android:foreground="?android:attr/selectableItemBackground"
-                        android:gravity="center_horizontal"
-                        android:text="@string/vent_window_button"
-                        android:textSize="24sp" />
+                <View
+                    android:id="@+id/divider14"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginVertical="8dp"
+                    android:background="?android:attr/listDivider" />
 
-                    <View
-                        android:id="@+id/divider10"
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginVertical="8dp"
-                        android:background="?android:attr/listDivider" />
+                <TextView
+                    android:id="@+id/stop_charge_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:gravity="center_horizontal"
+                    android:text="@string/stop_charge_button"
+                    android:textSize="24sp" />
 
-                    <TextView
-                        android:id="@+id/close_window_tv"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:clickable="true"
-                        android:foreground="?android:attr/selectableItemBackground"
-                        android:gravity="center_horizontal"
-                        android:text="@string/close_window_button"
-                        android:textSize="24sp" />
+                <View
+                    android:id="@+id/divider15"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginVertical="8dp"
+                    android:background="?android:attr/listDivider" />
 
-                    <View
-                        android:id="@+id/divider11"
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginVertical="8dp"
-                        android:background="?android:attr/listDivider" />
+                <TextView
+                    android:id="@+id/open_charge_port_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:gravity="center_horizontal"
+                    android:text="@string/open_charge_port_button"
+                    android:textSize="24sp" />
 
-                    <TextView
-                        android:id="@+id/sentry_mode_on_tv"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:clickable="true"
-                        android:foreground="?android:attr/selectableItemBackground"
-                        android:gravity="center_horizontal"
-                        android:text="@string/sentry_mode_on_button"
-                        android:textSize="24sp" />
+                <View
+                    android:id="@+id/divider16"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginVertical="8dp"
+                    android:background="?android:attr/listDivider" />
 
-                    <View
-                        android:id="@+id/divider12"
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginVertical="8dp"
-                        android:background="?android:attr/listDivider" />
+                <TextView
+                    android:id="@+id/close_charge_port_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:gravity="center_horizontal"
+                    android:text="@string/close_charge_port_button"
+                    android:textSize="24sp" />
 
-                    <TextView
-                        android:id="@+id/sentry_mode_off_tv"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:clickable="true"
-                        android:foreground="?android:attr/selectableItemBackground"
-                        android:gravity="center_horizontal"
-                        android:text="@string/sentry_mode_off_button"
-                        android:textSize="24sp" />
+                <View
+                    android:id="@+id/divider17"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginVertical="8dp"
+                    android:background="?android:attr/listDivider" />
 
-                    <View
-                        android:id="@+id/divider13"
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginVertical="8dp"
-                        android:background="?android:attr/listDivider" />
+                <TextView
+                    android:id="@+id/set_charge_limit_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:gravity="center_horizontal"
+                    android:text="@string/set_charge_limit_button"
+                    android:textSize="24sp" />
 
-                    <TextView
-                        android:id="@+id/start_charge_tv"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:clickable="true"
-                        android:foreground="?android:attr/selectableItemBackground"
-                        android:gravity="center_horizontal"
-                        android:text="@string/start_charge_button"
-                        android:textSize="24sp" />
+                <View
+                    android:id="@+id/divider18"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginVertical="8dp"
+                    android:background="?android:attr/listDivider" />
 
-                    <View
-                        android:id="@+id/divider14"
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginVertical="8dp"
-                        android:background="?android:attr/listDivider" />
-
-                    <TextView
-                        android:id="@+id/stop_charge_tv"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:clickable="true"
-                        android:foreground="?android:attr/selectableItemBackground"
-                        android:gravity="center_horizontal"
-                        android:text="@string/stop_charge_button"
-                        android:textSize="24sp" />
-
-                    <View
-                        android:id="@+id/divider15"
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginVertical="8dp"
-                        android:background="?android:attr/listDivider" />
-
-                    <TextView
-                        android:id="@+id/open_charge_port_tv"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:clickable="true"
-                        android:foreground="?android:attr/selectableItemBackground"
-                        android:gravity="center_horizontal"
-                        android:text="@string/open_charge_port_button"
-                        android:textSize="24sp" />
-
-                    <View
-                        android:id="@+id/divider16"
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginVertical="8dp"
-                        android:background="?android:attr/listDivider" />
-
-                    <TextView
-                        android:id="@+id/close_charge_port_tv"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:clickable="true"
-                        android:foreground="?android:attr/selectableItemBackground"
-                        android:gravity="center_horizontal"
-                        android:text="@string/close_charge_port_button"
-                        android:textSize="24sp" />
-
-                    <View
-                        android:id="@+id/divider17"
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginVertical="8dp"
-                        android:background="?android:attr/listDivider" />
-
-                    <TextView
-                        android:id="@+id/set_charge_limit_tv"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:clickable="true"
-                        android:foreground="?android:attr/selectableItemBackground"
-                        android:gravity="center_horizontal"
-                        android:text="@string/set_charge_limit_button"
-                        android:textSize="24sp" />
-
-                    <View
-                        android:id="@+id/divider18"
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginVertical="8dp"
-                        android:background="?android:attr/listDivider" />
-
-                    <TextView
-                        android:id="@+id/homelink_tv"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:clickable="true"
-                        android:foreground="?android:attr/selectableItemBackground"
-                        android:gravity="center_horizontal"
-                        android:text="@string/activate_homelink_button"
-                        android:textSize="24sp" />
-
-                    <View
-                        android:id="@+id/divider19"
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginVertical="8dp"
-                        android:background="?android:attr/listDivider" />
-
-                    <View
-                        android:id="@+id/view2"
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/screen_percentage_15" />
-
-                </LinearLayout>
+                <TextView
+                    android:id="@+id/homelink_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:gravity="center_horizontal"
+                    android:text="@string/activate_homelink_button"
+                    android:textSize="24sp" />
 
             </LinearLayout>
-        </ScrollView>
-    </androidx.wear.widget.BoxInsetLayout>
 
-    <!-- Navigation Drawer -->
+            <Space
+                android:id="@+id/lower_space"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/screen_percentage_15" />
+
+        </LinearLayout>
+    </ScrollView>
+
     <androidx.wear.widget.drawer.WearableNavigationDrawerView
         android:id="@+id/navigation_drawer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:animateLayoutChanges="true"
         android:background="#CC0000"
-        app:navigationStyle="singlePage" />
+        app:navigationStyle="singlePage" >
+
+    </androidx.wear.widget.drawer.WearableNavigationDrawerView>
+
+    <!-- Navigation Drawer -->
 
 </androidx.wear.widget.drawer.WearableDrawerLayout>

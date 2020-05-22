@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.NumberPicker;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
+import android.widget.Space;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -87,6 +88,9 @@ public class HomeActivity extends WearableActivity {
     /* Nav drawer */
     private WearableNavigationDrawerView navDrawer;
 
+    private ScrollView scrollView;
+    private boolean isRoundDisplay;
+
     private ArrayList<CarAlertItem> alerts;
     private CarAlertItemAdapter adapter;
 
@@ -142,6 +146,21 @@ public class HomeActivity extends WearableActivity {
             }
         };
 
+        scrollView = findViewById(R.id.home_screen_scrollview);
+
+        /* Custom inset */
+        isRoundDisplay = getResources().getConfiguration().isScreenRound();
+        if (isRoundDisplay) {
+            scrollView.setPadding(50,0,50,0);
+        } else {
+            scrollView.setPadding(0,15,0,15);
+            final Space upper_blank_space = findViewById(R.id.upper_space);
+            final Space lower_blank_space = findViewById(R.id.lower_space);
+
+            upper_blank_space.setVisibility(View.GONE);
+            lower_blank_space.setVisibility(View.GONE);
+        }
+
         /* Nav Drawer */
         NavItem[] mNavItems = new NavItem[]{
                 new NavItem("Refresh", getDrawable(R.drawable.refresh)),
@@ -175,7 +194,7 @@ public class HomeActivity extends WearableActivity {
         super.onResume();
 
         /* Scroll to top if not already there */
-        final ScrollView scrollView = findViewById(R.id.home_screen_scrollview);
+        scrollView = findViewById(R.id.home_screen_scrollview);
         if (scrollView.getScrollY() > 0) {
             scrollView.smoothScrollTo(0, 0);
         }
@@ -588,15 +607,19 @@ public class HomeActivity extends WearableActivity {
 
     private void showRefreshGraphic(boolean show) {
         /* Start refresh graphic */
-        final View upper_blank_space = findViewById(R.id.upper_blank_space);
+        final View upper_blank_space = findViewById(R.id.upper_space);
         final ProgressBar refresh_graphic = findViewById(R.id.refresh_view);
 
         if (show) {
-            upper_blank_space.setVisibility(View.GONE);
+            if (isRoundDisplay) {
+                upper_blank_space.setVisibility(View.GONE);
+            }
             refresh_graphic.setVisibility(View.VISIBLE);
         } else {
+            if (isRoundDisplay) {
+                upper_blank_space.setVisibility(View.VISIBLE);
+            }
             refresh_graphic.setVisibility(View.GONE);
-            upper_blank_space.setVisibility(View.VISIBLE);
         }
     }
 
