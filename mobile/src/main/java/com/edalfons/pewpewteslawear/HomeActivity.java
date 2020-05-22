@@ -67,9 +67,8 @@ public class HomeActivity extends AppCompatActivity {
     /* Child listener to handle UI changes */
     private Handler uiHandler = null;
 
-    private String access_token;
-    private String id_s;
     private SharedPreferences sharedPref;
+    private TeslaApi tApi;
 
     @SuppressLint("HandlerLeak")
     @Override
@@ -114,8 +113,10 @@ public class HomeActivity extends AppCompatActivity {
         /* Set sharedPref once, get access_token and default car id_s */
         sharedPref = getApplicationContext().getSharedPreferences(
                 getString(R.string.shared_pref_file_key), Context.MODE_PRIVATE);
-        access_token = sharedPref.getString(getString(R.string.access_token), "");
-        id_s = sharedPref.getString(getString(R.string.default_car_id), "");
+        String access_token = sharedPref.getString(getString(R.string.access_token), "");
+        String id_s = sharedPref.getString(getString(R.string.default_car_id), "");
+
+        tApi = new TeslaApi(access_token, id_s);
 
         /* Car Alerts */
         RecyclerView car_alerts_recyclerview = findViewById(R.id.car_alerts_recyclerview);
@@ -203,11 +204,10 @@ public class HomeActivity extends AppCompatActivity {
                 Message msg = new Message();
                 msg.what = VEHICLE_WAKE_FAIL;
 
-                TeslaApi tApi = new TeslaApi(access_token);
-                tApi.waitUntilVehicleAwake(id_s);
+                tApi.waitUntilVehicleAwake();
 
                 tApi.reset();
-                if (tApi.getVehicleWakeStatusFromVehicleList(id_s).matches("online")) {
+                if (tApi.getVehicleWakeStatusFromVehicleList().matches("online")) {
                     msg.what = VEHICLE_AWAKE;
                 }
                 uiHandler.sendMessage(msg);
@@ -223,8 +223,7 @@ public class HomeActivity extends AppCompatActivity {
                 Message msg = new Message();
                 msg.what = VEHICLE_ASLEEP;
 
-                TeslaApi tApi = new TeslaApi(access_token);
-                if (tApi.getVehicleWakeStatusFromVehicleList(id_s).matches("online")) {
+                if (tApi.getVehicleWakeStatusFromVehicleList().matches("online")) {
                     msg.what = VEHICLE_AWAKE;
                 }
                 uiHandler.sendMessage(msg);
@@ -246,8 +245,7 @@ public class HomeActivity extends AppCompatActivity {
                 try {
                     Thread.sleep(1000);
 
-                    TeslaApi tApi = new TeslaApi(access_token);
-                    tApi.getVehicleData(id_s);
+                    tApi.getVehicleData();
 
                     if (tApi.respCode == HttpURLConnection.HTTP_OK) {
                         data = tApi.resp.getJSONObject("response");
@@ -760,8 +758,7 @@ public class HomeActivity extends AppCompatActivity {
                 Message msg = new Message();
                 msg.what = COMMAND_FAILED;
 
-                TeslaApi tApi = new TeslaApi(access_token);
-                tApi.lockVehicle(id_s);
+                tApi.lockVehicle();
 
                 if (tApi.respCode == HttpURLConnection.HTTP_OK) {
                     msg.what = COMMAND_COMPLETED;
@@ -780,8 +777,7 @@ public class HomeActivity extends AppCompatActivity {
                 Message msg = new Message();
                 msg.what = COMMAND_FAILED;
 
-                TeslaApi tApi = new TeslaApi(access_token);
-                tApi.unlockVehicle(id_s);
+                tApi.unlockVehicle();
 
                 if (tApi.respCode == HttpURLConnection.HTTP_OK) {
                     msg.what = COMMAND_COMPLETED;
@@ -800,8 +796,7 @@ public class HomeActivity extends AppCompatActivity {
                 Message msg = new Message();
                 msg.what = COMMAND_FAILED;
 
-                TeslaApi tApi = new TeslaApi(access_token);
-                tApi.closeVehicleWindows(id_s);
+                tApi.closeVehicleWindows();
 
                 if (tApi.respCode == HttpURLConnection.HTTP_OK) {
                     msg.what = COMMAND_COMPLETED;
@@ -820,8 +815,7 @@ public class HomeActivity extends AppCompatActivity {
                 Message msg = new Message();
                 msg.what = COMMAND_FAILED;
 
-                TeslaApi tApi = new TeslaApi(access_token);
-                tApi.ventVehicleWindows(id_s);
+                tApi.ventVehicleWindows();
 
                 if (tApi.respCode == HttpURLConnection.HTTP_OK) {
                     msg.what = COMMAND_COMPLETED;
@@ -840,8 +834,7 @@ public class HomeActivity extends AppCompatActivity {
                 Message msg = new Message();
                 msg.what = COMMAND_FAILED;
 
-                TeslaApi tApi = new TeslaApi(access_token);
-                tApi.actuateFrunk(id_s);
+                tApi.actuateFrunk();
 
                 if (tApi.respCode == HttpURLConnection.HTTP_OK) {
                     msg.what = COMMAND_COMPLETED;
@@ -860,8 +853,7 @@ public class HomeActivity extends AppCompatActivity {
                 Message msg = new Message();
                 msg.what = COMMAND_FAILED;
 
-                TeslaApi tApi = new TeslaApi(access_token);
-                tApi.actuateTrunk(id_s);
+                tApi.actuateTrunk();
 
                 if (tApi.respCode == HttpURLConnection.HTTP_OK) {
                     msg.what = COMMAND_COMPLETED;
@@ -882,8 +874,7 @@ public class HomeActivity extends AppCompatActivity {
                 Message msg = new Message();
                 msg.what = COMMAND_FAILED;
 
-                TeslaApi tApi = new TeslaApi(access_token);
-                tApi.setChargeLimit(id_s, limit);
+                tApi.setChargeLimit(limit);
 
                 if (tApi.respCode == HttpURLConnection.HTTP_OK) {
                     msg.what = COMMAND_COMPLETED;
@@ -904,8 +895,7 @@ public class HomeActivity extends AppCompatActivity {
                 Message msg = new Message();
                 msg.what = COMMAND_FAILED;
 
-                TeslaApi tApi = new TeslaApi(access_token);
-                tApi.triggerHomelink(id_s);
+                tApi.triggerHomelink();
 
                 if (tApi.respCode == HttpURLConnection.HTTP_OK) {
                     msg.what = COMMAND_COMPLETED;
@@ -924,8 +914,7 @@ public class HomeActivity extends AppCompatActivity {
                 Message msg = new Message();
                 msg.what = COMMAND_FAILED;
 
-                TeslaApi tApi = new TeslaApi(access_token);
-                tApi.closeChargePort(id_s);
+                tApi.closeChargePort();
 
                 if (tApi.respCode == HttpURLConnection.HTTP_OK) {
                     msg.what = COMMAND_COMPLETED;
@@ -944,8 +933,7 @@ public class HomeActivity extends AppCompatActivity {
                 Message msg = new Message();
                 msg.what = COMMAND_FAILED;
 
-                TeslaApi tApi = new TeslaApi(access_token);
-                tApi.openChargePort(id_s);
+                tApi.openChargePort();
 
                 if (tApi.respCode == HttpURLConnection.HTTP_OK) {
                     msg.what = COMMAND_COMPLETED;
@@ -964,8 +952,7 @@ public class HomeActivity extends AppCompatActivity {
                 Message msg = new Message();
                 msg.what = COMMAND_FAILED;
 
-                TeslaApi tApi = new TeslaApi(access_token);
-                tApi.startCharging(id_s);
+                tApi.startCharging();
 
                 if (tApi.respCode == HttpURLConnection.HTTP_OK) {
                     msg.what = COMMAND_COMPLETED;
@@ -984,8 +971,7 @@ public class HomeActivity extends AppCompatActivity {
                 Message msg = new Message();
                 msg.what = COMMAND_FAILED;
 
-                TeslaApi tApi = new TeslaApi(access_token);
-                tApi.stopCharging(id_s);
+                tApi.stopCharging();
 
                 if (tApi.respCode == HttpURLConnection.HTTP_OK) {
                     msg.what = COMMAND_COMPLETED;
@@ -1004,8 +990,7 @@ public class HomeActivity extends AppCompatActivity {
                 Message msg = new Message();
                 msg.what = COMMAND_FAILED;
 
-                TeslaApi tApi = new TeslaApi(access_token);
-                tApi.sentryModeOn(id_s);
+                tApi.sentryModeOn();
 
                 if (tApi.respCode == HttpURLConnection.HTTP_OK) {
                     msg.what = COMMAND_COMPLETED;
@@ -1024,8 +1009,7 @@ public class HomeActivity extends AppCompatActivity {
                 Message msg = new Message();
                 msg.what = COMMAND_FAILED;
 
-                TeslaApi tApi = new TeslaApi(access_token);
-                tApi.sentryModeOff(id_s);
+                tApi.sentryModeOff();
 
                 if (tApi.respCode == HttpURLConnection.HTTP_OK) {
                     msg.what = COMMAND_COMPLETED;
@@ -1044,8 +1028,7 @@ public class HomeActivity extends AppCompatActivity {
                 Message msg = new Message();
                 msg.what = COMMAND_FAILED;
 
-                TeslaApi tApi = new TeslaApi(access_token);
-                tApi.startClimate(id_s);
+                tApi.startClimate();
 
                 if (tApi.respCode == HttpURLConnection.HTTP_OK) {
                     msg.what = COMMAND_COMPLETED;
@@ -1064,8 +1047,7 @@ public class HomeActivity extends AppCompatActivity {
                 Message msg = new Message();
                 msg.what = COMMAND_FAILED;
 
-                TeslaApi tApi = new TeslaApi(access_token);
-                tApi.stopClimate(id_s);
+                tApi.stopClimate();
 
                 if (tApi.respCode == HttpURLConnection.HTTP_OK) {
                     msg.what = COMMAND_COMPLETED;

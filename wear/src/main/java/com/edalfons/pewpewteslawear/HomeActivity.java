@@ -63,9 +63,8 @@ public class HomeActivity extends WearableActivity {
     private Handler uiHandler = null;
 
     /* Tesla API variables */
-    private String aToken;
-    private String id_s;
     private SharedPreferences sharedPref;
+    private TeslaApi tApi;
 
     /* Cmd Macros */
     private static final int CMD_LOCK = 1;
@@ -105,8 +104,10 @@ public class HomeActivity extends WearableActivity {
 
         sharedPref = getApplicationContext().getSharedPreferences(
                 getString(R.string.shared_pref_file_key), Context.MODE_PRIVATE);
-        aToken = sharedPref.getString(getString(R.string.access_token), "");
-        id_s = sharedPref.getString(getString(R.string.default_car_id), "");
+        String aToken = sharedPref.getString(getString(R.string.access_token), "");
+        String id_s = sharedPref.getString(getString(R.string.default_car_id), "");
+        
+        tApi = new TeslaApi(aToken, id_s);
 
         uiHandler = new Handler() {
             @Override
@@ -453,11 +454,10 @@ public class HomeActivity extends WearableActivity {
                 Message msg = new Message();
                 msg.what = VEHICLE_WAKE_FAIL;
 
-                TeslaApi tApi = new TeslaApi(aToken);
-                tApi.waitUntilVehicleAwake(id_s);
+                tApi.waitUntilVehicleAwake();
 
                 tApi.reset();
-                if (tApi.getVehicleWakeStatusFromVehicleList(id_s).matches("online")) {
+                if (tApi.getVehicleWakeStatusFromVehicleList().matches("online")) {
                     msg.what = VEHICLE_AWAKE;
                 }
                 uiHandler.sendMessage(msg);
@@ -473,8 +473,7 @@ public class HomeActivity extends WearableActivity {
                 Message msg = new Message();
                 msg.what = VEHICLE_ASLEEP;
 
-                TeslaApi tApi = new TeslaApi(aToken);
-                if (tApi.getVehicleWakeStatusFromVehicleList(id_s).matches("online")) {
+                if (tApi.getVehicleWakeStatusFromVehicleList().matches("online")) {
                     msg.what = VEHICLE_AWAKE;
                 }
                 uiHandler.sendMessage(msg);
@@ -496,8 +495,7 @@ public class HomeActivity extends WearableActivity {
                 try {
                     Thread.sleep(500);
 
-                    TeslaApi tApi = new TeslaApi(aToken);
-                    tApi.getVehicleData(id_s);
+                    tApi.getVehicleData();
 
                     if (tApi.respCode == HttpURLConnection.HTTP_OK) {
                         data = tApi.resp.getJSONObject("response");
@@ -870,11 +868,10 @@ public class HomeActivity extends WearableActivity {
                 msg.what = COMMAND_FAIL;
 
                 try {
-                    TeslaApi teslaApi = new TeslaApi(aToken);
-                    teslaApi.lockVehicle(id_s);
+                    tApi.lockVehicle();
 
-                    if (teslaApi.respCode == HttpURLConnection.HTTP_OK) {
-                        if (teslaApi.resp.getJSONObject("response").getBoolean("result")) {
+                    if (tApi.respCode == HttpURLConnection.HTTP_OK) {
+                        if (tApi.resp.getJSONObject("response").getBoolean("result")) {
                             msg.what = COMMAND_PASS;
                         }
                     }
@@ -895,11 +892,10 @@ public class HomeActivity extends WearableActivity {
                 msg.what = COMMAND_FAIL;
 
                 try {
-                    TeslaApi teslaApi = new TeslaApi(aToken);
-                    teslaApi.unlockVehicle(id_s);
+                    tApi.unlockVehicle();
 
-                    if (teslaApi.respCode == HttpURLConnection.HTTP_OK) {
-                        if (teslaApi.resp.getJSONObject("response").getBoolean("result")) {
+                    if (tApi.respCode == HttpURLConnection.HTTP_OK) {
+                        if (tApi.resp.getJSONObject("response").getBoolean("result")) {
                             msg.what = COMMAND_PASS;
                         }
                     }
@@ -920,11 +916,10 @@ public class HomeActivity extends WearableActivity {
                 msg.what = COMMAND_FAIL;
 
                 try {
-                    TeslaApi teslaApi = new TeslaApi(aToken);
-                    teslaApi.startClimate(id_s);
+                    tApi.startClimate();
 
-                    if (teslaApi.respCode == HttpURLConnection.HTTP_OK) {
-                        if (teslaApi.resp.getJSONObject("response").getBoolean("result")) {
+                    if (tApi.respCode == HttpURLConnection.HTTP_OK) {
+                        if (tApi.resp.getJSONObject("response").getBoolean("result")) {
                             msg.what = COMMAND_PASS;
                         }
                     }
@@ -945,11 +940,10 @@ public class HomeActivity extends WearableActivity {
                 msg.what = COMMAND_FAIL;
 
                 try {
-                    TeslaApi teslaApi = new TeslaApi(aToken);
-                    teslaApi.stopClimate(id_s);
+                    tApi.stopClimate();
 
-                    if (teslaApi.respCode == HttpURLConnection.HTTP_OK) {
-                        if (teslaApi.resp.getJSONObject("response").getBoolean("result")) {
+                    if (tApi.respCode == HttpURLConnection.HTTP_OK) {
+                        if (tApi.resp.getJSONObject("response").getBoolean("result")) {
                             msg.what = COMMAND_PASS;
                         }
                     }
@@ -970,11 +964,10 @@ public class HomeActivity extends WearableActivity {
                 msg.what = COMMAND_FAIL;
 
                 try {
-                    TeslaApi teslaApi = new TeslaApi(aToken);
-                    teslaApi.ventVehicleWindows(id_s);
+                    tApi.ventVehicleWindows();
 
-                    if (teslaApi.respCode == HttpURLConnection.HTTP_OK) {
-                        if (teslaApi.resp.getJSONObject("response").getBoolean("result")) {
+                    if (tApi.respCode == HttpURLConnection.HTTP_OK) {
+                        if (tApi.resp.getJSONObject("response").getBoolean("result")) {
                             msg.what = COMMAND_PASS;
                         }
                     }
@@ -995,11 +988,10 @@ public class HomeActivity extends WearableActivity {
                 msg.what = COMMAND_FAIL;
 
                 try {
-                    TeslaApi teslaApi = new TeslaApi(aToken);
-                    teslaApi.closeVehicleWindows(id_s);
+                    tApi.closeVehicleWindows();
 
-                    if (teslaApi.respCode == HttpURLConnection.HTTP_OK) {
-                        if (teslaApi.resp.getJSONObject("response").getBoolean("result")) {
+                    if (tApi.respCode == HttpURLConnection.HTTP_OK) {
+                        if (tApi.resp.getJSONObject("response").getBoolean("result")) {
                             msg.what = COMMAND_PASS;
                         }
                     }
@@ -1020,11 +1012,10 @@ public class HomeActivity extends WearableActivity {
                 msg.what = COMMAND_FAIL;
 
                 try {
-                    TeslaApi teslaApi = new TeslaApi(aToken);
-                    teslaApi.sentryModeOn(id_s);
+                    tApi.sentryModeOn();
 
-                    if (teslaApi.respCode == HttpURLConnection.HTTP_OK) {
-                        if (teslaApi.resp.getJSONObject("response").getBoolean("result")) {
+                    if (tApi.respCode == HttpURLConnection.HTTP_OK) {
+                        if (tApi.resp.getJSONObject("response").getBoolean("result")) {
                             msg.what = COMMAND_PASS;
                         }
                     }
@@ -1045,11 +1036,10 @@ public class HomeActivity extends WearableActivity {
                 msg.what = COMMAND_FAIL;
 
                 try {
-                    TeslaApi teslaApi = new TeslaApi(aToken);
-                    teslaApi.sentryModeOff(id_s);
+                    tApi.sentryModeOff();
 
-                    if (teslaApi.respCode == HttpURLConnection.HTTP_OK) {
-                        if (teslaApi.resp.getJSONObject("response").getBoolean("result")) {
+                    if (tApi.respCode == HttpURLConnection.HTTP_OK) {
+                        if (tApi.resp.getJSONObject("response").getBoolean("result")) {
                             msg.what = COMMAND_PASS;
                         }
                     }
@@ -1070,11 +1060,10 @@ public class HomeActivity extends WearableActivity {
                 msg.what = COMMAND_FAIL;
 
                 try {
-                    TeslaApi teslaApi = new TeslaApi(aToken);
-                    teslaApi.startCharging(id_s);
+                    tApi.startCharging();
 
-                    if (teslaApi.respCode == HttpURLConnection.HTTP_OK) {
-                        if (teslaApi.resp.getJSONObject("response").getBoolean("result")) {
+                    if (tApi.respCode == HttpURLConnection.HTTP_OK) {
+                        if (tApi.resp.getJSONObject("response").getBoolean("result")) {
                             msg.what = COMMAND_PASS;
                         }
                     }
@@ -1095,11 +1084,10 @@ public class HomeActivity extends WearableActivity {
                 msg.what = COMMAND_FAIL;
 
                 try {
-                    TeslaApi teslaApi = new TeslaApi(aToken);
-                    teslaApi.stopCharging(id_s);
+                    tApi.stopCharging();
 
-                    if (teslaApi.respCode == HttpURLConnection.HTTP_OK) {
-                        if (teslaApi.resp.getJSONObject("response").getBoolean("result")) {
+                    if (tApi.respCode == HttpURLConnection.HTTP_OK) {
+                        if (tApi.resp.getJSONObject("response").getBoolean("result")) {
                             msg.what = COMMAND_PASS;
                         }
                     }
@@ -1120,11 +1108,10 @@ public class HomeActivity extends WearableActivity {
                 msg.what = COMMAND_FAIL;
 
                 try {
-                    TeslaApi teslaApi = new TeslaApi(aToken);
-                    teslaApi.openChargePort(id_s);
+                    tApi.openChargePort();
 
-                    if (teslaApi.respCode == HttpURLConnection.HTTP_OK) {
-                        if (teslaApi.resp.getJSONObject("response").getBoolean("result")) {
+                    if (tApi.respCode == HttpURLConnection.HTTP_OK) {
+                        if (tApi.resp.getJSONObject("response").getBoolean("result")) {
                             msg.what = COMMAND_PASS;
                         }
                     }
@@ -1145,11 +1132,10 @@ public class HomeActivity extends WearableActivity {
                 msg.what = COMMAND_FAIL;
 
                 try {
-                    TeslaApi teslaApi = new TeslaApi(aToken);
-                    teslaApi.closeChargePort(id_s);
+                    tApi.closeChargePort();
 
-                    if (teslaApi.respCode == HttpURLConnection.HTTP_OK) {
-                        if (teslaApi.resp.getJSONObject("response").getBoolean("result")) {
+                    if (tApi.respCode == HttpURLConnection.HTTP_OK) {
+                        if (tApi.resp.getJSONObject("response").getBoolean("result")) {
                             msg.what = COMMAND_PASS;
                         }
                     }
@@ -1171,8 +1157,7 @@ public class HomeActivity extends WearableActivity {
                 Message msg = new Message();
                 msg.what = COMMAND_FAIL;
 
-                TeslaApi tApi = new TeslaApi(aToken);
-                tApi.setChargeLimit(id_s, limit);
+                tApi.setChargeLimit(limit);
 
                 if (tApi.respCode == HttpURLConnection.HTTP_OK) {
                     msg.what = COMMAND_PASS;
@@ -1194,11 +1179,10 @@ public class HomeActivity extends WearableActivity {
                 msg.what = COMMAND_FAIL;
 
                 try {
-                    TeslaApi teslaApi = new TeslaApi(aToken);
-                    teslaApi.actuateFrunk(id_s);
+                    tApi.actuateFrunk();
 
-                    if (teslaApi.respCode == HttpURLConnection.HTTP_OK) {
-                        if (teslaApi.resp.getJSONObject("response").getBoolean("result")) {
+                    if (tApi.respCode == HttpURLConnection.HTTP_OK) {
+                        if (tApi.resp.getJSONObject("response").getBoolean("result")) {
                             msg.what = COMMAND_PASS;
                         }
                     }
@@ -1219,11 +1203,10 @@ public class HomeActivity extends WearableActivity {
                 msg.what = COMMAND_FAIL;
 
                 try {
-                    TeslaApi teslaApi = new TeslaApi(aToken);
-                    teslaApi.actuateTrunk(id_s);
+                    tApi.actuateTrunk();
 
-                    if (teslaApi.respCode == HttpURLConnection.HTTP_OK) {
-                        if (teslaApi.resp.getJSONObject("response").getBoolean("result")) {
+                    if (tApi.respCode == HttpURLConnection.HTTP_OK) {
+                        if (tApi.resp.getJSONObject("response").getBoolean("result")) {
                             msg.what = COMMAND_PASS;
                         }
                     }
@@ -1244,11 +1227,10 @@ public class HomeActivity extends WearableActivity {
                 msg.what = COMMAND_FAIL;
 
                 try {
-                    TeslaApi teslaApi = new TeslaApi(aToken);
-                    teslaApi.triggerHomelink(id_s);
+                    tApi.triggerHomelink();
 
-                    if (teslaApi.respCode == HttpURLConnection.HTTP_OK) {
-                        if (teslaApi.resp.getJSONObject("response").getBoolean("result")) {
+                    if (tApi.respCode == HttpURLConnection.HTTP_OK) {
+                        if (tApi.resp.getJSONObject("response").getBoolean("result")) {
                             msg.what = COMMAND_PASS;
                         }
                     }

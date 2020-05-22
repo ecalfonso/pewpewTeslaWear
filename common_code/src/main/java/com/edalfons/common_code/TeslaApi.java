@@ -14,18 +14,27 @@ import java.nio.charset.StandardCharsets;
 
 public class TeslaApi {
     private final String access_token;
+    private final String id_s;
+
     public int respCode = HttpURLConnection.HTTP_UNAUTHORIZED;
     public JSONObject resp = null;
 
     private final String client_id = "81527cff06843c8634fdc09e8ac0abefb46ac849f38fe1e431c2ef2106796384";
     private final String client_secret = "c7257eb71a564034f9419ee651c7d0e5f7aa6bfbd18bafb5c5c033b093bb2fa3";
 
+    public TeslaApi(String aToken, String id_s) {
+        this.access_token = aToken;
+        this.id_s = id_s;
+    }
+
     public TeslaApi(String aToken) {
         this.access_token = aToken;
+        this.id_s = "";
     }
 
     public TeslaApi() {
         this.access_token = "";
+        this.id_s = "";
     }
 
     private void setRespCode(int rCode) {
@@ -163,7 +172,7 @@ public class TeslaApi {
         }
     }
 
-    public String getVehicleWakeStatusFromVehicleList(String id_s) {
+    public String getVehicleWakeStatusFromVehicleList() {
         int i;
 
         try {
@@ -184,7 +193,7 @@ public class TeslaApi {
         return "asleep";
     }
 
-    public void getVehicleData(String id_s) {
+    public void getVehicleData() {
         HttpURLConnection httpConn = null;
 
         try {
@@ -206,7 +215,7 @@ public class TeslaApi {
         }
     }
 
-    private void wakeupVehicle(String id_s) {
+    private void wakeupVehicle() {
         HttpURLConnection httpConn = null;
 
         try {
@@ -229,15 +238,15 @@ public class TeslaApi {
         }
     }
 
-    public void waitUntilVehicleAwake(String id_s) {
+    public void waitUntilVehicleAwake() {
         int i;
 
         try {
             for (i = 0; i < 12; i++) {
                 this.reset();
-                this.wakeupVehicle(id_s);
+                this.wakeupVehicle();
 
-                if (this.getVehicleWakeStatusFromVehicleList(id_s).matches("online")) {
+                if (this.getVehicleWakeStatusFromVehicleList().matches("online")) {
                     break;
                 }
 
@@ -248,12 +257,12 @@ public class TeslaApi {
         }
     }
 
-    public void unlockVehicle(String id_s) {
+    public void unlockVehicle() {
         HttpURLConnection httpConn = null;
 
         try {
             this.reset();
-            this.waitUntilVehicleAwake(id_s);
+            this.waitUntilVehicleAwake();
 
             URL url = new URL("https://owner-api.teslamotors.com/api/1/vehicles/" +
                     id_s + "/command/door_unlock");
@@ -274,12 +283,12 @@ public class TeslaApi {
         }
     }
 
-    public void lockVehicle(String id_s) {
+    public void lockVehicle() {
         HttpURLConnection httpConn = null;
 
         try {
             this.reset();
-            this.waitUntilVehicleAwake(id_s);
+            this.waitUntilVehicleAwake();
 
             URL url = new URL("https://owner-api.teslamotors.com/api/1/vehicles/" +
                     id_s + "/command/door_lock");
@@ -300,13 +309,13 @@ public class TeslaApi {
         }
     }
 
-    public void closeVehicleWindows(String id_s) {
+    public void closeVehicleWindows() {
         HttpURLConnection httpConn = null;
         JSONObject jsonBody = new JSONObject();
 
         try {
             this.reset();
-            this.waitUntilVehicleAwake(id_s);
+            this.waitUntilVehicleAwake();
 
             URL url = new URL("https://owner-api.teslamotors.com/api/1/vehicles/" +
                     id_s + "/command/window_control");
@@ -338,13 +347,13 @@ public class TeslaApi {
         }
     }
 
-    public void ventVehicleWindows(String id_s) {
+    public void ventVehicleWindows() {
         HttpURLConnection httpConn = null;
         JSONObject jsonBody = new JSONObject();
 
         try {
             this.reset();
-            this.waitUntilVehicleAwake(id_s);
+            this.waitUntilVehicleAwake();
 
             URL url = new URL("https://owner-api.teslamotors.com/api/1/vehicles/" +
                     id_s + "/command/window_control");
@@ -376,13 +385,13 @@ public class TeslaApi {
         }
     }
 
-    public void actuateFrunk(String id_s) {
+    public void actuateFrunk() {
         HttpURLConnection httpConn = null;
         JSONObject jsonBody = new JSONObject();
 
         try {
             this.reset();
-            this.waitUntilVehicleAwake(id_s);
+            this.waitUntilVehicleAwake();
 
             URL url = new URL("https://owner-api.teslamotors.com/api/1/vehicles/" +
                     id_s + "/command/actuate_trunk");
@@ -412,13 +421,13 @@ public class TeslaApi {
         }
     }
 
-    public void actuateTrunk(String id_s) {
+    public void actuateTrunk() {
         HttpURLConnection httpConn = null;
         JSONObject jsonBody = new JSONObject();
 
         try {
             this.reset();
-            this.waitUntilVehicleAwake(id_s);
+            this.waitUntilVehicleAwake();
 
             URL url = new URL("https://owner-api.teslamotors.com/api/1/vehicles/" +
                     id_s + "/command/actuate_trunk");
@@ -448,13 +457,13 @@ public class TeslaApi {
         }
     }
 
-    public void setChargeLimit(String id_s, int limit) {
+    public void setChargeLimit(int limit) {
         HttpURLConnection httpConn = null;
         JSONObject jsonBody = new JSONObject();
 
         try {
             this.reset();
-            this.waitUntilVehicleAwake(id_s);
+            this.waitUntilVehicleAwake();
 
             URL url = new URL("https://owner-api.teslamotors.com/api/1/vehicles/" +
                     id_s + "/command/set_charge_limit");
@@ -484,7 +493,7 @@ public class TeslaApi {
         }
     }
 
-    public void triggerHomelink(String id_s) {
+    public void triggerHomelink() {
         HttpURLConnection httpConn = null;
         JSONObject jsonBody = new JSONObject();
 
@@ -492,11 +501,11 @@ public class TeslaApi {
 
         try {
             this.reset();
-            this.waitUntilVehicleAwake(id_s);
+            this.waitUntilVehicleAwake();
 
             /* get car's initial lat/lon */
             this.reset();
-            this.getVehicleData(id_s);
+            this.getVehicleData();
             lat = this.resp.getJSONObject("response").getJSONObject("drive_state").getDouble("latitude");
             lon = this.resp.getJSONObject("response").getJSONObject("drive_state").getDouble("longitude");
 
@@ -531,12 +540,12 @@ public class TeslaApi {
         }
     }
 
-    public void closeChargePort(String id_s) {
+    public void closeChargePort() {
         HttpURLConnection httpConn = null;
 
         try {
             this.reset();
-            this.waitUntilVehicleAwake(id_s);
+            this.waitUntilVehicleAwake();
 
             URL url = new URL("https://owner-api.teslamotors.com/api/1/vehicles/" +
                     id_s + "/command/charge_port_door_close");
@@ -558,12 +567,12 @@ public class TeslaApi {
         }
     }
 
-    public void openChargePort(String id_s) {
+    public void openChargePort() {
         HttpURLConnection httpConn = null;
 
         try {
             this.reset();
-            this.waitUntilVehicleAwake(id_s);
+            this.waitUntilVehicleAwake();
 
             URL url = new URL("https://owner-api.teslamotors.com/api/1/vehicles/" +
                     id_s + "/command/charge_port_door_open");
@@ -585,12 +594,12 @@ public class TeslaApi {
         }
     }
 
-    public void startCharging(String id_s) {
+    public void startCharging() {
         HttpURLConnection httpConn = null;
 
         try {
             this.reset();
-            this.waitUntilVehicleAwake(id_s);
+            this.waitUntilVehicleAwake();
 
             URL url = new URL("https://owner-api.teslamotors.com/api/1/vehicles/" +
                     id_s + "/command/charge_start");
@@ -612,12 +621,12 @@ public class TeslaApi {
         }
     }
 
-    public void stopCharging(String id_s) {
+    public void stopCharging() {
         HttpURLConnection httpConn = null;
 
         try {
             this.reset();
-            this.waitUntilVehicleAwake(id_s);
+            this.waitUntilVehicleAwake();
 
             URL url = new URL("https://owner-api.teslamotors.com/api/1/vehicles/" +
                     id_s + "/command/charge_stop");
@@ -639,13 +648,13 @@ public class TeslaApi {
         }
     }
 
-    public void sentryModeOn(String id_s) {
+    public void sentryModeOn() {
         HttpURLConnection httpConn = null;
         JSONObject jsonBody = new JSONObject();
 
         try {
             this.reset();
-            this.waitUntilVehicleAwake(id_s);
+            this.waitUntilVehicleAwake();
 
             URL url = new URL("https://owner-api.teslamotors.com/api/1/vehicles/" +
                     id_s + "/command/set_sentry_mode");
@@ -675,13 +684,13 @@ public class TeslaApi {
         }
     }
 
-    public void sentryModeOff(String id_s) {
+    public void sentryModeOff() {
         HttpURLConnection httpConn = null;
         JSONObject jsonBody = new JSONObject();
 
         try {
             this.reset();
-            this.waitUntilVehicleAwake(id_s);
+            this.waitUntilVehicleAwake();
 
             URL url = new URL("https://owner-api.teslamotors.com/api/1/vehicles/" +
                     id_s + "/command/set_sentry_mode");
@@ -711,12 +720,12 @@ public class TeslaApi {
         }
     }
 
-    public void startClimate(String id_s) {
+    public void startClimate() {
         HttpURLConnection httpConn = null;
 
         try {
             this.reset();
-            this.waitUntilVehicleAwake(id_s);
+            this.waitUntilVehicleAwake();
 
             URL url = new URL("https://owner-api.teslamotors.com/api/1/vehicles/" +
                     id_s + "/command/auto_conditioning_start");
@@ -738,12 +747,12 @@ public class TeslaApi {
         }
     }
 
-    public void stopClimate(String id_s) {
+    public void stopClimate() {
         HttpURLConnection httpConn = null;
 
         try {
             this.reset();
-            this.waitUntilVehicleAwake(id_s);
+            this.waitUntilVehicleAwake();
 
             URL url = new URL("https://owner-api.teslamotors.com/api/1/vehicles/" +
                     id_s + "/command/auto_conditioning_stop");
