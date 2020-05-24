@@ -30,7 +30,7 @@
     <string name="outdoor_temp">Outdoor temp: %.1f%s</string>
     <string name="charge_eta_hrs_mins">%d hr %d min until %d%% charge</string>
     <string name="charge_eta_mins">%d min until %d%% charge</string>
-    <string name="drive_state">Car is %d</string>
+    <string name="drive_state">Car is %s</string>
     <string name="last_updated">Last Updated: %s</string>
 
     <string name="car_status_tv">Car alerts:</string>

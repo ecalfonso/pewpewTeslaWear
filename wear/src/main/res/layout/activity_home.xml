@@ -65,6 +65,13 @@
                     android:textAppearance="@android:style/TextAppearance.Material.Small" />
 
                 <TextView
+                    android:id="@+id/drive_charge_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/charge_eta_hrs_mins"
+                    android:textAppearance="@android:style/TextAppearance.Material.Small" />
+
+                <TextView
                     android:id="@+id/last_updated_tv"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -120,30 +127,6 @@
                 android:visibility="gone" />
 
             <LinearLayout
-                android:id="@+id/drive_charge_status_linearlayout"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:animateLayoutChanges="true"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/drive_charge_tv"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/charge_eta_hrs_mins"
-                    android:textAppearance="@android:style/TextAppearance.Material.Small"
-                    android:visibility="gone" />
-            </LinearLayout>
-
-            <View
-                android:id="@+id/main_divider_3"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginVertical="8dp"
-                android:background="?android:attr/listDivider"
-                android:visibility="gone" />
-
-            <LinearLayout
                 android:id="@+id/temperature_linearlayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -165,7 +148,7 @@
             </LinearLayout>
 
             <View
-                android:id="@+id/main_divider_4"
+                android:id="@+id/main_divider_3"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginVertical="8dp"
