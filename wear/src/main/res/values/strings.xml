@@ -26,6 +26,8 @@
     <string name="title_activity_home">HomeActivity</string>
     <string name="battery_level">Battery: %d%% | %.1f %s</string>
     <string name="scheduled_charge">Charging will start at %s</string>
+    <string name="scheduled_depart">Charging will start at %s for %s departure</string>
+    <string name="charging_stopped">Charging is stopped</string>
     <string name="indoor_temp">Indoor temp: %.1f%s</string>
     <string name="outdoor_temp">Outdoor temp: %.1f%s</string>
     <string name="charge_eta_hrs_mins">%d hr %d min until %d%% charge</string>

@@ -306,6 +306,15 @@ public class HomeActivity extends AppCompatActivity {
                             /* Because this can be NULL */
                             editor.putLong(getString(R.string.default_car_scheduled_charge_start_time),
                                     charge_state.getLong("scheduled_charging_start_time"));
+
+                            /* scheduled_departure_time only exists if it is set */
+                            boolean scheduled_departure = charge_state.has("scheduled_departure_time");
+                            editor.putBoolean(getString(com.edalfons.common_code.R.string.default_car_scheduled_departure),
+                                    scheduled_departure);
+                            if (scheduled_departure) {
+                                editor.putLong(getString(com.edalfons.common_code.R.string.default_car_scheduled_departure_time),
+                                        charge_state.getLong("scheduled_departure_time"));
+                            }
                         }
 
                         editor.putBoolean(getString(R.string.default_car_locked),
@@ -376,7 +385,6 @@ public class HomeActivity extends AppCompatActivity {
 
     @SuppressLint({"SetTextI18n", "StringFormatInvalid", "SimpleDateFormat", "StringFormatMatches"})
     private void updateHomeScreen() {
-        Date date;
         SimpleDateFormat sdf;
 
         /* Battery stats */
@@ -415,11 +423,26 @@ public class HomeActivity extends AppCompatActivity {
             /* Car plugged but not charging */
             else if (charge_state.matches("Stopped")) {
                 if (sharedPref.getBoolean(getString(R.string.default_car_scheduled_charge_pending), false)) {
-                    date =
-                            new java.util.Date(sharedPref
-                                    .getLong(getString(R.string.default_car_scheduled_charge_start_time), 0L) * 1000);
-                    sdf = new java.text.SimpleDateFormat("h:mma");
-                    drive_charge_tv.setText(String.format(getString(R.string.home_screen_main_card_scheduled_charge), sdf.format(date)));
+                    if (sharedPref.getBoolean(getString(com.edalfons.common_code.R.string.default_car_scheduled_departure), false)) {
+                        Date start_date =
+                                new java.util.Date(sharedPref
+                                        .getLong(getString(R.string.default_car_scheduled_charge_start_time), 0L) * 1000);
+                        Date depart_date =
+                                new java.util.Date(sharedPref
+                                        .getLong(getString(com.edalfons.common_code.R.string.default_car_scheduled_departure_time), 0L) * 1000);
+                        sdf = new java.text.SimpleDateFormat("h:mma");
+                        drive_charge_tv.setText(String.format(getString(R.string.home_screen_main_card_scheduled_depart),
+                                sdf.format(start_date), sdf.format(depart_date)));
+                    } else {
+                        Date date =
+                                new java.util.Date(sharedPref
+                                        .getLong(getString(R.string.default_car_scheduled_charge_start_time), 0L) * 1000);
+                        sdf = new java.text.SimpleDateFormat("h:mma");
+                        drive_charge_tv.setText(String.format(getString(R.string.home_screen_main_card_scheduled_charge),
+                                sdf.format(date)));
+                    }
+                } else {
+                    drive_charge_tv.setText(R.string.home_screen_main_card_charging_stopped);
                 }
             }
             /* Car is charging */
@@ -443,10 +466,10 @@ public class HomeActivity extends AppCompatActivity {
 
         /* Time stamp */
         final TextView last_update_tv = findViewById(R.id.main_card_last_updated);
-        date = new java.util.Date(sharedPref.getLong(getString(R.string.default_car_timestamp), 0L));
+        Date timestamp_date = new java.util.Date(sharedPref.getLong(getString(R.string.default_car_timestamp), 0L));
         sdf = new java.text.SimpleDateFormat("MMM d @ h:mma");
         sdf.setTimeZone(java.util.TimeZone.getDefault());
-        last_update_tv.setText(String.format(getString(R.string.home_screen_main_card_last_updated), sdf.format(date)));
+        last_update_tv.setText(String.format(getString(R.string.home_screen_main_card_last_updated), sdf.format(timestamp_date)));
 
         /*
          * Dynamic Car Alerts

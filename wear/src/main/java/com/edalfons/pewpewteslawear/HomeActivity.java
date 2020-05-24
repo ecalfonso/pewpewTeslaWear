@@ -254,9 +254,6 @@ public class HomeActivity extends WearableActivity {
 
     @SuppressLint({"StringFormatInvalid", "SimpleDateFormat", "StringFormatMatches"})
     private void updateHomeScreen() {
-        Date date;
-        SimpleDateFormat sdf;
-
         /*
         car_info_linearlayout
         Upper part of the view
@@ -286,11 +283,26 @@ public class HomeActivity extends WearableActivity {
             /* Car plugged but not charging */
             else if (charge_state.matches("Stopped")) {
                 if (sharedPref.getBoolean(getString(R.string.default_car_scheduled_charge_pending), false)) {
-                    date =
-                            new java.util.Date(sharedPref
-                                    .getLong(getString(R.string.default_car_scheduled_charge_start_time), 0L) * 1000);
-                    sdf = new java.text.SimpleDateFormat("h:mma");
-                    drive_charge_tv.setText(String.format(getString(R.string.scheduled_charge), sdf.format(date)));
+                    if (sharedPref.getBoolean(getString(com.edalfons.common_code.R.string.default_car_scheduled_departure), false)) {
+                        Date start_date =
+                                new java.util.Date(sharedPref
+                                        .getLong(getString(R.string.default_car_scheduled_charge_start_time), 0L) * 1000);
+                        Date depart_date =
+                                new java.util.Date(sharedPref
+                                        .getLong(getString(com.edalfons.common_code.R.string.default_car_scheduled_departure_time), 0L) * 1000);
+                        SimpleDateFormat sdf = new java.text.SimpleDateFormat("h:mma");
+                        drive_charge_tv.setText(String.format(getString(R.string.scheduled_depart),
+                                sdf.format(start_date), sdf.format(depart_date)));
+                    } else {
+                        Date start_date =
+                                new java.util.Date(sharedPref
+                                        .getLong(getString(R.string.default_car_scheduled_charge_start_time), 0L) * 1000);
+                        SimpleDateFormat sdf = new java.text.SimpleDateFormat("h:mma");
+                        drive_charge_tv.setText(String.format(getString(R.string.scheduled_charge),
+                                sdf.format(start_date)));
+                    }
+                } else {
+                    drive_charge_tv.setText(getString(R.string.charging_stopped));
                 }
             }
             /* Car is charging */
@@ -313,10 +325,11 @@ public class HomeActivity extends WearableActivity {
         }
 
         final TextView last_update_tv = findViewById(R.id.last_updated_tv);
-        date = new java.util.Date(sharedPref.getLong(getString(R.string.default_car_timestamp), 0L));
-        sdf = new java.text.SimpleDateFormat("MMM d @ h:mma");
-        sdf.setTimeZone(java.util.TimeZone.getDefault());
-        last_update_tv.setText(String.format(getString(R.string.last_updated), sdf.format(date)));
+        Date timestamp_date = new java.util.Date(sharedPref.getLong(getString(R.string.default_car_timestamp), 0L));
+        SimpleDateFormat timestamp_sdf = new java.text.SimpleDateFormat("MMM d @ h:mma");
+        timestamp_sdf.setTimeZone(java.util.TimeZone.getDefault());
+        last_update_tv.setText(String.format(getString(R.string.last_updated),
+                timestamp_sdf.format(timestamp_date)));
 
         /*
         temperature_linearlayout
@@ -513,6 +526,15 @@ public class HomeActivity extends WearableActivity {
                             /* Because this can be NULL */
                             editor.putLong(getString(R.string.default_car_scheduled_charge_start_time),
                                     charge_state.getLong("scheduled_charging_start_time"));
+
+                            /* scheduled_departure_time only exists if it is set */
+                            boolean scheduled_departure = charge_state.has("scheduled_departure_time");
+                            editor.putBoolean(getString(com.edalfons.common_code.R.string.default_car_scheduled_departure),
+                                    scheduled_departure);
+                            if (scheduled_departure) {
+                                editor.putLong(getString(com.edalfons.common_code.R.string.default_car_scheduled_departure_time),
+                                        charge_state.getLong("scheduled_departure_time"));
+                            }
                         }
 
                         editor.putBoolean(getString(R.string.default_car_locked),

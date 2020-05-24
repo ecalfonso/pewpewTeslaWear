@@ -17,7 +17,9 @@
     <!-- Home Screen -->
     <string name="home_screen_main_card_battery">Battery Level: %d%% | Battery Range: %.1f %s</string>
     <string name="home_screen_main_card_temperature">Indoor temp: %.1f%s | Outdoor temp: %.1f%s</string>
+    <string name="home_screen_main_card_charging_stopped">Charging is stopped</string>
     <string name="home_screen_main_card_scheduled_charge">Charging will start at %s</string>
+    <string name="home_screen_main_card_scheduled_depart">Charging will start at %s for %s departure</string>
     <string name="home_screen_main_card_charge_eta_hrs_mins">%d hr %d min until %d%% charge</string>
     <string name="home_screen_main_card_charge_eta_mins">%d min until %d%% charge</string>
     <string name="home_screen_main_card_drive_state">Car is %s</string>

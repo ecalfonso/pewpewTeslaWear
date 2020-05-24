@@ -23,6 +23,8 @@
     <string name="default_car_minutes_til_charge_complete">default_car_minutes_til_charge_complete</string>
     <string name="default_car_scheduled_charge_pending">default_car_scheduled_charge_pending</string>
     <string name="default_car_scheduled_charge_start_time">default_car_scheduled_charge_start_time</string>
+    <string name="default_car_scheduled_departure">default_car_scheduled_departure</string>
+    <string name="default_car_scheduled_departure_time">default_car_scheduled_departure_time</string>
 
     <string name="default_car_locked">default_car_locked</string>
     <string name="default_car_door_closed">driver_doors_closed</string>
