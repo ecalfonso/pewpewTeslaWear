@@ -7,10 +7,13 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.Objects;
+
 public class InfoActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Objects.requireNonNull(getSupportActionBar()).hide();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_info);
 
@@ -34,7 +37,6 @@ public class InfoActivity extends AppCompatActivity {
         final TextView vin_tv = findViewById(R.id.info_screen_vin_tv);
         final TextView sw_version_tv = findViewById(R.id.info_screen_sw_version_tv);
 
-        assert access_token != null;
         if (!access_token.matches("")) {
             access_token_tv.setText(getString(R.string.info_screen_tap_to_reveal));
             access_token_tv.setOnClickListener(v -> {
@@ -43,7 +45,6 @@ public class InfoActivity extends AppCompatActivity {
             });
         }
 
-        assert refresh_token != null;
         if (!refresh_token.matches("")) {
             refresh_token_tv.setText(getString(R.string.info_screen_tap_to_reveal));
             refresh_token_tv.setOnClickListener(v -> {
@@ -54,7 +55,6 @@ public class InfoActivity extends AppCompatActivity {
 
         odometer_tv.setText(String.format(getString(R.string.info_screen_odometer), odometer, range_unit));
 
-        assert vin != null;
         vin_tv.setText(vin.substring(0, vin.length() - 6).concat("XXXXXX"));
         vin_tv.setOnClickListener(v -> {
             vin_tv.setText(vin);

@@ -24,6 +24,7 @@ import org.json.JSONObject;
 
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class CarSelectActivity extends AppCompatActivity {
     /* UI Handler State Machine Macros */
@@ -44,6 +45,8 @@ public class CarSelectActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_car_select);
+
+        Objects.requireNonNull(getSupportActionBar()).setTitle("Select default vehicle");
 
         uiHandler = new Handler() {
             @Override

@@ -14,7 +14,6 @@ import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,6 +22,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.edalfons.common_code.CarAlertItem;
 import com.edalfons.common_code.CarAlertItemAdapter;
@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class HomeActivity extends AppCompatActivity {
     /* Dictionary of Car Alerts */
@@ -70,6 +71,9 @@ public class HomeActivity extends AppCompatActivity {
     private SharedPreferences sharedPref;
     private TeslaApi tApi;
 
+    /* Swipe refresh layout */
+    private SwipeRefreshLayout swipeRefreshLayout;
+
     @SuppressLint("HandlerLeak")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,13 +95,16 @@ public class HomeActivity extends AppCompatActivity {
                         Toast.makeText(HomeActivity.this,
                                 "Unable to wake up vehicle!",
                                 Toast.LENGTH_SHORT).show();
+                        swipeRefreshLayout.setRefreshing(false);
                         break;
                     case DATA_NOT_UPDATED:
                         Toast.makeText(getApplicationContext(),
                                 "Data NOT updated!",
                                 Toast.LENGTH_LONG).show();
+                        swipeRefreshLayout.setRefreshing(false);
                         break;
                     case DATA_UPDATED:
+                        swipeRefreshLayout.setRefreshing(false);
                         updateHomeScreen();
                         break;
                     case COMMAND_FAILED:
@@ -127,6 +134,14 @@ public class HomeActivity extends AppCompatActivity {
         adapter = new CarAlertItemAdapter(this, alerts);
         car_alerts_recyclerview.setAdapter(adapter);
 
+        /* Set title bar to car name */
+        String display_name = sharedPref.getString(getString(R.string.default_car_name), "display_name");
+        Objects.requireNonNull(getSupportActionBar()).setTitle(display_name);
+
+        /* Swipe refresh layout */
+        swipeRefreshLayout = findViewById(R.id.home_screen_swipe_refresh_layout);
+        swipeRefreshLayout.setOnRefreshListener(this::checkVehicleWakeStatusThread);
+
         setCardViewOnClickListeners();
 
         updateHomeScreen();
@@ -137,6 +152,7 @@ public class HomeActivity extends AppCompatActivity {
         super.onResume();
 
         /* Start data access */
+        swipeRefreshLayout.setRefreshing(true);
         checkVehicleWakeStatusThread();
     }
 
@@ -162,9 +178,7 @@ public class HomeActivity extends AppCompatActivity {
                 return true;
              */
             case R.id.home_screen_refresh_button:
-                Toast.makeText(getApplicationContext(),
-                        "Refreshing",
-                        Toast.LENGTH_SHORT).show();
+                swipeRefreshLayout.setRefreshing(true);
                 checkVehicleWakeStatusThread();
                 return true;
             case R.id.home_menu_car_info:
@@ -327,13 +341,13 @@ public class HomeActivity extends AppCompatActivity {
                                 !vehicle_state.getJSONObject("software_update")
                                         .getString("status").matches(""));
 
-                        if (drive_state.isNull("drive_state")) {
+                        if (drive_state.isNull("shift_state")) {
                             editor.putString(getString(R.string.default_car_drive_state), "Parked");
-                        } else if (drive_state.getString("drive_state").matches("D")) {
+                        } else if (drive_state.getString("shift_state").matches("D")) {
                             editor.putString(getString(R.string.default_car_drive_state), "Driving");
-                        } else if (drive_state.getString("drive_state").matches("R")) {
+                        } else if (drive_state.getString("shift_state").matches("R")) {
                             editor.putString(getString(R.string.default_car_drive_state), "Reversing");
-                        } else if (drive_state.getString("drive_state").matches("N")) {
+                        } else if (drive_state.getString("shift_state").matches("N")) {
                             editor.putString(getString(R.string.default_car_drive_state), "In Neutral");
                         }
 
@@ -365,10 +379,6 @@ public class HomeActivity extends AppCompatActivity {
         Date date;
         SimpleDateFormat sdf;
 
-        /* Car name */
-        final TextView car_name = findViewById(R.id.main_card_car_name);
-        car_name.setText(sharedPref.getString(getString(R.string.default_car_name), ""));
-
         /* Battery stats */
         final TextView battery = findViewById(R.id.main_card_car_battery);
         battery.setText(String.format(getString(R.string.home_screen_main_card_battery),
@@ -381,7 +391,6 @@ public class HomeActivity extends AppCompatActivity {
         String temp_unit = sharedPref.getString(getString(R.string.default_car_temperature_units), "C");
         float indoor_temp = sharedPref.getFloat(getString(R.string.default_car_indoor_temp), 0);
         float outdoor_temp = sharedPref.getFloat(getString(R.string.default_car_outdoor_temp), 0);
-        assert temp_unit != null;
         if (temp_unit.matches("C")) {
             temperature.setText(String.format(getString(R.string.home_screen_main_card_temperature),
                     indoor_temp, temp_unit, outdoor_temp, temp_unit));
@@ -398,14 +407,10 @@ public class HomeActivity extends AppCompatActivity {
         String charge_state = sharedPref.getString(getString(R.string.default_car_charge_state), "Disconnected");
 
         /* Check drive status */
-        assert drive_state != null;
         if (drive_state.matches("Parked")) {
             /* Car doesn't have charger plugged in */
-            assert charge_state != null;
             if (charge_state.matches("Disconnected")) {
-                if (drive_charge_tv.getVisibility() != View.GONE) {
-                    drive_charge_tv.setVisibility(View.GONE);
-                }
+                drive_charge_tv.setText(String.format(getString(R.string.home_screen_main_card_drive_state), drive_state));
             }
             /* Car plugged but not charging */
             else if (charge_state.matches("Stopped")) {
@@ -415,9 +420,6 @@ public class HomeActivity extends AppCompatActivity {
                                     .getLong(getString(R.string.default_car_scheduled_charge_start_time), 0L) * 1000);
                     sdf = new java.text.SimpleDateFormat("h:mma");
                     drive_charge_tv.setText(String.format(getString(R.string.home_screen_main_card_scheduled_charge), sdf.format(date)));
-                    if (drive_charge_tv.getVisibility() != View.VISIBLE) {
-                        drive_charge_tv.setVisibility(View.VISIBLE);
-                    }
                 }
             }
             /* Car is charging */
@@ -434,15 +436,9 @@ public class HomeActivity extends AppCompatActivity {
                             mins,
                             sharedPref.getInt(getString(R.string.default_car_max_charge_level), 0)));
                 }
-                if (drive_charge_tv.getVisibility() != View.VISIBLE) {
-                    drive_charge_tv.setVisibility(View.VISIBLE);
-                }
             }
         } else {
-            drive_charge_tv.setText(String.format(getString(R.string.drive_state), drive_state));
-            if (drive_charge_tv.getVisibility() != View.VISIBLE) {
-                drive_charge_tv.setVisibility(View.VISIBLE);
-            }
+            drive_charge_tv.setText(String.format(getString(R.string.home_screen_main_card_drive_state), drive_state));
         }
 
         /* Time stamp */
