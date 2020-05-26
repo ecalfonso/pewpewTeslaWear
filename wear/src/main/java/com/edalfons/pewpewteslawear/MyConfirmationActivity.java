@@ -2,6 +2,8 @@ package com.edalfons.pewpewteslawear;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.support.wearable.activity.ConfirmationActivity;
 import android.support.wearable.activity.WearableActivity;
 import android.view.View;
@@ -50,6 +52,10 @@ public class MyConfirmationActivity extends WearableActivity implements
         i.putExtra(ConfirmationActivity.EXTRA_ANIMATION_TYPE,
                 ConfirmationActivity.SUCCESS_ANIMATION);
         startActivity(i);
+
+        /* Success vibration */
+        Vibrator v = (Vibrator) this.getSystemService(VIBRATOR_SERVICE);
+        v.vibrate(VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE));
 
         /* Return success to Home Activity */
         setResult(RESULT_OK);

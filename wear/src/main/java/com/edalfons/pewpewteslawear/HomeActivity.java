@@ -9,6 +9,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.support.wearable.activity.ConfirmationActivity;
 import android.support.wearable.activity.WearableActivity;
 import android.view.View;
@@ -142,6 +144,11 @@ public class HomeActivity extends WearableActivity {
                         Toast.makeText(HomeActivity.this,
                                 "Command failed!",
                                 Toast.LENGTH_SHORT).show();
+
+                        /* Failure vibration */
+                        Vibrator v = (Vibrator) getApplicationContext().getSystemService(VIBRATOR_SERVICE);
+                        v.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
+
                         break;
                 }
             }
