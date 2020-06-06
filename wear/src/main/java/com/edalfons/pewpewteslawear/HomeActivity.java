@@ -287,6 +287,10 @@ public class HomeActivity extends WearableActivity {
             if (charge_state.matches("Disconnected")) {
                 drive_charge_tv.setText(String.format(getString(R.string.drive_state), drive_state));
             }
+            /* Car is plugged in and charging is completed */
+            else if (charge_state.matches("Complete")) {
+                drive_charge_tv.setText(getString(R.string.charging_complete));
+            }
             /* Car plugged but not charging */
             else if (charge_state.matches("Stopped")) {
                 if (sharedPref.getBoolean(getString(R.string.default_car_scheduled_charge_pending), false)) {
