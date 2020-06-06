@@ -92,6 +92,16 @@ Wear OS controls give you a 2.5 second confirmation delay before executing the c
     TBD
 
 ## Changelist
+### 1.0.3:
+	Optimize APKs, drawables and code
+	Wear: CarSelect take RotaryInput
+	Wear: Remove dark gray backgrounds
+	Wear: Enhancements for round/square displays
+	Mobile: Update UI
+	Mobile: Change TokenActivity to InfoActivity
+	Common: Fix parking/charging logic
+	Common: Update to cleaner Sentry Mode icon
+
 ### 1.0.2:
 	Improve CarSelect activities for mobile and wear
 	Move CarAlerts from static images/views to a list/adapter
