@@ -32,7 +32,7 @@
                 android:value="SHORT_TEXT" />
             <meta-data
                 android:name="android.support.wearable.complications.UPDATE_PERIOD_SECONDS"
-                android:value="900" />
+                android:value="1800" />
         </service>
 
         <uses-library
