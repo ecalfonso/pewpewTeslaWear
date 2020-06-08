@@ -468,8 +468,8 @@ public class TeslaApi {
 
             URL url = new URL("https://owner-api.teslamotors.com/api/1/vehicles/" +
                     id_s + "/command/set_temps?" +
-                    "driver_temp=" + String.valueOf(driver_temp) +
-                    "passenger_temp=" + String.valueOf(passenger_temp));
+                    "driver_temp=" + driver_temp +
+                    "passenger_temp=" + passenger_temp);
             httpConn = (HttpURLConnection)url.openConnection();
             httpConn.setRequestMethod("POST");
             httpConn.setRequestProperty("Content-type", "application/json");

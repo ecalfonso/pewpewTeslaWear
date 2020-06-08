@@ -46,6 +46,7 @@ public class MyComplicationProviderService extends ComplicationProviderService {
             public void handleMessage(Message msg) {
                 switch (msg.what) {
                     case VEHICLE_ASLEEP:
+                    case DATA_NOT_UPDATED:
                         /* Do nothing */
                         break;
                     case VEHICLE_AWAKE:
@@ -53,9 +54,6 @@ public class MyComplicationProviderService extends ComplicationProviderService {
                         break;
                     case DATA_UPDATED:
                         UpdateComplication(complicationId, type, manager);
-                        break;
-                    case DATA_NOT_UPDATED:
-                        /* Do nothing */
                         break;
                 }
             }

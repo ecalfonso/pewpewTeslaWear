@@ -11,6 +11,8 @@ import android.widget.TextView;
 
 import androidx.wear.widget.CircularProgressLayout;
 
+import java.util.Objects;
+
 public class MyConfirmationActivity extends WearableActivity implements
     CircularProgressLayout.OnTimerFinishedListener, View.OnClickListener {
 
@@ -55,7 +57,7 @@ public class MyConfirmationActivity extends WearableActivity implements
 
         /* Success vibration */
         Vibrator v = (Vibrator) this.getSystemService(VIBRATOR_SERVICE);
-        v.vibrate(VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE));
+        Objects.requireNonNull(v).vibrate(VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE));
 
         /* Return success to Home Activity */
         setResult(RESULT_OK);

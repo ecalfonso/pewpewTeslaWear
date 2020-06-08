@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class HomeActivity extends WearableActivity {
     /* Dictionary of Car Alerts */
@@ -147,7 +148,7 @@ public class HomeActivity extends WearableActivity {
 
                         /* Failure vibration */
                         Vibrator v = (Vibrator) getApplicationContext().getSystemService(VIBRATOR_SERVICE);
-                        v.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
+                        Objects.requireNonNull(v).vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
 
                         break;
                 }
@@ -280,10 +281,8 @@ public class HomeActivity extends WearableActivity {
         String charge_state = sharedPref.getString(getString(R.string.default_car_charge_state), "Disconnected");
 
         /* Check drive_status */
-        assert drive_state != null;
         if (drive_state.matches("Parked")) {
             /* Car doesn't have charger plugged in */
-            assert charge_state != null;
             if (charge_state.matches("Disconnected")) {
                 drive_charge_tv.setText(String.format(getString(R.string.drive_state), drive_state));
             }
@@ -350,7 +349,6 @@ public class HomeActivity extends WearableActivity {
         String temp_unit = sharedPref.getString(getString(R.string.default_car_temperature_units), "C");
         float indoor_temp = sharedPref.getFloat(getString(R.string.default_car_indoor_temp), 0);
         float outdoor_temp = sharedPref.getFloat(getString(R.string.default_car_outdoor_temp), 0);
-        assert temp_unit != null;
         if (temp_unit.matches("C")) {
             indoor_temp_tv.setText(String.format(getString(R.string.indoor_temp),
                     indoor_temp, temp_unit));

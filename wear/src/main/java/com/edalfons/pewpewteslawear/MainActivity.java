@@ -130,7 +130,6 @@ public class MainActivity extends WearableActivity {
                 String access_token = sharedPref.getString(getString(R.string.access_token), "");
 
                 /* If access_token is not blank, try to access API */
-                assert access_token != null;
                 if (!access_token.equals("")) {
                     TeslaApi tApi = new TeslaApi(access_token);
                     tApi.getVehicleList();
@@ -161,7 +160,6 @@ public class MainActivity extends WearableActivity {
 
                 String refresh_token = sharedPref.getString(getString(R.string.refresh_token), "");
                 /* If refresh_token is not blank, try to access API */
-                assert refresh_token != null;
                 if (!refresh_token.equals("")) {
                     TeslaApi tApi = new TeslaApi();
                     tApi.refreshToken(refresh_token);
@@ -219,7 +217,6 @@ public class MainActivity extends WearableActivity {
                 String default_car_id = sharedPref.getString(getString(R.string.default_car_id), "");
 
                 /* Check default_car_id against User's vehicle list */
-                assert default_car_id != null;
                 if (!default_car_id.matches("")) {
                     TeslaApi tApi = new TeslaApi(aToken);
                     tApi.getVehicleList();
