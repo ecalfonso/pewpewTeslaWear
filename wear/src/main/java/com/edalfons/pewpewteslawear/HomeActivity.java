@@ -449,13 +449,23 @@ public class HomeActivity extends WearableActivity {
                 Message msg = new Message();
                 msg.what = VEHICLE_WAKE_FAIL;
 
-                tApi.waitUntilVehicleAwake();
+                try {
+                    tApi.waitUntilVehicleAwake();
+                    tApi.reset();
+                    tApi.getVehicleSummary();
 
-                tApi.reset();
-                if (tApi.getVehicleWakeStatusFromVehicleList().matches("online")) {
-                    msg.what = VEHICLE_AWAKE;
+                    if (tApi.respCode == HttpURLConnection.HTTP_OK) {
+                        if (tApi.resp.getJSONObject("response")
+                                .getString("state")
+                                .matches("online")) {
+                            msg.what = VEHICLE_AWAKE;
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } finally {
+                    uiHandler.sendMessage(msg);
                 }
-                uiHandler.sendMessage(msg);
             }
         };
         t.start();
@@ -468,10 +478,21 @@ public class HomeActivity extends WearableActivity {
                 Message msg = new Message();
                 msg.what = VEHICLE_ASLEEP;
 
-                if (tApi.getVehicleWakeStatusFromVehicleList().matches("online")) {
-                    msg.what = VEHICLE_AWAKE;
+                try {
+                    tApi.getVehicleSummary();
+
+                    if (tApi.respCode == HttpURLConnection.HTTP_OK) {
+                        if (tApi.resp.getJSONObject("response")
+                                .getString("state")
+                                .matches("online")) {
+                            msg.what = VEHICLE_AWAKE;
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } finally {
+                    uiHandler.sendMessage(msg);
                 }
-                uiHandler.sendMessage(msg);
             }
         };
         t.start();

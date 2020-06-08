@@ -71,11 +71,20 @@ public class MyComplicationProviderService extends ComplicationProviderService {
                 Message msg = new Message();
                 msg.what = VEHICLE_ASLEEP;
 
-                if (teslaApi.getVehicleWakeStatusFromVehicleList().matches("online")) {
-                    msg.what = VEHICLE_AWAKE;
-                }
+                try {
+                    teslaApi.reset();
+                    teslaApi.getVehicleSummary();
 
-                handler.sendMessage(msg);
+                    if (teslaApi.resp.getJSONObject("response")
+                            .getString("state")
+                            .matches("online")) {
+                        msg.what = VEHICLE_AWAKE;
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } finally {
+                    handler.sendMessage(msg);
+                }
             }
         };
         t.start();

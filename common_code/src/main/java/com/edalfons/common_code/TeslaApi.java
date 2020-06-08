@@ -13,15 +13,21 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
 public class TeslaApi {
+    /* Private internal variables */
     private final String access_token;
     private final String id_s;
 
+    /* Private static internal variables */
+    private static final String client_id = "81527cff06843c8634fdc09e8ac0abefb46ac849f38fe1e431c2ef2106796384";
+    private static final String client_secret = "c7257eb71a564034f9419ee651c7d0e5f7aa6bfbd18bafb5c5c033b093bb2fa3";
+
+    /* Returnable values from HTTP request */
     public int respCode = HttpURLConnection.HTTP_UNAUTHORIZED;
     public JSONObject resp = null;
 
-    private final String client_id = "81527cff06843c8634fdc09e8ac0abefb46ac849f38fe1e431c2ef2106796384";
-    private final String client_secret = "c7257eb71a564034f9419ee651c7d0e5f7aa6bfbd18bafb5c5c033b093bb2fa3";
-
+    /*
+     * Public  Constructors
+     */
     public TeslaApi(String aToken, String id_s) {
         this.access_token = aToken;
         this.id_s = id_s;
@@ -37,6 +43,9 @@ public class TeslaApi {
         this.id_s = "";
     }
 
+    /*
+     * Set returnable variables
+     */
     private void setRespCode(int rCode) {
         respCode = rCode;
     }
@@ -64,6 +73,9 @@ public class TeslaApi {
         this.resp = null;
     }
 
+    /*
+     * Tesla API Calls
+     */
     public void getApiStatus() {
         HttpURLConnection httpConn = null;
 
@@ -172,25 +184,25 @@ public class TeslaApi {
         }
     }
 
-    public String getVehicleWakeStatusFromVehicleList() {
-        int i;
+    public void getVehicleSummary() {
+        HttpURLConnection httpConn = null;
 
         try {
-            this.reset();
-            this.getVehicleList();
+            URL url = new URL("https://owner-api.teslamotors.com/api/1/vehicles/" + id_s);
+            httpConn = (HttpURLConnection)url.openConnection();
+            httpConn.setRequestProperty("Content-type", "application/json");
+            httpConn.setRequestProperty("Authorization", "Bearer ".concat(access_token));
+            httpConn.connect();
 
-            for (i = 0; i < resp.getInt("count"); i++) {
-                if (resp.getJSONArray("response").getJSONObject(i)
-                        .getString("id_s").matches(id_s)) {
-                    return resp.getJSONArray("response").getJSONObject(i)
-                            .getString("state");
-                }
-            }
-        } catch (JSONException e) {
+            this.setRespCode(httpConn.getResponseCode());
+            this.setResp(httpConn.getInputStream());
+        } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            if (httpConn != null) {
+                httpConn.disconnect();
+            }
         }
-
-        return "asleep";
     }
 
     public void getVehicleData() {
@@ -242,17 +254,22 @@ public class TeslaApi {
         int i;
 
         try {
-            for (i = 0; i < 12; i++) {
-                this.reset();
-                this.wakeupVehicle();
+            this.reset();
+            this.wakeupVehicle();
 
-                if (this.getVehicleWakeStatusFromVehicleList().matches("online")) {
+            for (i = 0; i < 60; i++) {
+                this.reset();
+                this.getVehicleSummary();
+
+                if (this.resp.getJSONObject("response")
+                        .getString("state")
+                        .matches("online")) {
                     break;
                 }
 
-                Thread.sleep(5000);
+                Thread.sleep(1000);
             }
-        } catch (InterruptedException e) {
+        } catch (InterruptedException | JSONException e) {
             e.printStackTrace();
         }
     }
@@ -301,6 +318,204 @@ public class TeslaApi {
             this.setRespCode(httpConn.getResponseCode());
             this.setResp(httpConn.getInputStream());
         } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (httpConn != null) {
+                httpConn.disconnect();
+            }
+        }
+    }
+
+    public void honkHorn() {
+        HttpURLConnection httpConn = null;
+
+        try {
+            this.reset();
+            this.waitUntilVehicleAwake();
+
+            URL url = new URL("https://owner-api.teslamotors.com/api/1/vehicles/" +
+                    id_s + "/command/honk_horn");
+            httpConn = (HttpURLConnection)url.openConnection();
+            httpConn.setRequestMethod("POST");
+            httpConn.setRequestProperty("Content-type", "application/json");
+            httpConn.setRequestProperty("Authorization", "Bearer ".concat(access_token));
+            httpConn.connect();
+
+            this.setRespCode(httpConn.getResponseCode());
+            this.setResp(httpConn.getInputStream());
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (httpConn != null) {
+                httpConn.disconnect();
+            }
+        }
+    }
+
+    public void flashLights() {
+        HttpURLConnection httpConn = null;
+
+        try {
+            this.reset();
+            this.waitUntilVehicleAwake();
+
+            URL url = new URL("https://owner-api.teslamotors.com/api/1/vehicles/" +
+                    id_s + "/command/flash_lights");
+            httpConn = (HttpURLConnection)url.openConnection();
+            httpConn.setRequestMethod("POST");
+            httpConn.setRequestProperty("Content-type", "application/json");
+            httpConn.setRequestProperty("Authorization", "Bearer ".concat(access_token));
+            httpConn.connect();
+
+            this.setRespCode(httpConn.getResponseCode());
+            this.setResp(httpConn.getInputStream());
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (httpConn != null) {
+                httpConn.disconnect();
+            }
+        }
+    }
+
+    public void startClimate() {
+        HttpURLConnection httpConn = null;
+
+        try {
+            this.reset();
+            this.waitUntilVehicleAwake();
+
+            URL url = new URL("https://owner-api.teslamotors.com/api/1/vehicles/" +
+                    id_s + "/command/auto_conditioning_start");
+            httpConn = (HttpURLConnection)url.openConnection();
+            httpConn.setRequestMethod("POST");
+            httpConn.setRequestProperty("Content-type", "application/json");
+            httpConn.setRequestProperty("Authorization", "Bearer ".concat(access_token));
+
+            httpConn.connect();
+
+            this.setRespCode(httpConn.getResponseCode());
+            this.setResp(httpConn.getInputStream());
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (httpConn != null) {
+                httpConn.disconnect();
+            }
+        }
+    }
+
+    public void stopClimate() {
+        HttpURLConnection httpConn = null;
+
+        try {
+            this.reset();
+            this.waitUntilVehicleAwake();
+
+            URL url = new URL("https://owner-api.teslamotors.com/api/1/vehicles/" +
+                    id_s + "/command/auto_conditioning_stop");
+            httpConn = (HttpURLConnection)url.openConnection();
+            httpConn.setRequestMethod("POST");
+            httpConn.setRequestProperty("Content-type", "application/json");
+            httpConn.setRequestProperty("Authorization", "Bearer ".concat(access_token));
+
+            httpConn.connect();
+
+            this.setRespCode(httpConn.getResponseCode());
+            this.setResp(httpConn.getInputStream());
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (httpConn != null) {
+                httpConn.disconnect();
+            }
+        }
+    }
+
+    public void maxDefrost() {
+        HttpURLConnection httpConn = null;
+
+        try {
+            this.reset();
+            this.waitUntilVehicleAwake();
+
+            URL url = new URL("https://owner-api.teslamotors.com/api/1/vehicles/" +
+                    id_s + "/command/set_preconditioning_max");
+            httpConn = (HttpURLConnection)url.openConnection();
+            httpConn.setRequestMethod("POST");
+            httpConn.setRequestProperty("Content-type", "application/json");
+            httpConn.setRequestProperty("Authorization", "Bearer ".concat(access_token));
+
+            httpConn.connect();
+
+            this.setRespCode(httpConn.getResponseCode());
+            this.setResp(httpConn.getInputStream());
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (httpConn != null) {
+                httpConn.disconnect();
+            }
+        }
+    }
+
+    public void setTemps(int driver_temp, int passenger_temp) {
+        HttpURLConnection httpConn = null;
+
+        try {
+            this.reset();
+            this.waitUntilVehicleAwake();
+
+            URL url = new URL("https://owner-api.teslamotors.com/api/1/vehicles/" +
+                    id_s + "/command/set_temps?" +
+                    "driver_temp=" + String.valueOf(driver_temp) +
+                    "passenger_temp=" + String.valueOf(passenger_temp));
+            httpConn = (HttpURLConnection)url.openConnection();
+            httpConn.setRequestMethod("POST");
+            httpConn.setRequestProperty("Content-type", "application/json");
+            httpConn.setRequestProperty("Authorization", "Bearer ".concat(access_token));
+
+            httpConn.connect();
+
+            this.setRespCode(httpConn.getResponseCode());
+            this.setResp(httpConn.getInputStream());
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (httpConn != null) {
+                httpConn.disconnect();
+            }
+        }
+    }
+
+    public void setChargeLimit(int limit) {
+        HttpURLConnection httpConn = null;
+        JSONObject jsonBody = new JSONObject();
+
+        try {
+            this.reset();
+            this.waitUntilVehicleAwake();
+
+            URL url = new URL("https://owner-api.teslamotors.com/api/1/vehicles/" +
+                    id_s + "/command/set_charge_limit");
+            httpConn = (HttpURLConnection)url.openConnection();
+            httpConn.setRequestMethod("POST");
+            httpConn.setRequestProperty("Content-type", "application/json");
+            httpConn.setRequestProperty("Authorization", "Bearer ".concat(access_token));
+
+            /* Build JSON body */
+            jsonBody.put("percent", limit);
+
+            /* Attach JSON body to POST request */
+            OutputStream os = httpConn.getOutputStream();
+            os.write(jsonBody.toString().getBytes(StandardCharsets.UTF_8));
+            os.close();
+
+            httpConn.connect();
+
+            this.setRespCode(httpConn.getResponseCode());
+            this.setResp(httpConn.getInputStream());
+        } catch (IOException | JSONException e) {
             e.printStackTrace();
         } finally {
             if (httpConn != null) {
@@ -457,34 +672,26 @@ public class TeslaApi {
         }
     }
 
-    public void setChargeLimit(int limit) {
+    public void remoteStart(String password) {
         HttpURLConnection httpConn = null;
-        JSONObject jsonBody = new JSONObject();
 
         try {
             this.reset();
             this.waitUntilVehicleAwake();
 
             URL url = new URL("https://owner-api.teslamotors.com/api/1/vehicles/" +
-                    id_s + "/command/set_charge_limit");
+                    id_s + "/command/remote_start_drive?" +
+                    "password=" + password);
             httpConn = (HttpURLConnection)url.openConnection();
             httpConn.setRequestMethod("POST");
             httpConn.setRequestProperty("Content-type", "application/json");
             httpConn.setRequestProperty("Authorization", "Bearer ".concat(access_token));
 
-            /* Build JSON body */
-            jsonBody.put("percent", limit);
-
-            /* Attach JSON body to POST request */
-            OutputStream os = httpConn.getOutputStream();
-            os.write(jsonBody.toString().getBytes(StandardCharsets.UTF_8));
-            os.close();
-
             httpConn.connect();
 
             this.setRespCode(httpConn.getResponseCode());
             this.setResp(httpConn.getInputStream());
-        } catch (IOException | JSONException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         } finally {
             if (httpConn != null) {
@@ -648,6 +855,73 @@ public class TeslaApi {
         }
     }
 
+    public void scheduleSoftwareUpdate(int seconds) {
+        HttpURLConnection httpConn = null;
+        JSONObject jsonBody = new JSONObject();
+
+        try {
+            this.reset();
+            this.waitUntilVehicleAwake();
+
+            URL url = new URL("https://owner-api.teslamotors.com/api/1/vehicles/" +
+                    id_s + "/command/schedule_software_update");
+            httpConn = (HttpURLConnection)url.openConnection();
+            httpConn.setRequestMethod("POST");
+            httpConn.setRequestProperty("Content-type", "application/json");
+            httpConn.setRequestProperty("Authorization", "Bearer ".concat(access_token));
+
+            /* Build JSON body */
+            jsonBody.put("offset_sec", seconds);
+
+            /* Attach JSON body to POST request */
+            OutputStream os = httpConn.getOutputStream();
+            os.write(jsonBody.toString().getBytes(StandardCharsets.UTF_8));
+            os.close();
+
+            httpConn.connect();
+
+            this.setRespCode(httpConn.getResponseCode());
+            this.setResp(httpConn.getInputStream());
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+        } finally {
+            if (httpConn != null) {
+                httpConn.disconnect();
+            }
+        }
+    }
+
+    public void startSoftwareUpdate() {
+        this.scheduleSoftwareUpdate(0);
+    }
+
+    public void cancelSoftwareUpdate() {
+        HttpURLConnection httpConn = null;
+
+        try {
+            this.reset();
+            this.waitUntilVehicleAwake();
+
+            URL url = new URL("https://owner-api.teslamotors.com/api/1/vehicles/" +
+                    id_s + "/command/cancel_software_update");
+            httpConn = (HttpURLConnection)url.openConnection();
+            httpConn.setRequestMethod("POST");
+            httpConn.setRequestProperty("Content-type", "application/json");
+            httpConn.setRequestProperty("Authorization", "Bearer ".concat(access_token));
+
+            httpConn.connect();
+
+            this.setRespCode(httpConn.getResponseCode());
+            this.setResp(httpConn.getInputStream());
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (httpConn != null) {
+                httpConn.disconnect();
+            }
+        }
+    }
+
     public void sentryModeOn() {
         HttpURLConnection httpConn = null;
         JSONObject jsonBody = new JSONObject();
@@ -720,25 +994,35 @@ public class TeslaApi {
         }
     }
 
-    public void startClimate() {
+    public void seatHeaterRequest(int seat, int level) {
         HttpURLConnection httpConn = null;
+        JSONObject jsonBody = new JSONObject();
 
         try {
             this.reset();
             this.waitUntilVehicleAwake();
 
             URL url = new URL("https://owner-api.teslamotors.com/api/1/vehicles/" +
-                    id_s + "/command/auto_conditioning_start");
+                    id_s + "/command/window_control");
             httpConn = (HttpURLConnection)url.openConnection();
             httpConn.setRequestMethod("POST");
             httpConn.setRequestProperty("Content-type", "application/json");
             httpConn.setRequestProperty("Authorization", "Bearer ".concat(access_token));
 
+            /* Build JSON body */
+            jsonBody.put("heater", seat);
+            jsonBody.put("level", level);
+
+            /* Attach JSON body to POST request */
+            OutputStream os = httpConn.getOutputStream();
+            os.write(jsonBody.toString().getBytes(StandardCharsets.UTF_8));
+            os.close();
+
             httpConn.connect();
 
             this.setRespCode(httpConn.getResponseCode());
             this.setResp(httpConn.getInputStream());
-        } catch (IOException e) {
+        } catch (IOException | JSONException e) {
             e.printStackTrace();
         } finally {
             if (httpConn != null) {
@@ -747,25 +1031,70 @@ public class TeslaApi {
         }
     }
 
-    public void stopClimate() {
+    public void wheelHeaterOn() {
         HttpURLConnection httpConn = null;
+        JSONObject jsonBody = new JSONObject();
 
         try {
             this.reset();
             this.waitUntilVehicleAwake();
 
             URL url = new URL("https://owner-api.teslamotors.com/api/1/vehicles/" +
-                    id_s + "/command/auto_conditioning_stop");
+                    id_s + "/command/remote_steering_wheel_heater_request");
             httpConn = (HttpURLConnection)url.openConnection();
             httpConn.setRequestMethod("POST");
             httpConn.setRequestProperty("Content-type", "application/json");
             httpConn.setRequestProperty("Authorization", "Bearer ".concat(access_token));
 
+            /* Build JSON body */
+            jsonBody.put("on", "true");
+
+            /* Attach JSON body to POST request */
+            OutputStream os = httpConn.getOutputStream();
+            os.write(jsonBody.toString().getBytes(StandardCharsets.UTF_8));
+            os.close();
+
             httpConn.connect();
 
             this.setRespCode(httpConn.getResponseCode());
             this.setResp(httpConn.getInputStream());
-        } catch (IOException e) {
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+        } finally {
+            if (httpConn != null) {
+                httpConn.disconnect();
+            }
+        }
+    }
+
+    public void wheelHeaterOff() {
+        HttpURLConnection httpConn = null;
+        JSONObject jsonBody = new JSONObject();
+
+        try {
+            this.reset();
+            this.waitUntilVehicleAwake();
+
+            URL url = new URL("https://owner-api.teslamotors.com/api/1/vehicles/" +
+                    id_s + "/command/remote_steering_wheel_heater_request");
+            httpConn = (HttpURLConnection)url.openConnection();
+            httpConn.setRequestMethod("POST");
+            httpConn.setRequestProperty("Content-type", "application/json");
+            httpConn.setRequestProperty("Authorization", "Bearer ".concat(access_token));
+
+            /* Build JSON body */
+            jsonBody.put("on", "false");
+
+            /* Attach JSON body to POST request */
+            OutputStream os = httpConn.getOutputStream();
+            os.write(jsonBody.toString().getBytes(StandardCharsets.UTF_8));
+            os.close();
+
+            httpConn.connect();
+
+            this.setRespCode(httpConn.getResponseCode());
+            this.setResp(httpConn.getInputStream());
+        } catch (IOException | JSONException e) {
             e.printStackTrace();
         } finally {
             if (httpConn != null) {
