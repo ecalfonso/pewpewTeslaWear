@@ -37,8 +37,8 @@
     <string name="home_screen_button_lock">LOCK</string>
     <string name="home_screen_button_unlock">UNLOCK</string>
 
-    <string name="home_screen_button_windows_close">CLOSE\nWINDOWS</string>
-    <string name="home_screen_button_windows_vent">VENT\nWINDOWS</string>
+    <string name="home_screen_button_windows_close">CLOSE WINDOWS</string>
+    <string name="home_screen_button_windows_vent">VENT WINDOWS</string>
 
     <string name="home_screen_button_open_frunk">OPEN FRUNK</string>
     <string name="home_screen_button_open_frunk_dialog_message">Are you sure you want to open the Frunk?</string>
@@ -46,10 +46,10 @@
     <string name="home_screen_button_open_trunk">OPEN TRUNK</string>
     <string name="home_screen_button_open_trunk_dialog_message">Are you sure you want to open the Trunk?</string>
 
-    <string name="home_screen_button_charge_limit">SET\nCHARGE LIMIT</string>
+    <string name="home_screen_button_charge_limit">SET CHARGE LIMIT</string>
     <string name="home_screen_button_charge_limit_dialog_message">Enter new charge limit from 50–100%</string>
 
-    <string name="home_screen_button_homelink">ACTIVATE\nHOMELINK</string>
+    <string name="home_screen_button_homelink">ACTIVATE HOMELINK</string>
     <string name="home_screen_button_open_homelink_dialog_message">Are you sure you want to trigger Homelink?</string>
 
     <string name="home_screen_button_charge_port_open">OPEN CHARGE PORT</string>
@@ -58,11 +58,11 @@
     <string name="home_screen_button_charge_start">START CHARGE</string>
     <string name="home_screen_button_charge_stop">STOP CHARGE</string>
 
-    <string name="home_screen_button_sentry_on">TURN ON\nSENTRY MODE</string>
-    <string name="home_screen_button_sentry_off">TURN OFF\nSENTRY MODE</string>
+    <string name="home_screen_button_sentry_on">TURN ON SENTRY MODE</string>
+    <string name="home_screen_button_sentry_off">TURN OFF SENTRY MODE</string>
 
-    <string name="home_screen_button_climate_on">TURN ON\nCLIMATE</string>
-    <string name="home_screen_button_climate_off">TURN OFF\nCLIMATE</string>
+    <string name="home_screen_button_climate_on">TURN ON CLIMATE</string>
+    <string name="home_screen_button_climate_off">TURN OFF CLIMATE</string>
 
     <!-- Home Screen Menu -->
     <string name="home_screen_refresh_button">Refresh</string>
