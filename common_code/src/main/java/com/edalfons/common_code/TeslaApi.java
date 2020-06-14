@@ -12,6 +12,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
+@SuppressWarnings("unused")
 public class TeslaApi {
     /* Private internal variables */
     private final String access_token;
