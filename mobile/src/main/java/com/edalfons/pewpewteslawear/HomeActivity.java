@@ -62,8 +62,6 @@ public class HomeActivity extends AppCompatActivity {
     private static final int VEHICLE_WAKE_FAIL = 2;
     private static final int DATA_NOT_UPDATED = 3;
     private static final int DATA_UPDATED = 4;
-    private static final int COMMAND_FAILED = 5;
-    private static final int COMMAND_COMPLETED = 6;
 
     /* Child listener to handle UI changes */
     private Handler uiHandler = null;
@@ -88,7 +86,6 @@ public class HomeActivity extends AppCompatActivity {
                         wakeVehicleThread();
                         break;
                     case VEHICLE_AWAKE:
-                    case COMMAND_COMPLETED:
                         updateVehicleDataThread();
                         break;
                     case VEHICLE_WAKE_FAIL:
@@ -107,12 +104,6 @@ public class HomeActivity extends AppCompatActivity {
                         swipeRefreshLayout.setRefreshing(false);
                         updateHomeScreen();
                         break;
-                    case COMMAND_FAILED:
-                        /* Do nothing */
-                        Toast.makeText(getApplicationContext(),
-                                "Command failed",
-                                Toast.LENGTH_LONG).show();
-                        break;
                 }
             }
         };
@@ -123,7 +114,7 @@ public class HomeActivity extends AppCompatActivity {
         String access_token = sharedPref.getString(getString(R.string.access_token), "");
         String id_s = sharedPref.getString(getString(R.string.default_car_id), "");
 
-        tApi = new TeslaApi(access_token, id_s);
+        tApi = new TeslaApi(this, access_token, id_s);
 
         /* Car Alerts */
         RecyclerView car_alerts_recyclerview = findViewById(R.id.car_alerts_recyclerview);
@@ -566,14 +557,14 @@ public class HomeActivity extends AppCompatActivity {
         /* Lock button */
         final CardView lock_button_cv = findViewById(R.id.lock_button_cv);
         lock_button_cv.setOnClickListener(v -> {
-            lockVehicleThread();
+            tApi.sendCmd(TeslaApi.CMD_LOCK, 0);
             Toast.makeText(getApplicationContext(), "Locking", Toast.LENGTH_SHORT).show();
         });
 
         /* Unlock button */
         final CardView unlock_button_cv = findViewById(R.id.unlock_button_cv);
         unlock_button_cv.setOnClickListener(v -> {
-            unlockVehicleThread();
+            tApi.sendCmd(TeslaApi.CMD_UNLOCK, 0);
             Toast.makeText(getApplicationContext(),
                     "Unlocking",
                     Toast.LENGTH_SHORT).show();
@@ -582,7 +573,7 @@ public class HomeActivity extends AppCompatActivity {
         /* Close Windows button */
         final CardView close_window_button_cv = findViewById(R.id.close_window_cv);
         close_window_button_cv.setOnClickListener(v -> {
-            closeWindowsThread();
+            tApi.sendCmd(TeslaApi.CMD_CLOSE_WINDOW, 0);
             Toast.makeText(getApplicationContext(),
                     "Closing windows",
                     Toast.LENGTH_SHORT).show();
@@ -591,7 +582,7 @@ public class HomeActivity extends AppCompatActivity {
         /* Vent Windows button */
         final CardView vent_window_button_cv = findViewById(R.id.vent_window_cv);
         vent_window_button_cv.setOnClickListener(v -> {
-            ventWindowsThread();
+            tApi.sendCmd(TeslaApi.CMD_VENT_WINDOW, 0);
             Toast.makeText(getApplicationContext(),
                     "Venting windows",
                     Toast.LENGTH_SHORT).show();
@@ -604,7 +595,7 @@ public class HomeActivity extends AppCompatActivity {
                     (dialog, which) -> {
                         switch (which) {
                             case DialogInterface.BUTTON_POSITIVE:
-                                actuateFrunkThread();
+                                tApi.sendCmd(TeslaApi.CMD_ACTUATE_FRUNK, 0);
                                 Toast.makeText(getApplicationContext(),
                                         "Opening Frunk",
                                         Toast.LENGTH_SHORT).show();
@@ -629,7 +620,7 @@ public class HomeActivity extends AppCompatActivity {
                     (dialog, which) -> {
                         switch (which) {
                             case DialogInterface.BUTTON_POSITIVE:
-                                actuateTrunkThread();
+                                tApi.sendCmd(TeslaApi.CMD_ACTUATE_TRUNK, 0);
                                 Toast.makeText(getApplicationContext(),
                                         "Opening Trunk",
                                         Toast.LENGTH_SHORT).show();
@@ -663,7 +654,7 @@ public class HomeActivity extends AppCompatActivity {
                                     int input_int = Integer.parseInt(input.getText().toString());
 
                                     if (input_int >= 50 && input_int <= 100) {
-                                        setChargeLimitThread(input_int);
+                                        tApi.sendCmd(TeslaApi.CMD_SET_CHARGE_LIMIT, input_int);
                                         Toast.makeText(getApplicationContext(),
                                                 "Setting charge limit to "
                                                         .concat(input.getText().toString()),
@@ -704,7 +695,7 @@ public class HomeActivity extends AppCompatActivity {
                     (dialog, which) -> {
                         switch (which) {
                             case DialogInterface.BUTTON_POSITIVE:
-                                triggerHomelinkThread();
+                                tApi.sendCmd(TeslaApi.CMD_HOMELINK, 0);
                                 Toast.makeText(getApplicationContext(),
                                         "Triggering Homelink",
                                         Toast.LENGTH_SHORT).show();
@@ -725,7 +716,7 @@ public class HomeActivity extends AppCompatActivity {
         /* Close charge port button */
         final CardView close_charge_port_button_cv = findViewById(R.id.charge_port_close_button_cv);
         close_charge_port_button_cv.setOnClickListener(v -> {
-            closeChargePortThread();
+            tApi.sendCmd(TeslaApi.CMD_CLOSE_CHARGE_PORT, 0);
             Toast.makeText(getApplicationContext(),
                     "Closing charge port",
                     Toast.LENGTH_SHORT).show();
@@ -734,7 +725,7 @@ public class HomeActivity extends AppCompatActivity {
         /* Open charge port button */
         final CardView open_charge_port_button_cv = findViewById(R.id.charge_port_open_button_cv);
         open_charge_port_button_cv.setOnClickListener(v -> {
-            openChargePortThread();
+            tApi.sendCmd(TeslaApi.CMD_OPEN_CHARGE_PORT, 0);
             Toast.makeText(getApplicationContext(),
                     "Opening charge port",
                     Toast.LENGTH_SHORT).show();
@@ -743,7 +734,7 @@ public class HomeActivity extends AppCompatActivity {
         /* Start charge button */
         final CardView start_charge_button_cv = findViewById(R.id.start_charge_button_cv);
         start_charge_button_cv.setOnClickListener(v -> {
-            startChargingThread();
+            tApi.sendCmd(TeslaApi.CMD_START_CHARGE, 0);
             Toast.makeText(getApplicationContext(),
                     "Starting charge",
                     Toast.LENGTH_SHORT).show();
@@ -752,7 +743,7 @@ public class HomeActivity extends AppCompatActivity {
         /* Stop charge button */
         final CardView stop_charge_button_cv = findViewById(R.id.stop_charge_button_cv);
         stop_charge_button_cv.setOnClickListener(v -> {
-            stopChargingThread();
+            tApi.sendCmd(TeslaApi.CMD_STOP_CHARGE, 0);
             Toast.makeText(getApplicationContext(),
                     "Ending charge",
                     Toast.LENGTH_SHORT).show();
@@ -761,7 +752,7 @@ public class HomeActivity extends AppCompatActivity {
         /* Sentry mode on button */
         final CardView sentry_mode_on_button_cv = findViewById(R.id.sentry_mode_on_button_cv);
         sentry_mode_on_button_cv.setOnClickListener(v -> {
-            sentryModeOnThread();
+            tApi.sendCmd(TeslaApi.CMD_SENTRY_MODE_ON, 0);
             Toast.makeText(getApplicationContext(),
                     "Turning on Sentry Mode",
                     Toast.LENGTH_SHORT).show();
@@ -770,7 +761,7 @@ public class HomeActivity extends AppCompatActivity {
         /* Sentry mode off button */
         final CardView sentry_mode_off_button_cv = findViewById(R.id.sentry_mode_off_button_cv);
         sentry_mode_off_button_cv.setOnClickListener(v -> {
-            sentryModeOffThread();
+            tApi.sendCmd(TeslaApi.CMD_SENTRY_MODE_OFF, 0);
             Toast.makeText(getApplicationContext(),
                     "Turning off Sentry Mode",
                     Toast.LENGTH_SHORT).show();
@@ -779,7 +770,7 @@ public class HomeActivity extends AppCompatActivity {
         /* Start climate button */
         final CardView start_climate_button_cv = findViewById(R.id.climate_on_button_cv);
         start_climate_button_cv.setOnClickListener(v -> {
-            startClimateThread();
+            tApi.sendCmd(TeslaApi.CMD_CLIMATE_ON, 0);
             Toast.makeText(getApplicationContext(),
                     "Turning on climate",
                     Toast.LENGTH_SHORT).show();
@@ -788,318 +779,10 @@ public class HomeActivity extends AppCompatActivity {
         /* Stop climate button */
         final CardView stop_climate_button_cv = findViewById(R.id.climate_off_button_cv);
         stop_climate_button_cv.setOnClickListener(v -> {
-            stopClimateThread();
+            tApi.sendCmd(TeslaApi.CMD_CLIMATE_OFF, 0);
             Toast.makeText(getApplicationContext(),
                     "Turning off climate",
                     Toast.LENGTH_SHORT).show();
         });
-    }
-
-    private void lockVehicleThread() {
-        Thread t = new Thread() {
-            @Override
-            public void run() {
-                Message msg = new Message();
-                msg.what = COMMAND_FAILED;
-
-                tApi.lockVehicle();
-
-                if (tApi.respCode == HttpURLConnection.HTTP_OK) {
-                    msg.what = COMMAND_COMPLETED;
-                }
-
-                uiHandler.sendMessage(msg);
-            }
-        };
-        t.start();
-    }
-
-    private void unlockVehicleThread() {
-        Thread t = new Thread() {
-            @Override
-            public void run() {
-                Message msg = new Message();
-                msg.what = COMMAND_FAILED;
-
-                tApi.unlockVehicle();
-
-                if (tApi.respCode == HttpURLConnection.HTTP_OK) {
-                    msg.what = COMMAND_COMPLETED;
-                }
-
-                uiHandler.sendMessage(msg);
-            }
-        };
-        t.start();
-    }
-
-    private void closeWindowsThread() {
-        Thread t = new Thread() {
-            @Override
-            public void run() {
-                Message msg = new Message();
-                msg.what = COMMAND_FAILED;
-
-                tApi.closeVehicleWindows();
-
-                if (tApi.respCode == HttpURLConnection.HTTP_OK) {
-                    msg.what = COMMAND_COMPLETED;
-                }
-
-                uiHandler.sendMessage(msg);
-            }
-        };
-        t.start();
-    }
-
-    private void ventWindowsThread() {
-        Thread t = new Thread() {
-            @Override
-            public void run() {
-                Message msg = new Message();
-                msg.what = COMMAND_FAILED;
-
-                tApi.ventVehicleWindows();
-
-                if (tApi.respCode == HttpURLConnection.HTTP_OK) {
-                    msg.what = COMMAND_COMPLETED;
-                }
-
-                uiHandler.sendMessage(msg);
-            }
-        };
-        t.start();
-    }
-
-    private void actuateFrunkThread() {
-        Thread t = new Thread() {
-            @Override
-            public void run() {
-                Message msg = new Message();
-                msg.what = COMMAND_FAILED;
-
-                tApi.actuateFrunk();
-
-                if (tApi.respCode == HttpURLConnection.HTTP_OK) {
-                    msg.what = COMMAND_COMPLETED;
-                }
-
-                uiHandler.sendMessage(msg);
-            }
-        };
-        t.start();
-    }
-
-    private void actuateTrunkThread() {
-        Thread t = new Thread() {
-            @Override
-            public void run() {
-                Message msg = new Message();
-                msg.what = COMMAND_FAILED;
-
-                tApi.actuateTrunk();
-
-                if (tApi.respCode == HttpURLConnection.HTTP_OK) {
-                    msg.what = COMMAND_COMPLETED;
-                }
-
-                uiHandler.sendMessage(msg);
-            }
-        };
-        t.start();
-    }
-
-    private void setChargeLimitThread(int input) {
-        class ChargeLimitThread extends Thread {
-            private final int limit;
-            private ChargeLimitThread(int in) {this.limit = in;}
-
-            public void run() {
-                Message msg = new Message();
-                msg.what = COMMAND_FAILED;
-
-                tApi.setChargeLimit(limit);
-
-                if (tApi.respCode == HttpURLConnection.HTTP_OK) {
-                    msg.what = COMMAND_COMPLETED;
-                }
-
-                uiHandler.sendMessage(msg);
-            }
-        }
-
-        ChargeLimitThread t = new ChargeLimitThread(input);
-        t.start();
-    }
-
-    private void triggerHomelinkThread() {
-        Thread t = new Thread() {
-            @Override
-            public void run() {
-                Message msg = new Message();
-                msg.what = COMMAND_FAILED;
-
-                tApi.triggerHomelink();
-
-                if (tApi.respCode == HttpURLConnection.HTTP_OK) {
-                    msg.what = COMMAND_COMPLETED;
-                }
-
-                uiHandler.sendMessage(msg);
-            }
-        };
-        t.start();
-    }
-
-    private void closeChargePortThread() {
-        Thread t = new Thread() {
-            @Override
-            public void run() {
-                Message msg = new Message();
-                msg.what = COMMAND_FAILED;
-
-                tApi.closeChargePort();
-
-                if (tApi.respCode == HttpURLConnection.HTTP_OK) {
-                    msg.what = COMMAND_COMPLETED;
-                }
-
-                uiHandler.sendMessage(msg);
-            }
-        };
-        t.start();
-    }
-
-    private void openChargePortThread() {
-        Thread t = new Thread() {
-            @Override
-            public void run() {
-                Message msg = new Message();
-                msg.what = COMMAND_FAILED;
-
-                tApi.openChargePort();
-
-                if (tApi.respCode == HttpURLConnection.HTTP_OK) {
-                    msg.what = COMMAND_COMPLETED;
-                }
-
-                uiHandler.sendMessage(msg);
-            }
-        };
-        t.start();
-    }
-
-    private void startChargingThread() {
-        Thread t = new Thread() {
-            @Override
-            public void run() {
-                Message msg = new Message();
-                msg.what = COMMAND_FAILED;
-
-                tApi.startCharging();
-
-                if (tApi.respCode == HttpURLConnection.HTTP_OK) {
-                    msg.what = COMMAND_COMPLETED;
-                }
-
-                uiHandler.sendMessage(msg);
-            }
-        };
-        t.start();
-    }
-
-    private void stopChargingThread() {
-        Thread t = new Thread() {
-            @Override
-            public void run() {
-                Message msg = new Message();
-                msg.what = COMMAND_FAILED;
-
-                tApi.stopCharging();
-
-                if (tApi.respCode == HttpURLConnection.HTTP_OK) {
-                    msg.what = COMMAND_COMPLETED;
-                }
-
-                uiHandler.sendMessage(msg);
-            }
-        };
-        t.start();
-    }
-
-    private void sentryModeOnThread() {
-        Thread t = new Thread() {
-            @Override
-            public void run() {
-                Message msg = new Message();
-                msg.what = COMMAND_FAILED;
-
-                tApi.sentryModeOn();
-
-                if (tApi.respCode == HttpURLConnection.HTTP_OK) {
-                    msg.what = COMMAND_COMPLETED;
-                }
-
-                uiHandler.sendMessage(msg);
-            }
-        };
-        t.start();
-    }
-
-    private void sentryModeOffThread() {
-        Thread t = new Thread() {
-            @Override
-            public void run() {
-                Message msg = new Message();
-                msg.what = COMMAND_FAILED;
-
-                tApi.sentryModeOff();
-
-                if (tApi.respCode == HttpURLConnection.HTTP_OK) {
-                    msg.what = COMMAND_COMPLETED;
-                }
-
-                uiHandler.sendMessage(msg);
-            }
-        };
-        t.start();
-    }
-
-    private void startClimateThread() {
-        Thread t = new Thread() {
-            @Override
-            public void run() {
-                Message msg = new Message();
-                msg.what = COMMAND_FAILED;
-
-                tApi.startClimate();
-
-                if (tApi.respCode == HttpURLConnection.HTTP_OK) {
-                    msg.what = COMMAND_COMPLETED;
-                }
-
-                uiHandler.sendMessage(msg);
-            }
-        };
-        t.start();
-    }
-
-    private void stopClimateThread() {
-        Thread t = new Thread() {
-            @Override
-            public void run() {
-                Message msg = new Message();
-                msg.what = COMMAND_FAILED;
-
-                tApi.stopClimate();
-
-                if (tApi.respCode == HttpURLConnection.HTTP_OK) {
-                    msg.what = COMMAND_COMPLETED;
-                }
-
-                uiHandler.sendMessage(msg);
-            }
-        };
-        t.start();
     }
 }

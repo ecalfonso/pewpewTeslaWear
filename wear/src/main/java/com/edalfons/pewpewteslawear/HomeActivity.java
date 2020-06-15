@@ -9,8 +9,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.os.VibrationEffect;
-import android.os.Vibrator;
 import android.support.wearable.activity.ConfirmationActivity;
 import android.support.wearable.activity.WearableActivity;
 import android.view.View;
@@ -38,7 +36,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public class HomeActivity extends WearableActivity {
     /* Dictionary of Car Alerts */
@@ -59,8 +56,6 @@ public class HomeActivity extends WearableActivity {
     private static final int VEHICLE_WAKE_FAIL = 2;
     private static final int DATA_NOT_UPDATED = 3;
     private static final int DATA_UPDATED = 4;
-    private static final int COMMAND_FAIL = 5;
-    private static final int COMMAND_PASS = 6;
 
     /* Child listener to handle UI changes */
     private Handler uiHandler = null;
@@ -68,24 +63,6 @@ public class HomeActivity extends WearableActivity {
     /* Tesla API variables */
     private SharedPreferences sharedPref;
     private TeslaApi tApi;
-
-    /* Cmd Macros */
-    private static final int CMD_LOCK = 1;
-    private static final int CMD_UNLOCK = 2;
-    private static final int CMD_CLIMATE_ON = 3;
-    private static final int CMD_CLIMATE_OFF = 4;
-    //private static final int CMD_FRUNK = 5;
-    //private static final int CMD_TRUNK = 6;
-    private static final int CMD_VENT_WINDOWS = 7;
-    private static final int CMD_CLOSE_WINDOWS = 8;
-    private static final int CMD_SENTRY_MODE_ON = 9;
-    private static final int CMD_SENTRY_MODE_OFF = 10;
-    private static final int CMD_START_CHARGE = 11;
-    private static final int CMD_STOP_CHARGE = 12;
-    private static final int CMD_OPEN_CHARGE_PORT = 13;
-    private static final int CMD_CLOSE_CHARGE_PORT = 14;
-    //private static final int CMD_SET_CHARGE_LIMIT = 15;
-    //private static final int CMD_HOMELINK = 16;
 
     /* Nav drawer */
     private WearableNavigationDrawerView navDrawer;
@@ -110,7 +87,7 @@ public class HomeActivity extends WearableActivity {
         String aToken = sharedPref.getString(getString(R.string.access_token), "");
         String id_s = sharedPref.getString(getString(R.string.default_car_id), "");
         
-        tApi = new TeslaApi(aToken, id_s);
+        tApi = new TeslaApi(this, aToken, id_s);
 
         uiHandler = new Handler() {
             @Override
@@ -121,7 +98,6 @@ public class HomeActivity extends WearableActivity {
                         wakeVehicleThread();
                         break;
                     case VEHICLE_AWAKE:
-                    case COMMAND_PASS:
                         /* Update Vehicle Data */
                         updateVehicleDataThread();
                         break;
@@ -140,16 +116,6 @@ public class HomeActivity extends WearableActivity {
                     case DATA_UPDATED:
                         showRefreshGraphic(false);
                         updateHomeScreen();
-                        break;
-                    case COMMAND_FAIL:
-                        Toast.makeText(HomeActivity.this,
-                                "Command failed!",
-                                Toast.LENGTH_SHORT).show();
-
-                        /* Failure vibration */
-                        Vibrator v = (Vibrator) getApplicationContext().getSystemService(VIBRATOR_SERVICE);
-                        Objects.requireNonNull(v).vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
-
                         break;
                 }
             }
@@ -649,28 +615,28 @@ public class HomeActivity extends WearableActivity {
         lock.setOnClickListener(v -> {
             Intent i = new Intent(getApplicationContext(), MyConfirmationActivity.class);
             i.putExtra(getString(R.string.commands_key_str), "Locking");
-            startActivityForResult(i, CMD_LOCK);
+            startActivityForResult(i, TeslaApi.CMD_LOCK);
         });
 
         final TextView unlock = findViewById(R.id.unlock_tv);
         unlock.setOnClickListener(v -> {
             Intent i = new Intent(getApplicationContext(), MyConfirmationActivity.class);
             i.putExtra(getString(R.string.commands_key_str), "Unlocking");
-            startActivityForResult(i, CMD_UNLOCK);
+            startActivityForResult(i, TeslaApi.CMD_UNLOCK);
         });
 
         final TextView climate_on = findViewById(R.id.climate_on_tv);
         climate_on.setOnClickListener(v -> {
             Intent i = new Intent(getApplicationContext(), MyConfirmationActivity.class);
             i.putExtra(getString(R.string.commands_key_str), "Turning climate on");
-            startActivityForResult(i, CMD_CLIMATE_ON);
+            startActivityForResult(i, TeslaApi.CMD_CLIMATE_ON);
         });
 
         final TextView climate_off = findViewById(R.id.climate_off_tv);
         climate_off.setOnClickListener(v -> {
             Intent i = new Intent(getApplicationContext(), MyConfirmationActivity.class);
             i.putExtra(getString(R.string.commands_key_str), "Turning climate off");
-            startActivityForResult(i, CMD_CLIMATE_OFF);
+            startActivityForResult(i, TeslaApi.CMD_CLIMATE_OFF);
         });
 
         final TextView actuate_frunk = findViewById(R.id.frunk_tv);
@@ -687,7 +653,7 @@ public class HomeActivity extends WearableActivity {
                                 startActivity(i);
 
                                 /* Start Frunk open thread */
-                                actuateFrunkThread();
+                                tApi.sendCmd(TeslaApi.CMD_ACTUATE_FRUNK, 0);
 
                                 break;
                             case DialogInterface.BUTTON_NEGATIVE:
@@ -717,7 +683,7 @@ public class HomeActivity extends WearableActivity {
                                 startActivity(i);
 
                                 /* Start Trunk open thread */
-                                actuateTrunkThread();
+                                tApi.sendCmd(TeslaApi.CMD_ACTUATE_TRUNK, 0);
 
                                 break;
                             case DialogInterface.BUTTON_NEGATIVE:
@@ -737,56 +703,56 @@ public class HomeActivity extends WearableActivity {
         vent_windows.setOnClickListener(v -> {
             Intent i = new Intent(getApplicationContext(), MyConfirmationActivity.class);
             i.putExtra(getString(R.string.commands_key_str), "Venting windows");
-            startActivityForResult(i, CMD_VENT_WINDOWS);
+            startActivityForResult(i, TeslaApi.CMD_VENT_WINDOW);
         });
 
         final TextView close_windows = findViewById(R.id.close_window_tv);
         close_windows.setOnClickListener(v -> {
             Intent i = new Intent(getApplicationContext(), MyConfirmationActivity.class);
             i.putExtra(getString(R.string.commands_key_str), "Closing windows");
-            startActivityForResult(i, CMD_CLOSE_WINDOWS);
+            startActivityForResult(i, TeslaApi.CMD_CLOSE_WINDOW);
         });
 
         final TextView sentry_on = findViewById(R.id.sentry_mode_on_tv);
         sentry_on.setOnClickListener(v -> {
             Intent i = new Intent(getApplicationContext(), MyConfirmationActivity.class);
             i.putExtra(getString(R.string.commands_key_str), "Turning Sentry mode on");
-            startActivityForResult(i, CMD_SENTRY_MODE_ON);
+            startActivityForResult(i, TeslaApi.CMD_SENTRY_MODE_ON);
         });
 
         final TextView sentry_off = findViewById(R.id.sentry_mode_off_tv);
         sentry_off.setOnClickListener(v -> {
             Intent i = new Intent(getApplicationContext(), MyConfirmationActivity.class);
             i.putExtra(getString(R.string.commands_key_str), "Turning Sentry mode off");
-            startActivityForResult(i, CMD_SENTRY_MODE_OFF);
+            startActivityForResult(i, TeslaApi.CMD_SENTRY_MODE_OFF);
         });
 
         final TextView start_charge = findViewById(R.id.start_charge_tv);
         start_charge.setOnClickListener(v -> {
             Intent i = new Intent(getApplicationContext(), MyConfirmationActivity.class);
             i.putExtra(getString(R.string.commands_key_str), "Starting charge");
-            startActivityForResult(i, CMD_START_CHARGE);
+            startActivityForResult(i, TeslaApi.CMD_START_CHARGE);
         });
 
         final TextView stop_charge = findViewById(R.id.stop_charge_tv);
         stop_charge.setOnClickListener(v -> {
             Intent i = new Intent(getApplicationContext(), MyConfirmationActivity.class);
             i.putExtra(getString(R.string.commands_key_str), "Stopping charge");
-            startActivityForResult(i, CMD_STOP_CHARGE);
+            startActivityForResult(i, TeslaApi.CMD_STOP_CHARGE);
         });
 
         final TextView open_charge_port = findViewById(R.id.open_charge_port_tv);
         open_charge_port.setOnClickListener(v -> {
             Intent i = new Intent(getApplicationContext(), MyConfirmationActivity.class);
             i.putExtra(getString(R.string.commands_key_str), "Opening charge port");
-            startActivityForResult(i, CMD_OPEN_CHARGE_PORT);
+            startActivityForResult(i, TeslaApi.CMD_OPEN_CHARGE_PORT);
         });
 
         final TextView close_charge_port = findViewById(R.id.close_charge_port_tv);
         close_charge_port.setOnClickListener(v -> {
             Intent i = new Intent(getApplicationContext(), MyConfirmationActivity.class);
             i.putExtra(getString(R.string.commands_key_str), "Closing charge port");
-            startActivityForResult(i, CMD_CLOSE_CHARGE_PORT);
+            startActivityForResult(i, TeslaApi.CMD_CLOSE_CHARGE_PORT);
         });
 
         final TextView set_charge_limit = findViewById(R.id.set_charge_limit_tv);
@@ -809,7 +775,7 @@ public class HomeActivity extends WearableActivity {
                                 startActivity(i);
 
                                 /* Start set charge limit thread */
-                                setChargeLimitThread(numberPicker.getValue());
+                                tApi.sendCmd(TeslaApi.CMD_SET_CHARGE_LIMIT, numberPicker.getValue());
 
                                 break;
                             case DialogInterface.BUTTON_NEGATIVE:
@@ -840,7 +806,7 @@ public class HomeActivity extends WearableActivity {
                                 startActivity(i);
 
                                 /* Start Homelink thread */
-                                activateHomelinkThread();
+                                tApi.sendCmd(TeslaApi.CMD_HOMELINK, 0);
 
                                 break;
                             case DialogInterface.BUTTON_NEGATIVE:
@@ -863,406 +829,23 @@ public class HomeActivity extends WearableActivity {
 
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
-                case CMD_LOCK:          lockVehicleThread(); break;
-                case CMD_UNLOCK:        unlockVehicleThread(); break;
-                case CMD_CLIMATE_ON:    climateOnThread(); break;
-                case CMD_CLIMATE_OFF:   climateOffThread(); break;
-                case CMD_VENT_WINDOWS:  ventWindowsThread(); break;
-                case CMD_CLOSE_WINDOWS: closeWindowsThread(); break;
-                case CMD_SENTRY_MODE_ON: sentryModeOnThread(); break;
-                case CMD_SENTRY_MODE_OFF: sentryModeOffThread(); break;
-                case CMD_START_CHARGE:  startChargingThread(); break;
-                case CMD_STOP_CHARGE:   stopChargingThread(); break;
-                case CMD_OPEN_CHARGE_PORT: openChargePortThread(); break;
-                case CMD_CLOSE_CHARGE_PORT: closeChargePortThread(); break;
+                case TeslaApi.CMD_LOCK:             tApi.sendCmd(TeslaApi.CMD_LOCK, 0); break;
+                case TeslaApi.CMD_UNLOCK:           tApi.sendCmd(TeslaApi.CMD_UNLOCK, 0); break;
+                case TeslaApi.CMD_CLIMATE_ON:       tApi.sendCmd(TeslaApi.CMD_CLIMATE_ON, 0); break;
+                case TeslaApi.CMD_CLIMATE_OFF:      tApi.sendCmd(TeslaApi.CMD_CLIMATE_OFF, 0); break;
+                case TeslaApi.CMD_VENT_WINDOW:      tApi.sendCmd(TeslaApi.CMD_VENT_WINDOW, 0); break;
+                case TeslaApi.CMD_CLOSE_WINDOW:     tApi.sendCmd(TeslaApi.CMD_CLOSE_WINDOW, 0); break;
+                case TeslaApi.CMD_SENTRY_MODE_ON:   tApi.sendCmd(TeslaApi.CMD_SENTRY_MODE_ON, 0); break;
+                case TeslaApi.CMD_SENTRY_MODE_OFF:  tApi.sendCmd(TeslaApi.CMD_SENTRY_MODE_OFF, 0); break;
+                case TeslaApi.CMD_START_CHARGE:     tApi.sendCmd(TeslaApi.CMD_START_CHARGE, 0); break;
+                case TeslaApi.CMD_STOP_CHARGE:      tApi.sendCmd(TeslaApi.CMD_STOP_CHARGE, 0); break;
+                case TeslaApi.CMD_OPEN_CHARGE_PORT: tApi.sendCmd(TeslaApi.CMD_OPEN_CHARGE_PORT, 0); break;
+                case TeslaApi.CMD_CLOSE_CHARGE_PORT: tApi.sendCmd(TeslaApi.CMD_CLOSE_CHARGE_PORT, 0); break;
                 default:
                     Toast.makeText(this,
                             "Unknown requestCode!",
                             Toast.LENGTH_SHORT).show();
             }
         }
-    }
-
-    private void lockVehicleThread() {
-        Thread t = new Thread() {
-            @Override
-            public void run() {
-                Message msg = new Message();
-                msg.what = COMMAND_FAIL;
-
-                try {
-                    tApi.lockVehicle();
-
-                    if (tApi.respCode == HttpURLConnection.HTTP_OK) {
-                        if (tApi.resp.getJSONObject("response").getBoolean("result")) {
-                            msg.what = COMMAND_PASS;
-                        }
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                uiHandler.sendMessage(msg);
-            }
-        };
-        t.start();
-    }
-
-    private void unlockVehicleThread() {
-        Thread t = new Thread() {
-            @Override
-            public void run() {
-                Message msg = new Message();
-                msg.what = COMMAND_FAIL;
-
-                try {
-                    tApi.unlockVehicle();
-
-                    if (tApi.respCode == HttpURLConnection.HTTP_OK) {
-                        if (tApi.resp.getJSONObject("response").getBoolean("result")) {
-                            msg.what = COMMAND_PASS;
-                        }
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                uiHandler.sendMessage(msg);
-            }
-        };
-        t.start();
-    }
-
-    private void climateOnThread() {
-        Thread t = new Thread() {
-            @Override
-            public void run() {
-                Message msg = new Message();
-                msg.what = COMMAND_FAIL;
-
-                try {
-                    tApi.startClimate();
-
-                    if (tApi.respCode == HttpURLConnection.HTTP_OK) {
-                        if (tApi.resp.getJSONObject("response").getBoolean("result")) {
-                            msg.what = COMMAND_PASS;
-                        }
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                uiHandler.sendMessage(msg);
-            }
-        };
-        t.start();
-    }
-
-    private void climateOffThread() {
-        Thread t = new Thread() {
-            @Override
-            public void run() {
-                Message msg = new Message();
-                msg.what = COMMAND_FAIL;
-
-                try {
-                    tApi.stopClimate();
-
-                    if (tApi.respCode == HttpURLConnection.HTTP_OK) {
-                        if (tApi.resp.getJSONObject("response").getBoolean("result")) {
-                            msg.what = COMMAND_PASS;
-                        }
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                uiHandler.sendMessage(msg);
-            }
-        };
-        t.start();
-    }
-
-    private void ventWindowsThread() {
-        Thread t = new Thread() {
-            @Override
-            public void run() {
-                Message msg = new Message();
-                msg.what = COMMAND_FAIL;
-
-                try {
-                    tApi.ventVehicleWindows();
-
-                    if (tApi.respCode == HttpURLConnection.HTTP_OK) {
-                        if (tApi.resp.getJSONObject("response").getBoolean("result")) {
-                            msg.what = COMMAND_PASS;
-                        }
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                uiHandler.sendMessage(msg);
-            }
-        };
-        t.start();
-    }
-
-    private void closeWindowsThread() {
-        Thread t = new Thread() {
-            @Override
-            public void run() {
-                Message msg = new Message();
-                msg.what = COMMAND_FAIL;
-
-                try {
-                    tApi.closeVehicleWindows();
-
-                    if (tApi.respCode == HttpURLConnection.HTTP_OK) {
-                        if (tApi.resp.getJSONObject("response").getBoolean("result")) {
-                            msg.what = COMMAND_PASS;
-                        }
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                uiHandler.sendMessage(msg);
-            }
-        };
-        t.start();
-    }
-
-    private void sentryModeOnThread() {
-        Thread t = new Thread() {
-            @Override
-            public void run() {
-                Message msg = new Message();
-                msg.what = COMMAND_FAIL;
-
-                try {
-                    tApi.sentryModeOn();
-
-                    if (tApi.respCode == HttpURLConnection.HTTP_OK) {
-                        if (tApi.resp.getJSONObject("response").getBoolean("result")) {
-                            msg.what = COMMAND_PASS;
-                        }
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                uiHandler.sendMessage(msg);
-            }
-        };
-        t.start();
-    }
-
-    private void sentryModeOffThread() {
-        Thread t = new Thread() {
-            @Override
-            public void run() {
-                Message msg = new Message();
-                msg.what = COMMAND_FAIL;
-
-                try {
-                    tApi.sentryModeOff();
-
-                    if (tApi.respCode == HttpURLConnection.HTTP_OK) {
-                        if (tApi.resp.getJSONObject("response").getBoolean("result")) {
-                            msg.what = COMMAND_PASS;
-                        }
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                uiHandler.sendMessage(msg);
-            }
-        };
-        t.start();
-    }
-
-    private void startChargingThread() {
-        Thread t = new Thread() {
-            @Override
-            public void run() {
-                Message msg = new Message();
-                msg.what = COMMAND_FAIL;
-
-                try {
-                    tApi.startCharging();
-
-                    if (tApi.respCode == HttpURLConnection.HTTP_OK) {
-                        if (tApi.resp.getJSONObject("response").getBoolean("result")) {
-                            msg.what = COMMAND_PASS;
-                        }
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                uiHandler.sendMessage(msg);
-            }
-        };
-        t.start();
-    }
-
-    private void stopChargingThread() {
-        Thread t = new Thread() {
-            @Override
-            public void run() {
-                Message msg = new Message();
-                msg.what = COMMAND_FAIL;
-
-                try {
-                    tApi.stopCharging();
-
-                    if (tApi.respCode == HttpURLConnection.HTTP_OK) {
-                        if (tApi.resp.getJSONObject("response").getBoolean("result")) {
-                            msg.what = COMMAND_PASS;
-                        }
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                uiHandler.sendMessage(msg);
-            }
-        };
-        t.start();
-    }
-
-    private void openChargePortThread() {
-        Thread t = new Thread() {
-            @Override
-            public void run() {
-                Message msg = new Message();
-                msg.what = COMMAND_FAIL;
-
-                try {
-                    tApi.openChargePort();
-
-                    if (tApi.respCode == HttpURLConnection.HTTP_OK) {
-                        if (tApi.resp.getJSONObject("response").getBoolean("result")) {
-                            msg.what = COMMAND_PASS;
-                        }
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                uiHandler.sendMessage(msg);
-            }
-        };
-        t.start();
-    }
-
-    private void closeChargePortThread() {
-        Thread t = new Thread() {
-            @Override
-            public void run() {
-                Message msg = new Message();
-                msg.what = COMMAND_FAIL;
-
-                try {
-                    tApi.closeChargePort();
-
-                    if (tApi.respCode == HttpURLConnection.HTTP_OK) {
-                        if (tApi.resp.getJSONObject("response").getBoolean("result")) {
-                            msg.what = COMMAND_PASS;
-                        }
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                uiHandler.sendMessage(msg);
-            }
-        };
-        t.start();
-    }
-
-    private void setChargeLimitThread(int input) {
-        class ChargeLimitThread extends Thread {
-            private final int limit;
-            private ChargeLimitThread(int in) {this.limit = in;}
-
-            public void run() {
-                Message msg = new Message();
-                msg.what = COMMAND_FAIL;
-
-                tApi.setChargeLimit(limit);
-
-                if (tApi.respCode == HttpURLConnection.HTTP_OK) {
-                    msg.what = COMMAND_PASS;
-                }
-
-                uiHandler.sendMessage(msg);
-            }
-        }
-
-        ChargeLimitThread t = new ChargeLimitThread(input);
-        t.start();
-    }
-
-    private void actuateFrunkThread() {
-        Thread t = new Thread() {
-            @Override
-            public void run() {
-                Message msg = new Message();
-                msg.what = COMMAND_FAIL;
-
-                try {
-                    tApi.actuateFrunk();
-
-                    if (tApi.respCode == HttpURLConnection.HTTP_OK) {
-                        if (tApi.resp.getJSONObject("response").getBoolean("result")) {
-                            msg.what = COMMAND_PASS;
-                        }
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                uiHandler.sendMessage(msg);
-            }
-        };
-        t.start();
-    }
-
-    private void actuateTrunkThread() {
-        Thread t = new Thread() {
-            @Override
-            public void run() {
-                Message msg = new Message();
-                msg.what = COMMAND_FAIL;
-
-                try {
-                    tApi.actuateTrunk();
-
-                    if (tApi.respCode == HttpURLConnection.HTTP_OK) {
-                        if (tApi.resp.getJSONObject("response").getBoolean("result")) {
-                            msg.what = COMMAND_PASS;
-                        }
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                uiHandler.sendMessage(msg);
-            }
-        };
-        t.start();
-    }
-
-    private void activateHomelinkThread() {
-        Thread t = new Thread() {
-            @Override
-            public void run() {
-                Message msg = new Message();
-                msg.what = COMMAND_FAIL;
-
-                try {
-                    tApi.triggerHomelink();
-
-                    if (tApi.respCode == HttpURLConnection.HTTP_OK) {
-                        if (tApi.resp.getJSONObject("response").getBoolean("result")) {
-                            msg.what = COMMAND_PASS;
-                        }
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                uiHandler.sendMessage(msg);
-            }
-        };
-        t.start();
     }
 }

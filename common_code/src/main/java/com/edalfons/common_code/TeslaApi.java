@@ -1,5 +1,13 @@
 package com.edalfons.common_code;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.content.Context;
+import android.os.Build;
+import android.os.SystemClock;
+
+import androidx.core.app.NotificationCompat;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -11,12 +19,43 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.Locale;
 
 @SuppressWarnings("unused")
 public class TeslaApi {
+    /* Notification Channel IDs */
+    private final static String COMMAND_PASS_CHANNEL_ID = "cmd_pass_channel_id";
+    private final static String COMMAND_FAIL_CHANNEL_ID = "cmd_fail_channel_id";
+
+    /* Command enumerations */
+    public final static int CMD_LOCK = 0;
+    public final static int CMD_UNLOCK = 1;
+    public final static int CMD_HONK_HORN = 2;
+    public final static int CMD_FLASH_LIGHTS = 3;
+    public final static int CMD_CLIMATE_ON = 4;
+    public final static int CMD_CLIMATE_OFF = 5;
+    public final static int CMD_MAX_DEFROST = 6;
+    public final static int CMD_SET_TEMPERATURE = 7;
+    public final static int CMD_SET_CHARGE_LIMIT = 8;
+    public final static int CMD_VENT_WINDOW = 9;
+    public final static int CMD_CLOSE_WINDOW = 10;
+    public final static int CMD_ACTUATE_FRUNK = 11;
+    public final static int CMD_ACTUATE_TRUNK = 12;
+    public final static int CMD_REMOTE_START = 13;
+    public final static int CMD_HOMELINK = 14;
+    public final static int CMD_OPEN_CHARGE_PORT = 15;
+    public final static int CMD_CLOSE_CHARGE_PORT = 16;
+    public final static int CMD_START_CHARGE = 17;
+    public final static int CMD_STOP_CHARGE = 18;
+    public final static int CMD_SENTRY_MODE_ON = 19;
+    public final static int CMD_SENTRY_MODE_OFF = 20;
+    public final static int CMD_SEAT_HEATER = 21;
+    public final static int CMD_WHEEL_HEATER = 22;
+
     /* Private internal variables */
     private final String access_token;
     private final String id_s;
+    private final Context ctx;
 
     /* Private static internal variables */
     private static final String client_id = "81527cff06843c8634fdc09e8ac0abefb46ac849f38fe1e431c2ef2106796384";
@@ -29,19 +68,28 @@ public class TeslaApi {
     /*
      * Public  Constructors
      */
+    public TeslaApi(Context c, String aToken, String id_s) {
+        this.access_token = aToken;
+        this.id_s = id_s;
+        this.ctx = c;
+    }
+
     public TeslaApi(String aToken, String id_s) {
         this.access_token = aToken;
         this.id_s = id_s;
+        this.ctx = null;
     }
 
     public TeslaApi(String aToken) {
         this.access_token = aToken;
         this.id_s = "";
+        this.ctx = null;
     }
 
     public TeslaApi() {
         this.access_token = "";
         this.id_s = "";
+        this.ctx = null;
     }
 
     /*
@@ -1102,6 +1150,341 @@ public class TeslaApi {
                 httpConn.disconnect();
             }
         }
+    }
+
+    /**
+     * Thread definitions
+     */
+    static class TeslaApiThread extends Thread {
+        private final TeslaApi teslaApi;
+        private final int cmd;
+        private final int input;
+
+        TeslaApiThread(TeslaApi t, int c, int i) {
+            this.teslaApi = t;
+            this.cmd = c;
+            this.input = i;
+        }
+
+        public void run() {
+            if (this.teslaApi.ctx == null) {
+                /* Break early if we happen to get here with NULL context */
+                return;
+            }
+
+            switch (this.cmd) {
+                case CMD_LOCK:
+                    this.teslaApi.lockVehicle();
+                    break;
+                case CMD_UNLOCK:
+                    this.teslaApi.unlockVehicle();
+                    break;
+                case CMD_HONK_HORN:
+                    /* Nothing implemented */
+                    break;
+                case CMD_FLASH_LIGHTS:
+                    /* Nothing implemented */
+                    break;
+                case CMD_CLIMATE_ON:
+                    this.teslaApi.startClimate();
+                    break;
+                case CMD_CLIMATE_OFF:
+                    this.teslaApi.stopClimate();
+                    break;
+                case CMD_MAX_DEFROST:
+                    /* Nothing implemented */
+                    break;
+                case CMD_SET_TEMPERATURE:
+                    /* Nothing implemented */
+                    break;
+                case CMD_SET_CHARGE_LIMIT:
+                    this.teslaApi.setChargeLimit(this.input);
+                    break;
+                case CMD_VENT_WINDOW:
+                    this.teslaApi.ventVehicleWindows();
+                    break;
+                case CMD_CLOSE_WINDOW:
+                    this.teslaApi.closeVehicleWindows();
+                    break;
+                case CMD_ACTUATE_FRUNK:
+                    this.teslaApi.actuateFrunk();
+                    break;
+                case CMD_ACTUATE_TRUNK:
+                    this.teslaApi.actuateTrunk();
+                    break;
+                case CMD_REMOTE_START:
+                    /* Nothing implemented */
+                    break;
+                case CMD_HOMELINK:
+                    this.teslaApi.triggerHomelink();
+                    break;
+                case CMD_OPEN_CHARGE_PORT:
+                    this.teslaApi.openChargePort();
+                    break;
+                case CMD_CLOSE_CHARGE_PORT:
+                    this.teslaApi.closeChargePort();
+                    break;
+                case CMD_START_CHARGE:
+                    this.teslaApi.startCharging();
+                    break;
+                case CMD_STOP_CHARGE:
+                    this.teslaApi.stopCharging();
+                    break;
+                case CMD_SENTRY_MODE_ON:
+                    this.teslaApi.sentryModeOn();
+                    break;
+                case CMD_SENTRY_MODE_OFF:
+                    this.teslaApi.sentryModeOff();
+                    break;
+                case CMD_SEAT_HEATER:
+                    /* Nothing implemented */
+                    break;
+                case CMD_WHEEL_HEATER:
+                    /* Nothing implemented */
+                    break;
+                default:
+                    /* Unknown cmd */
+            }
+
+            NotificationManager notificationManager = this.teslaApi.ctx.getSystemService(NotificationManager.class);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                /* Register successful notification channel */
+                CharSequence name = this.teslaApi.ctx.getString(R.string.notification_channel_command_success_name);
+                NotificationChannel channel = new NotificationChannel(COMMAND_PASS_CHANNEL_ID, name, NotificationManager.IMPORTANCE_DEFAULT);
+                assert notificationManager != null;
+                notificationManager.createNotificationChannel(channel);
+
+                /* Register successful notification channel */
+                name = this.teslaApi.ctx.getString(R.string.notification_channel_command_failure_name);
+                channel = new NotificationChannel(COMMAND_FAIL_CHANNEL_ID, name, NotificationManager.IMPORTANCE_DEFAULT);
+                notificationManager.createNotificationChannel(channel);
+            }
+
+            NotificationCompat.Builder builder;
+
+            /* Build success notification */
+            try {
+                if (this.teslaApi.respCode == HttpURLConnection.HTTP_OK &&
+                    this.teslaApi.resp.getJSONObject("response").getBoolean("result")) {
+                    builder = new NotificationCompat.Builder(this.teslaApi.ctx, COMMAND_PASS_CHANNEL_ID)
+                            .setSmallIcon(R.drawable.notification_icon)
+                            .setShowWhen(true);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        builder.setPriority(NotificationManager.IMPORTANCE_DEFAULT);
+                    }
+                    switch (this.cmd) {
+                        case CMD_LOCK:
+                            builder.setContentTitle("Locked vehicle");
+                            break;
+                        case CMD_UNLOCK:
+                            builder.setContentTitle("Unlocked vehicle");
+                            break;
+                        case CMD_HONK_HORN:
+                            /* Nothing implemented */
+                            break;
+                        case CMD_FLASH_LIGHTS:
+                            /* Nothing implemented */
+                            break;
+                        case CMD_CLIMATE_ON:
+                            builder.setContentTitle("Turning on climate");
+                            break;
+                        case CMD_CLIMATE_OFF:
+                            builder.setContentTitle("Turning off climate");
+                            break;
+                        case CMD_MAX_DEFROST:
+                            /* Nothing implemented */
+                            break;
+                        case CMD_SET_TEMPERATURE:
+                            /* Nothing implemented */
+                            break;
+                        case CMD_SET_CHARGE_LIMIT:
+                            builder.setContentTitle(String.format(Locale.getDefault(),
+                                    "Set charge limit to %d%%", this.input));
+                            break;
+                        case CMD_VENT_WINDOW:
+                            builder.setContentTitle("Venting windows");
+                            break;
+                        case CMD_CLOSE_WINDOW:
+                            builder.setContentTitle("Closing windows");
+                            break;
+                        case CMD_ACTUATE_FRUNK:
+                            builder.setContentTitle("Opening Frunk");
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                builder.setPriority(NotificationManager.IMPORTANCE_HIGH);
+                            }
+                            break;
+                        case CMD_ACTUATE_TRUNK:
+                            builder.setContentTitle("Opening Trunk");
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                builder.setPriority(NotificationManager.IMPORTANCE_HIGH);
+                            }
+                            break;
+                        case CMD_REMOTE_START:
+                            /* Nothing implemented */
+                            break;
+                        case CMD_HOMELINK:
+                            builder.setContentTitle("Activating Homelink");
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                builder.setPriority(NotificationManager.IMPORTANCE_HIGH);
+                            }
+                            break;
+                        case CMD_OPEN_CHARGE_PORT:
+                            builder.setContentTitle("Opening charge port");
+                            break;
+                        case CMD_CLOSE_CHARGE_PORT:
+                            builder.setContentTitle("Closing charge port");
+                            break;
+                        case CMD_START_CHARGE:
+                            builder.setContentTitle("Starting charge");
+                            break;
+                        case CMD_STOP_CHARGE:
+                            builder.setContentTitle("Stopping charge");
+                            break;
+                        case CMD_SENTRY_MODE_ON:
+                            builder.setContentTitle("Turning Sentry Mode on");
+                            break;
+                        case CMD_SENTRY_MODE_OFF:
+                            builder.setContentTitle("Turning Sentry Mode off");
+                            break;
+                        case CMD_SEAT_HEATER:
+                            /* Nothing implemented */
+                            break;
+                        case CMD_WHEEL_HEATER:
+                            /* Nothing implemented */
+                            break;
+                    }
+                }
+                /* Build failure notification */
+                else {
+                    builder = new NotificationCompat.Builder(this.teslaApi.ctx, COMMAND_FAIL_CHANNEL_ID)
+                            .setSmallIcon(R.drawable.notification_icon)
+                            .setShowWhen(true);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        builder.setPriority(NotificationManager.IMPORTANCE_HIGH);
+                    }
+                    try {
+                        switch (this.cmd) {
+                            case CMD_LOCK:
+                                builder.setContentTitle("Failed to lock vehicle!")
+                                        .setContentText(this.teslaApi.resp.getJSONObject("response")
+                                                .getString("reason"));
+                                break;
+                            case CMD_UNLOCK:
+                                builder.setContentTitle("Failed to unlock vehicle!")
+                                        .setContentText(this.teslaApi.resp.getJSONObject("response")
+                                                .getString("reason"));
+                                break;
+                            case CMD_HONK_HORN:
+                                /* Nothing implemented */
+                                break;
+                            case CMD_FLASH_LIGHTS:
+                                /* Nothing implemented */
+                                break;
+                            case CMD_CLIMATE_ON:
+                                builder.setContentTitle("Failed to turn on climate!")
+                                        .setContentText(this.teslaApi.resp.getJSONObject("response")
+                                                .getString("reason"));
+                                break;
+                            case CMD_CLIMATE_OFF:
+                                builder.setContentTitle("Failed to turn off climate!")
+                                        .setContentText(this.teslaApi.resp.getJSONObject("response")
+                                                .getString("reason"));
+                                break;
+                            case CMD_MAX_DEFROST:
+                                /* Nothing implemented */
+                                break;
+                            case CMD_SET_TEMPERATURE:
+                                /* Nothing implemented */
+                                break;
+                            case CMD_SET_CHARGE_LIMIT:
+                                builder.setContentTitle(String.format(Locale.getDefault(),
+                                        "Failed to set charge limit to %d%%!", this.input))
+                                        .setContentText(this.teslaApi.resp.getJSONObject("response")
+                                                .getString("reason"));
+                                break;
+                            case CMD_VENT_WINDOW:
+                                builder.setContentTitle("Failed to vent windows!")
+                                        .setContentText(this.teslaApi.resp.getJSONObject("response")
+                                                .getString("reason"));
+                                break;
+                            case CMD_CLOSE_WINDOW:
+                                builder.setContentTitle("Failed to close windows!")
+                                        .setContentText(this.teslaApi.resp.getJSONObject("response")
+                                                .getString("reason"));
+                                break;
+                            case CMD_ACTUATE_FRUNK:
+                                builder.setContentTitle("Failed to open Frunk!")
+                                        .setContentText(this.teslaApi.resp.getJSONObject("response")
+                                                .getString("reason"));
+                                break;
+                            case CMD_ACTUATE_TRUNK:
+                                builder.setContentTitle("Failed to open Trunk!")
+                                        .setContentText(this.teslaApi.resp.getJSONObject("response")
+                                                .getString("reason"));
+                                break;
+                            case CMD_REMOTE_START:
+                                /* Nothing implemented */
+                                break;
+                            case CMD_HOMELINK:
+                                builder.setContentTitle("Failed to activate Homelink!")
+                                        .setContentText(this.teslaApi.resp.getJSONObject("response")
+                                                .getString("reason"));
+                                break;
+                            case CMD_OPEN_CHARGE_PORT:
+                                builder.setContentTitle("Failed to open charge port!")
+                                        .setContentText(this.teslaApi.resp.getJSONObject("response")
+                                                .getString("reason"));
+                                break;
+                            case CMD_CLOSE_CHARGE_PORT:
+                                builder.setContentTitle("Failed to close charge port!")
+                                        .setContentText(this.teslaApi.resp.getJSONObject("response")
+                                                .getString("reason"));
+                                break;
+                            case CMD_START_CHARGE:
+                                builder.setContentTitle("Failed to start charge!")
+                                        .setContentText(this.teslaApi.resp.getJSONObject("response")
+                                                .getString("reason"));
+                                break;
+                            case CMD_STOP_CHARGE:
+                                builder.setContentTitle("Failed to stop charge!")
+                                        .setContentText(this.teslaApi.resp.getJSONObject("response")
+                                                .getString("reason"));
+                                break;
+                            case CMD_SENTRY_MODE_ON:
+                                builder.setContentTitle("Failed to turn Sentry Mode on!")
+                                        .setContentText(this.teslaApi.resp.getJSONObject("response")
+                                                .getString("reason"));
+                                break;
+                            case CMD_SENTRY_MODE_OFF:
+                                builder.setContentTitle("Failed to turn Sentry Mode off")
+                                        .setContentText(this.teslaApi.resp.getJSONObject("response")
+                                                .getString("reason"));
+                                break;
+                            case CMD_SEAT_HEATER:
+                                /* Nothing implemented */
+                                break;
+                            case CMD_WHEEL_HEATER:
+                                /* Nothing implemented */
+                                break;
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                /* Display notification */
+                assert notificationManager != null;
+                notificationManager.notify((int)SystemClock.uptimeMillis(), builder.build());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void sendCmd(int cmd, int input) {
+        TeslaApiThread t = new TeslaApiThread(this, cmd, input);
+        t.start();
     }
 }
 

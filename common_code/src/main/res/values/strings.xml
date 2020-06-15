@@ -45,4 +45,8 @@
 
     <!-- contentDescription for item_car_alert.xml -->
     <string name="imgview_desc">contentDesc for imgview</string>
+
+    <!-- Notifications -->
+    <string name="notification_channel_command_success_name">Command success notifications</string>
+    <string name="notification_channel_command_failure_name">Command failure notifications</string>
 </resources>
