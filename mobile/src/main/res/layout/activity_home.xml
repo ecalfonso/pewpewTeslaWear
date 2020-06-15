@@ -12,7 +12,7 @@
         android:layout_height="match_parent"
         android:animateLayoutChanges="true"
         android:orientation="vertical"
-        android:weightSum="20">
+        android:weightSum="30">
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
@@ -21,7 +21,7 @@
             android:layout_marginTop="16dp"
             android:layout_marginRight="16dp"
             android:layout_marginBottom="16dp"
-            android:layout_weight="4"
+            android:layout_weight="6"
             android:animateLayoutChanges="true"
             app:cardCornerRadius="8dp"
             app:cardElevation="8dp"
@@ -87,7 +87,7 @@
         <GridLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="16"
+            android:layout_weight="24"
             android:animateLayoutChanges="true"
             android:columnCount="2">
 
