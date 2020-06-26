@@ -71,6 +71,7 @@
     <string name="home_screen_menu_item2">View Car Info</string>
     <string name="home_screen_menu_item3">Car Select</string>
     <string name="home_screen_menu_item4">Logout</string>
+    <string name="home_screen_menu_item4_prompt">Are you sure you want to log out?</string>
 
     <!-- Info Screen -->
     <string name="info_screen_access_token_title">Current Access Token:</string>

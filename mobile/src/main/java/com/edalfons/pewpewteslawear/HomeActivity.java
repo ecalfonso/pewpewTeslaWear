@@ -186,16 +186,32 @@ public class HomeActivity extends AppCompatActivity {
                 finish();
                 return true;
             case R.id.home_menu_logout:
-                // Clear sharedPrefs
-                SharedPreferences.Editor editor = sharedPref.edit();
-                editor.clear();
-                editor.apply();
+                DialogInterface.OnClickListener diaglogClickListener =
+                        (dialog, which) -> {
+                            switch (which) {
+                                case DialogInterface.BUTTON_POSITIVE:
+                                    // Clear sharedPrefs
+                                    SharedPreferences.Editor editor = sharedPref.edit();
+                                    editor.clear();
+                                    editor.apply();
 
-                // Load Login activity
-                Intent login_activity_intent = new Intent(getApplicationContext(),
-                        LoginActivity.class);
-                startActivity(login_activity_intent);
-                finish();
+                                    // Load Login activity
+                                    Intent login_activity_intent = new Intent(getApplicationContext(),
+                                            LoginActivity.class);
+                                    startActivity(login_activity_intent);
+                                    finish();
+                                    break;
+                                case DialogInterface.BUTTON_NEGATIVE:
+                                    break;
+                            }
+                        };
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(HomeActivity.this);
+
+                builder.setMessage(R.string.home_screen_menu_item4_prompt)
+                        .setPositiveButton(R.string.home_screen_menu_item4, diaglogClickListener)
+                        .setNegativeButton(R.string.negative_cancel_button, diaglogClickListener)
+                        .show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
