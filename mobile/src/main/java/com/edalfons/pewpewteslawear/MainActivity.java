@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.edalfons.common_code.TeslaApi;
@@ -37,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
         uiHandler = new Handler()
         {
             @Override
-            public void handleMessage(Message msg) {
+            public void handleMessage(@NonNull Message msg) {
                 Intent api_inaccessible_intent = new Intent(getApplicationContext(),
                         TeslaApiUnaccessibleActivity.class);
                 Intent login_activity_intent = new Intent(getApplicationContext(),

@@ -12,6 +12,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
 import com.edalfons.common_code.TeslaApi;
 
 import org.json.JSONException;
@@ -34,7 +36,7 @@ public class LoginActivity extends WearableActivity {
 
         uiHandler = new Handler() {
             @Override
-            public void handleMessage(Message msg) {
+            public void handleMessage(@NonNull Message msg) {
                 switch (msg.what) {
                     case LOGIN_GOOD:
                         /* Load Car select activity */

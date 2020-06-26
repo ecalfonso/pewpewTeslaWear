@@ -12,6 +12,8 @@ import android.support.wearable.complications.ComplicationManager;
 import android.support.wearable.complications.ComplicationProviderService;
 import android.support.wearable.complications.ComplicationText;
 
+import androidx.annotation.NonNull;
+
 import com.edalfons.common_code.TeslaApi;
 
 import org.json.JSONException;
@@ -43,7 +45,7 @@ public class MyComplicationProviderService extends ComplicationProviderService {
 
         handler = new Handler() {
             @Override
-            public void handleMessage(Message msg) {
+            public void handleMessage(@NonNull Message msg) {
                 switch (msg.what) {
                     case VEHICLE_ASLEEP:
                     case DATA_NOT_UPDATED:

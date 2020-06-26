@@ -9,6 +9,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.wearable.activity.WearableActivity;
 
+import androidx.annotation.NonNull;
+
 import com.edalfons.common_code.TeslaApi;
 
 import org.json.JSONException;
@@ -33,7 +35,7 @@ public class MainActivity extends WearableActivity {
 
         uiHandler = new Handler() {
             @Override
-            public void handleMessage(Message m) {
+            public void handleMessage(@NonNull Message m) {
                 Intent api_inaccessible_intent = new Intent(getApplicationContext(),
                         TeslaApiUnaccessible.class);
                 Intent login_picker = new Intent(getApplicationContext(),

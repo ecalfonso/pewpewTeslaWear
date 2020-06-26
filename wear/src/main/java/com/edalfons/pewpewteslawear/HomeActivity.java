@@ -19,6 +19,7 @@ import android.widget.Space;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.wear.widget.drawer.WearableNavigationDrawerView;
@@ -88,7 +89,7 @@ public class HomeActivity extends WearableActivity {
 
         uiHandler = new Handler() {
             @Override
-            public void handleMessage(Message msg) {
+            public void handleMessage(@NonNull Message msg) {
                 switch (msg.what) {
                     case VEHICLE_ASLEEP:
                         showRefreshGraphic(true);

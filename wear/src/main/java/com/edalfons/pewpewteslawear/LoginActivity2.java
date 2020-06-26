@@ -12,6 +12,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
 import com.edalfons.common_code.TeslaApi;
 
 import java.net.HttpURLConnection;
@@ -33,7 +35,7 @@ public class LoginActivity2 extends WearableActivity {
         uiHandler = new Handler() {
             @SuppressLint("HandlerLeak")
             @Override
-            public void handleMessage(Message msg) {
+            public void handleMessage(@NonNull Message msg) {
                 switch (msg.what) {
                     case LOGIN_GOOD:
                         Intent car_select_activity = new Intent(getApplicationContext(),
