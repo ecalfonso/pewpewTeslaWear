@@ -46,9 +46,6 @@ public class CarSelectActivity extends WearableActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_car_select);
 
-        // Enables Always-on
-        setAmbientEnabled();
-
         uiHandler = new Handler() {
             @Override
             public void handleMessage(Message msg) {

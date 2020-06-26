@@ -31,9 +31,6 @@ public class MainActivity extends WearableActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Enables Always-on
-        setAmbientEnabled();
-
         uiHandler = new Handler() {
             @Override
             public void handleMessage(Message m) {

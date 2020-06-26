@@ -23,9 +23,6 @@ public class MyConfirmationActivity extends WearableActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_confirmation);
 
-        // Enables Always-on
-        setAmbientEnabled();
-
         /* Set Cmd text */
         Intent i = getIntent();
         final TextView tv = findViewById(R.id.circular_progress_tv);

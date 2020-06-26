@@ -12,9 +12,6 @@ public class LoginSelectActivity extends WearableActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_select);
 
-        // Enables Always-on
-        setAmbientEnabled();
-
         final Button credentials_button = findViewById(R.id.button);
         final Button access_token_button = findViewById(R.id.button2);
 

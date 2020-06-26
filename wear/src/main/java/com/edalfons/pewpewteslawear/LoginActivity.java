@@ -32,9 +32,6 @@ public class LoginActivity extends WearableActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        // Enables Always-on
-        setAmbientEnabled();
-
         uiHandler = new Handler() {
             @Override
             public void handleMessage(Message msg) {

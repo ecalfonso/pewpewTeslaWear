@@ -30,9 +30,6 @@ public class LoginActivity2 extends WearableActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login2);
 
-        // Enables Always-on
-        setAmbientEnabled();
-
         uiHandler = new Handler() {
             @SuppressLint("HandlerLeak")
             @Override

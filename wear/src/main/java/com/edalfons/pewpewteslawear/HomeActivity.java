@@ -79,9 +79,6 @@ public class HomeActivity extends WearableActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        // Enables Always-on
-        setAmbientEnabled();
-
         sharedPref = getApplicationContext().getSharedPreferences(
                 getString(R.string.shared_pref_file_key), Context.MODE_PRIVATE);
         String aToken = sharedPref.getString(getString(R.string.access_token), "");

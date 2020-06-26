@@ -9,8 +9,5 @@ public class TeslaApiUnaccessible extends WearableActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tesla_api_unaccessible);
-
-        // Enables Always-on
-        setAmbientEnabled();
     }
 }
