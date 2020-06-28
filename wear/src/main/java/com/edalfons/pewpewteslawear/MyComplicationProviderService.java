@@ -103,11 +103,8 @@ public class MyComplicationProviderService extends ComplicationProviderService {
 
                     if (teslaApi.respCode == HttpURLConnection.HTTP_OK) {
                         @SuppressLint("CommitPrefEdits") SharedPreferences.Editor editor = sharedPref.edit();
+                        editor.putString(getString(R.string.default_car_vehicle_data), teslaApi.resp.getJSONObject("response").toString());
 
-                        JSONObject data = teslaApi.resp.getJSONObject("response").getJSONObject("charge_state");
-
-                        editor.putInt(getString(R.string.complication_battery_level), data.getInt("battery_level"));
-                        editor.putLong(getString(R.string.complication_timestamp), data.getLong("timestamp"));
                         editor.apply();
 
                         msg.what = DATA_UPDATED;
@@ -123,31 +120,38 @@ public class MyComplicationProviderService extends ComplicationProviderService {
     }
 
     private void UpdateComplication(int complicationId, int type, ComplicationManager manager) {
-        int battery_level = sharedPref.getInt(getString(R.string.complication_battery_level), -1);
-        String complicationText = String.format(Locale.getDefault(), "%d%%", battery_level);
+        try {
+            JSONObject data = new JSONObject(sharedPref.getString(getString(R.string.default_car_vehicle_data), ""));
+            JSONObject charge_state = data.getJSONObject("charge_state");
+            JSONObject vehicle_state = data.getJSONObject("vehicle_state");
 
-        long timestamp = sharedPref.getLong(getString(R.string.complication_timestamp), 0L);
-        Date date = new java.util.Date(timestamp);
-        @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf =
-                new java.text.SimpleDateFormat("h:mma");
-        sdf.setTimeZone(java.util.TimeZone.getDefault());
+            String complicationText = String.format(Locale.getDefault(), "%d%%",
+                    charge_state.getInt("battery_level"));
 
-        ComplicationData complicationData;
+            Date date = new java.util.Date(vehicle_state.getLong("timestamp"));
+            @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf =
+                    new java.text.SimpleDateFormat("h:mma");
+            sdf.setTimeZone(java.util.TimeZone.getDefault());
 
-        Intent app_intent = new Intent(getApplicationContext(), MainActivity.class);
-        PendingIntent pi = PendingIntent.getActivity(this, 0, app_intent, 0);
+            ComplicationData complicationData;
 
-        if (type == ComplicationData.TYPE_SHORT_TEXT) {
-            complicationData =
-                    new ComplicationData.Builder(ComplicationData.TYPE_SHORT_TEXT)
-                            .setShortText(ComplicationText.plainText(sdf.format(date)))
-                            .setShortTitle(ComplicationText.plainText(complicationText))
-                            .setTapAction(pi)
-                            .build();
+            Intent app_intent = new Intent(getApplicationContext(), MainActivity.class);
+            PendingIntent pi = PendingIntent.getActivity(this, 0, app_intent, 0);
 
-            manager.updateComplicationData(complicationId, complicationData);
-        } else {
-            manager.noUpdateRequired(complicationId);
+            if (type == ComplicationData.TYPE_SHORT_TEXT) {
+                complicationData =
+                        new ComplicationData.Builder(ComplicationData.TYPE_SHORT_TEXT)
+                                .setShortText(ComplicationText.plainText(sdf.format(date)))
+                                .setShortTitle(ComplicationText.plainText(complicationText))
+                                .setTapAction(pi)
+                                .build();
+
+                manager.updateComplicationData(complicationId, complicationData);
+            } else {
+                manager.noUpdateRequired(complicationId);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 }

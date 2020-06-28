@@ -226,181 +226,211 @@ public class HomeActivity extends WearableActivity {
 
     @SuppressLint({"StringFormatInvalid", "SimpleDateFormat", "StringFormatMatches"})
     private void updateHomeScreen() {
-        /*
-        car_info_linearlayout
-        Upper part of the view
-         */
-        final TextView car_name_tv = findViewById(R.id.car_name_tv);
-        car_name_tv.setText(sharedPref.getString(getString(R.string.default_car_name), ""));
 
-        final TextView battery_charge_tv = findViewById(R.id.car_battery_tv);
-        battery_charge_tv.setText(String.format(getString(R.string.battery_level),
-                sharedPref.getInt(getString(R.string.default_car_battery_level), -1),
-                sharedPref.getFloat(getString(R.string.default_car_battery_range), -1),
-                sharedPref.getString(getString(R.string.default_car_range_units), "unit")));
+        try {
+            JSONObject data = new JSONObject(sharedPref.getString(getString(R.string.default_car_vehicle_data), ""));
 
-        final TextView drive_charge_tv = findViewById(R.id.drive_charge_tv);
-
-        String drive_state = sharedPref.getString(getString(com.edalfons.common_code.R.string.default_car_drive_state), "Parked");
-        String charge_state = sharedPref.getString(getString(R.string.default_car_charge_state), "Disconnected");
-
-        /* Check drive_status */
-        if (drive_state.matches("Parked")) {
-            /* Car doesn't have charger plugged in */
-            if (charge_state.matches("Disconnected")) {
-                drive_charge_tv.setText(String.format(getString(R.string.drive_state), drive_state));
+            if (data.length() == 0) {
+                return;
             }
-            /* Car is plugged in and charging is completed */
-            else if (charge_state.matches("Complete")) {
-                drive_charge_tv.setText(getString(R.string.charging_complete));
+
+            JSONObject charge_state = data.getJSONObject("charge_state");
+            JSONObject gui_settings = data.getJSONObject("gui_settings");
+            JSONObject vehicle_state = data.getJSONObject("vehicle_state");
+            JSONObject climate_state = data.getJSONObject("climate_state");
+            JSONObject drive_state = data.getJSONObject("drive_state");
+
+            /*
+             * car_info_linearlayout
+             * Upper part of the view
+             */
+            final TextView car_name_tv = findViewById(R.id.car_name_tv);
+            car_name_tv.setText(sharedPref.getString(getString(R.string.default_car_name), ""));
+
+            final TextView battery_charge_tv = findViewById(R.id.car_battery_tv);
+            battery_charge_tv.setText(String.format(getString(R.string.battery_level),
+                    charge_state.getInt("battery_level"),
+                    charge_state.getDouble("battery_range"),
+                    gui_settings.getString("gui_distance_units").matches("mi/hr") ?
+                            "mi" : "km"));
+
+            final TextView drive_charge_tv = findViewById(R.id.drive_charge_tv);
+
+            String car_drive_state = "";
+            if (drive_state.isNull("shift_state")) {
+                car_drive_state = "Parked";
+            } else if (drive_state.getString("shift_state").matches("D")) {
+                car_drive_state = "Driving";
+            } else if (drive_state.getString("shift_state").matches("R")) {
+                car_drive_state = "Reversing";
+            } else if (drive_state.getString("shift_state").matches("N")) {
+                car_drive_state = "In Neutral";
             }
-            /* Car plugged but not charging */
-            else if (charge_state.matches("Stopped")) {
-                if (sharedPref.getBoolean(getString(R.string.default_car_scheduled_charge_pending), false)) {
-                    if (sharedPref.getBoolean(getString(com.edalfons.common_code.R.string.default_car_scheduled_departure), false)) {
-                        Date start_date =
-                                new java.util.Date(sharedPref
-                                        .getLong(getString(R.string.default_car_scheduled_charge_start_time), 0L) * 1000);
-                        Date depart_date =
-                                new java.util.Date(sharedPref
-                                        .getLong(getString(com.edalfons.common_code.R.string.default_car_scheduled_departure_time), 0L) * 1000);
-                        SimpleDateFormat sdf = new java.text.SimpleDateFormat("h:mma");
-                        drive_charge_tv.setText(String.format(getString(R.string.scheduled_depart),
-                                sdf.format(start_date), sdf.format(depart_date)));
+
+            String car_charge_state = charge_state.getString("charging_state");
+
+            /* Check drive_status */
+            if (car_drive_state.matches("Parked")) {
+                /* Car doesn't have charger plugged in */
+                if (car_charge_state.matches("Disconnected")) {
+                    drive_charge_tv.setText(String.format(getString(R.string.drive_state), car_drive_state));
+                }
+                /* Car is plugged in and charging is completed */
+                else if (car_charge_state.matches("Complete")) {
+                    drive_charge_tv.setText(getString(R.string.charging_complete));
+                }
+                /* Car plugged but not charging */
+                else if (car_charge_state.matches("Stopped")) {
+                    if (charge_state.getBoolean("scheduled_charging_pending")) {
+                        if (charge_state.has("scheduled_departure_time")) {
+                            Date start_date =
+                                    new java.util.Date(charge_state.getLong("scheduled_charging_start_time") * 1000);
+                            Date depart_date =
+                                    new java.util.Date(charge_state.getLong("scheduled_departure_time") * 1000);
+                            SimpleDateFormat sdf = new java.text.SimpleDateFormat("h:mma");
+                            drive_charge_tv.setText(String.format(getString(R.string.scheduled_depart),
+                                    sdf.format(start_date), sdf.format(depart_date)));
+                        } else {
+                            Date start_date =
+                                    new java.util.Date(charge_state.getLong("scheduled_charging_start_time") * 1000);
+                            SimpleDateFormat sdf = new java.text.SimpleDateFormat("h:mma");
+                            drive_charge_tv.setText(String.format(getString(R.string.scheduled_charge),
+                                    sdf.format(start_date)));
+                        }
                     } else {
-                        Date start_date =
-                                new java.util.Date(sharedPref
-                                        .getLong(getString(R.string.default_car_scheduled_charge_start_time), 0L) * 1000);
-                        SimpleDateFormat sdf = new java.text.SimpleDateFormat("h:mma");
-                        drive_charge_tv.setText(String.format(getString(R.string.scheduled_charge),
-                                sdf.format(start_date)));
+                        drive_charge_tv.setText(getString(R.string.charging_stopped));
                     }
-                } else {
-                    drive_charge_tv.setText(getString(R.string.charging_stopped));
+                }
+                /* Car is charging */
+                else if (car_charge_state.matches("Charging")) {
+                    int minutes_rem = charge_state.getInt("minutes_to_full_charge");
+                    int hours = minutes_rem / 60;
+                    int mins = minutes_rem % 60;
+                    if (hours > 0) {
+                        drive_charge_tv.setText(String.format(getString(R.string.charge_eta_hrs_mins),
+                                hours, mins, charge_state.getInt("charge_limit_soc")));
+                    } else {
+                        drive_charge_tv.setText(String.format(getString(R.string.charge_eta_mins),
+                                mins, charge_state.getInt("charge_limit_soc")));
+                    }
+                }
+            } else {
+                drive_charge_tv.setText(String.format(getString(R.string.drive_state), car_drive_state));
+            }
+
+            final TextView last_update_tv = findViewById(R.id.last_updated_tv);
+            Date timestamp_date = new java.util.Date(vehicle_state.getLong("timestamp"));
+            SimpleDateFormat timestamp_sdf = new java.text.SimpleDateFormat("MMM d @ h:mma");
+            timestamp_sdf.setTimeZone(java.util.TimeZone.getDefault());
+            last_update_tv.setText(String.format(getString(R.string.last_updated),
+                    timestamp_sdf.format(timestamp_date)));
+
+            /*
+             * temperature_linearlayout
+             */
+            final TextView indoor_temp_tv = findViewById(R.id.indoor_temp_tv);
+            final TextView outdoor_temp_tv = findViewById(R.id.outdoor_temp_tv);
+            String temp_unit = gui_settings.getString("gui_temperature_units");
+            float indoor_temp = climate_state.getInt("inside_temp");
+            float outdoor_temp = climate_state.getInt("outside_temp");
+            if (temp_unit.matches("C")) {
+                indoor_temp_tv.setText(String.format(getString(R.string.indoor_temp),
+                        indoor_temp, temp_unit));
+                outdoor_temp_tv.setText(String.format(getString(R.string.outdoor_temp),
+                        outdoor_temp, temp_unit));
+            } else {
+                indoor_temp_tv.setText(String.format(getString(R.string.indoor_temp),
+                        (indoor_temp * 9 / 5) + 32, temp_unit));
+                outdoor_temp_tv.setText(String.format(getString(R.string.outdoor_temp),
+                        (outdoor_temp * 9 / 5) + 32, temp_unit));
+            }
+
+            /*
+             * car_alerts_linearlayout
+             * Dynamic car alerts
+             */
+            alerts.clear();
+
+            boolean locked = vehicle_state.getBoolean("locked");
+            if (!locked) {
+                alerts.add(alertsDict.get("unlocked"));
+            } else {
+                alerts.remove(alertsDict.get("unlocked"));
+            }
+
+            int doors_open_sum = vehicle_state.getInt("df") +
+                    vehicle_state.getInt("pf") +
+                    vehicle_state.getInt("dr") +
+                    vehicle_state.getInt("pr");
+            if (doors_open_sum > 0) {
+                alerts.add(alertsDict.get("doors_open"));
+            } else {
+                alerts.remove(alertsDict.get("doors_open"));
+            }
+
+            boolean frunk_closed = vehicle_state.getInt("ft") == 0;
+            if (!frunk_closed) {
+                alerts.add(alertsDict.get("frunk_open"));
+            } else {
+                alerts.remove(alertsDict.get("frunk_open"));
+            }
+
+            boolean trunk_closed = vehicle_state.getInt("rt") == 0;
+            if (!trunk_closed) {
+                alerts.add(alertsDict.get("trunk_open"));
+            } else {
+                alerts.remove(alertsDict.get("trunk_open"));
+            }
+
+            int window_sum = vehicle_state.getInt("fd_window") +
+                    vehicle_state.getInt("rd_window") +
+                    vehicle_state.getInt("fp_window") +
+                    vehicle_state.getInt("rp_window");
+            if (window_sum > 0) {
+                alerts.add(alertsDict.get("windows_open"));
+            } else {
+                alerts.remove(alertsDict.get("windows_open"));
+            }
+
+            boolean sw_update = !vehicle_state.getJSONObject("software_update")
+                    .getString("status").matches("");
+            if (sw_update) {
+                alerts.add(alertsDict.get("sw_update"));
+            } else {
+                alerts.remove(alertsDict.get("sw_update"));
+            }
+
+            boolean sentry_mode = vehicle_state.getBoolean("sentry_mode");
+            if (sentry_mode) {
+                alerts.add(alertsDict.get("sentry_on"));
+            } else {
+                alerts.remove(alertsDict.get("sentry_on"));
+            }
+
+            boolean climate_on = climate_state.getBoolean("is_auto_conditioning_on");
+            if (climate_on) {
+                alerts.add(alertsDict.get("climate_on"));
+            } else {
+                alerts.remove(alertsDict.get("climate_on"));
+            }
+
+            adapter.notifyDataSetChanged();
+
+            final TextView car_status_tv = findViewById(R.id.car_status_tv);
+            final View main_divider_2 = findViewById(R.id.main_divider_2);
+            if (alerts.size() > 0) {
+                car_status_tv.setVisibility(View.VISIBLE);
+                main_divider_2.setVisibility(View.VISIBLE);
+            } else {
+                if (car_status_tv.getVisibility() != View.GONE) {
+                    car_status_tv.setVisibility(View.GONE);
+                }
+                if (main_divider_2.getVisibility() != View.GONE) {
+                    main_divider_2.setVisibility(View.GONE);
                 }
             }
-            /* Car is charging */
-            else if (charge_state.matches("Charging")) {
-                int minutes_rem = sharedPref.getInt(getString(R.string.default_car_minutes_til_charge_complete), 0);
-                int hours = minutes_rem / 60;
-                int mins = minutes_rem % 60;
-                if (hours > 0) {
-                    drive_charge_tv.setText(String.format(getString(R.string.charge_eta_hrs_mins),
-                            hours, mins,
-                            sharedPref.getInt(getString(R.string.default_car_max_charge_level), 0)));
-                } else {
-                    drive_charge_tv.setText(String.format(getString(R.string.charge_eta_mins),
-                            mins,
-                            sharedPref.getInt(getString(R.string.default_car_max_charge_level), 0)));
-                }
-            }
-        } else {
-            drive_charge_tv.setText(String.format(getString(R.string.drive_state), drive_state));
-        }
-
-        final TextView last_update_tv = findViewById(R.id.last_updated_tv);
-        Date timestamp_date = new java.util.Date(sharedPref.getLong(getString(R.string.default_car_timestamp), 0L));
-        SimpleDateFormat timestamp_sdf = new java.text.SimpleDateFormat("MMM d @ h:mma");
-        timestamp_sdf.setTimeZone(java.util.TimeZone.getDefault());
-        last_update_tv.setText(String.format(getString(R.string.last_updated),
-                timestamp_sdf.format(timestamp_date)));
-
-        /*
-        temperature_linearlayout
-         */
-        final TextView indoor_temp_tv = findViewById(R.id.indoor_temp_tv);
-        final TextView outdoor_temp_tv = findViewById(R.id.outdoor_temp_tv);
-        String temp_unit = sharedPref.getString(getString(R.string.default_car_temperature_units), "C");
-        float indoor_temp = sharedPref.getFloat(getString(R.string.default_car_indoor_temp), 0);
-        float outdoor_temp = sharedPref.getFloat(getString(R.string.default_car_outdoor_temp), 0);
-        if (temp_unit.matches("C")) {
-            indoor_temp_tv.setText(String.format(getString(R.string.indoor_temp),
-                    indoor_temp, temp_unit));
-            outdoor_temp_tv.setText(String.format(getString(R.string.outdoor_temp),
-                    outdoor_temp, temp_unit));
-        } else {
-            indoor_temp_tv.setText(String.format(getString(R.string.indoor_temp),
-                    (indoor_temp * 9/5) + 32, temp_unit));
-            outdoor_temp_tv.setText(String.format(getString(R.string.outdoor_temp),
-                    (outdoor_temp * 9/5) + 32, temp_unit));
-        }
-
-        /*
-        car_alerts_linearlayout
-        Dynamic car alerts
-         */
-        alerts.clear();
-        boolean locked = sharedPref.getBoolean(getString(R.string.default_car_locked), false);
-        if (!locked) {
-            alerts.add(alertsDict.get("unlocked"));
-        } else {
-            alerts.remove(alertsDict.get("unlocked"));
-        }
-
-        boolean doors_closed = sharedPref.getBoolean(getString(R.string.default_car_door_closed), false);
-        if (!doors_closed) {
-            alerts.add(alertsDict.get("doors_open"));
-        } else {
-            alerts.remove(alertsDict.get("doors_open"));
-        }
-
-        boolean frunk_closed = sharedPref.getBoolean(getString(R.string.default_car_front_trunk_closed), false);
-        if (!frunk_closed) {
-            alerts.add(alertsDict.get("frunk_open"));
-        } else {
-            alerts.remove(alertsDict.get("frunk_open"));
-        }
-
-        boolean trunk_closed = sharedPref.getBoolean(getString(R.string.default_car_rear_trunk_closed), false);
-        if (!trunk_closed) {
-            alerts.add(alertsDict.get("trunk_open"));
-        } else {
-            alerts.remove(alertsDict.get("trunk_open"));
-        }
-
-        boolean windows_closed = sharedPref.getBoolean(getString(R.string.default_car_window_closed), false);
-        if (!windows_closed) {
-            alerts.add(alertsDict.get("windows_open"));
-        } else {
-            alerts.remove(alertsDict.get("windows_open"));
-        }
-
-        boolean sw_update = sharedPref.getBoolean(getString(R.string.default_car_sw_update_available), true);
-        if (sw_update) {
-            alerts.add(alertsDict.get("sw_update"));
-        } else {
-            alerts.remove(alertsDict.get("sw_update"));
-        }
-
-        boolean sentry_mode = sharedPref.getBoolean(getString(R.string.default_car_sentry_mode), true);
-        if (sentry_mode) {
-            alerts.add(alertsDict.get("sentry_on"));
-        } else {
-            alerts.remove(alertsDict.get("sentry_on"));
-        }
-
-        boolean climate_off = sharedPref.getBoolean(getString(R.string.default_car_climate_off), false);
-
-        if (!climate_off) {
-            alerts.add(alertsDict.get("climate_on"));
-        } else {
-            alerts.remove(alertsDict.get("climate_on"));
-        }
-
-        adapter.notifyDataSetChanged();
-
-        final TextView car_status_tv = findViewById(R.id.car_status_tv);
-        final View main_divider_2 = findViewById(R.id.main_divider_2);
-        if (alerts.size() > 0) {
-            car_status_tv.setVisibility(View.VISIBLE);
-            main_divider_2.setVisibility(View.VISIBLE);
-        } else {
-            if (car_status_tv.getVisibility() != View.GONE) {
-                car_status_tv.setVisibility(View.GONE);
-            }
-            if (main_divider_2.getVisibility() != View.GONE) {
-                main_divider_2.setVisibility(View.GONE);
-            }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 
@@ -466,122 +496,20 @@ public class HomeActivity extends WearableActivity {
             public void run() {
                 Message msg = new Message();
                 msg.what = DATA_NOT_UPDATED;
-                JSONObject data;
 
                 SharedPreferences.Editor editor = sharedPref.edit();
 
                 try {
-                    Thread.sleep(500);
-
                     tApi.getVehicleData();
 
                     if (tApi.respCode == HttpURLConnection.HTTP_OK) {
-                        data = tApi.resp.getJSONObject("response");
-                        JSONObject charge_state = data.getJSONObject("charge_state");
-                        JSONObject gui_settings = data.getJSONObject("gui_settings");
-                        JSONObject vehicle_state = data.getJSONObject("vehicle_state");
-                        JSONObject climate_state = data.getJSONObject("climate_state");
-                        JSONObject drive_state = data.getJSONObject("drive_state");
-
-                        /* Save data to sharedPref */
-                        editor.putString(getString(R.string.default_car_name),
-                                data.getString("display_name"));
-                        editor.putInt(getString(R.string.default_car_battery_level),
-                                charge_state.getInt("battery_level"));
-                        editor.putFloat(getString(R.string.default_car_battery_range),
-                                charge_state.getInt("battery_range"));
-                        editor.putString(getString(R.string.default_car_range_units),
-                                gui_settings.getString("gui_distance_units").matches("mi/hr") ?
-                                "mi" : "km");
-
-                        editor.putFloat(getString(R.string.default_car_indoor_temp),
-                                climate_state.getInt("inside_temp"));
-                        editor.putFloat(getString(R.string.default_car_outdoor_temp),
-                                climate_state.getInt("outside_temp"));
-                        editor.putString(getString(R.string.default_car_temperature_units),
-                                gui_settings.getString("gui_temperature_units"));
-
-                        editor.putString(getString(R.string.default_car_charge_state),
-                                charge_state.getString("charging_state"));
-                        editor.putString(getString(R.string.default_car_charge_units),
-                                gui_settings.getString("gui_charge_rate_units"));
-                        editor.putInt(getString(R.string.default_car_max_charge_level),
-                                charge_state.getInt("charge_limit_soc"));
-                        editor.putInt(getString(R.string.default_car_charge_rate),
-                                charge_state.getInt("charge_rate"));
-                        editor.putInt(getString(R.string.default_car_charge_power),
-                                charge_state.getInt("charger_power"));
-                        editor.putInt(getString(R.string.default_car_minutes_til_charge_complete),
-                                charge_state.getInt("minutes_to_full_charge"));
-                        boolean charge_pending = charge_state.getBoolean("scheduled_charging_pending");
-                        editor.putBoolean(getString(R.string.default_car_scheduled_charge_pending),
-                                charge_pending);
-                        if (charge_pending) {
-                            /* Because this can be NULL */
-                            editor.putLong(getString(R.string.default_car_scheduled_charge_start_time),
-                                    charge_state.getLong("scheduled_charging_start_time"));
-
-                            /* scheduled_departure_time only exists if it is set */
-                            boolean scheduled_departure = charge_state.has("scheduled_departure_time");
-                            editor.putBoolean(getString(com.edalfons.common_code.R.string.default_car_scheduled_departure),
-                                    scheduled_departure);
-                            if (scheduled_departure) {
-                                editor.putLong(getString(com.edalfons.common_code.R.string.default_car_scheduled_departure_time),
-                                        charge_state.getLong("scheduled_departure_time"));
-                            }
-                        }
-
-                        editor.putBoolean(getString(R.string.default_car_locked),
-                                vehicle_state.getBoolean("locked"));
-
-                        int door_sum = vehicle_state.getInt("df") +
-                                vehicle_state.getInt("pf") +
-                                vehicle_state.getInt("dr") +
-                                vehicle_state.getInt("pr");
-                        editor.putBoolean(getString(R.string.default_car_door_closed),
-                                door_sum == 0);
-
-                        editor.putBoolean(getString(R.string.default_car_front_trunk_closed),
-                                vehicle_state.getInt("ft") == 0);
-
-                        editor.putBoolean(getString(R.string.default_car_rear_trunk_closed),
-                                vehicle_state.getInt("rt") == 0);
-
-                        int window_sum = vehicle_state.getInt("fd_window") +
-                                vehicle_state.getInt("rd_window") +
-                                vehicle_state.getInt("fp_window") +
-                                vehicle_state.getInt("rp_window");
-                        editor.putBoolean(getString(R.string.default_car_window_closed),
-                                window_sum == 0);
-
-                        editor.putBoolean(getString(R.string.default_car_climate_off),
-                                !climate_state.getBoolean("is_auto_conditioning_on"));
-
-                        editor.putBoolean(getString(R.string.default_car_sentry_mode),
-                                vehicle_state.getBoolean("sentry_mode"));
-
-                        editor.putBoolean(getString(R.string.default_car_sw_update_available),
-                                !vehicle_state.getJSONObject("software_update")
-                                        .getString("status").matches(""));
-
-                        if (drive_state.isNull("shift_state")) {
-                            editor.putString(getString(R.string.default_car_drive_state), "Parked");
-                        } else if (drive_state.getString("shift_state").matches("D")) {
-                            editor.putString(getString(R.string.default_car_drive_state), "Driving");
-                        } else if (drive_state.getString("shift_state").matches("R")) {
-                            editor.putString(getString(R.string.default_car_drive_state), "Reversing");
-                        } else if (drive_state.getString("shift_state").matches("N")) {
-                            editor.putString(getString(R.string.default_car_drive_state), "In Neutral");
-                        }
-
-                        editor.putLong(getString(R.string.default_car_timestamp),
-                                vehicle_state.getLong("timestamp"));
+                        editor.putString(getString(R.string.default_car_vehicle_data), tApi.resp.getJSONObject("response").toString());
 
                         editor.apply();
 
                         msg.what = DATA_UPDATED;
                     }
-                } catch (JSONException | InterruptedException e) {
+                } catch (JSONException e) {
                     e.printStackTrace();
                 }
                 uiHandler.sendMessage(msg);
@@ -758,8 +686,17 @@ public class HomeActivity extends WearableActivity {
             final NumberPicker numberPicker = new NumberPicker(HomeActivity.this);
             numberPicker.setMaxValue(100);
             numberPicker.setMinValue(50);
-            numberPicker.setValue(sharedPref.getInt(getString(R.string.default_car_max_charge_level), 0));
             numberPicker.setWrapSelectorWheel(false);
+
+            JSONObject charge_state;
+            try {
+                JSONObject data = new JSONObject(sharedPref.getString(getString(R.string.default_car_vehicle_data), ""));
+                charge_state = data.getJSONObject("charge_state");
+                numberPicker.setValue(charge_state.getInt("charge_limit_soc"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+                numberPicker.setValue(80);
+            }
 
             final DialogInterface.OnClickListener dialogClickListener =
                     (dialog, which) -> {
