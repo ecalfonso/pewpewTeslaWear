@@ -25,10 +25,8 @@ import java.util.Date;
 import java.util.Locale;
 
 public class MyComplicationProviderService extends ComplicationProviderService {
-    private static final int VEHICLE_ASLEEP = 0;
-    private static final int VEHICLE_AWAKE = 1;
-    private static final int DATA_UPDATED = 2;
-    private static final int DATA_NOT_UPDATED = 3;
+    private static final int DATA_UPDATED = 0;
+    private static final int DATA_NOT_UPDATED = 1;
 
     private Handler handler;
 
@@ -47,12 +45,8 @@ public class MyComplicationProviderService extends ComplicationProviderService {
             @Override
             public void handleMessage(@NonNull Message msg) {
                 switch (msg.what) {
-                    case VEHICLE_ASLEEP:
                     case DATA_NOT_UPDATED:
                         /* Do nothing */
-                        break;
-                    case VEHICLE_AWAKE:
-                        UpdateComplicationDataThread();
                         break;
                     case DATA_UPDATED:
                         UpdateComplication(complicationId, type, manager);
@@ -61,36 +55,10 @@ public class MyComplicationProviderService extends ComplicationProviderService {
             }
         };
 
-        CheckVehicleWakeStatusThread();
+        updateComplicationDataThread();
     }
 
-    private void CheckVehicleWakeStatusThread() {
-        Thread t = new Thread() {
-            @Override
-            public void run() {
-                Message msg = new Message();
-                msg.what = VEHICLE_ASLEEP;
-
-                try {
-                    teslaApi.reset();
-                    teslaApi.getVehicleSummary();
-
-                    if (teslaApi.resp.getJSONObject("response")
-                            .getString("state")
-                            .matches("online")) {
-                        msg.what = VEHICLE_AWAKE;
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                } finally {
-                    handler.sendMessage(msg);
-                }
-            }
-        };
-        t.start();
-    }
-
-    private void UpdateComplicationDataThread() {
+    private void updateComplicationDataThread() {
         Thread t = new Thread() {
             @Override
             public void run() {
@@ -98,16 +66,24 @@ public class MyComplicationProviderService extends ComplicationProviderService {
                 msg.what = DATA_NOT_UPDATED;
 
                 try {
-                    teslaApi.reset();
-                    teslaApi.getVehicleData();
+                    teslaApi.getVehicleSummary();
 
                     if (teslaApi.respCode == HttpURLConnection.HTTP_OK) {
-                        @SuppressLint("CommitPrefEdits") SharedPreferences.Editor editor = sharedPref.edit();
-                        editor.putString(getString(R.string.default_car_vehicle_data), teslaApi.resp.getJSONObject("response").toString());
+                        if (teslaApi.resp.getJSONObject("response").getString("state")
+                                .matches("online")) {
+                            teslaApi.reset();
+                            teslaApi.getVehicleData();
 
-                        editor.apply();
+                            if (teslaApi.respCode == HttpURLConnection.HTTP_OK) {
+                                SharedPreferences.Editor editor = sharedPref.edit();
+                                editor.putString(getString(R.string.default_car_vehicle_data),
+                                        teslaApi.resp.getJSONObject("response").toString());
 
-                        msg.what = DATA_UPDATED;
+                                editor.apply();
+
+                                msg.what = DATA_UPDATED;
+                            }
+                        }
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -138,9 +114,12 @@ public class MyComplicationProviderService extends ComplicationProviderService {
             Intent app_intent = new Intent(getApplicationContext(), MainActivity.class);
             PendingIntent pi = PendingIntent.getActivity(this, 0, app_intent, 0);
 
-            if (type == ComplicationData.TYPE_SHORT_TEXT) {
+            if (type == ComplicationData.TYPE_RANGED_VALUE) {
                 complicationData =
-                        new ComplicationData.Builder(ComplicationData.TYPE_SHORT_TEXT)
+                        new ComplicationData.Builder(ComplicationData.TYPE_RANGED_VALUE)
+                                .setMinValue(0)
+                                .setMaxValue(100)
+                                .setValue(charge_state.getInt("battery_level"))
                                 .setShortText(ComplicationText.plainText(sdf.format(date)))
                                 .setShortTitle(ComplicationText.plainText(complicationText))
                                 .setTapAction(pi)
