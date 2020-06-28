@@ -71,7 +71,7 @@ class WearCarSelectItemAdapter extends WearableRecyclerView.Adapter {
 
     @Override
     public int getItemViewType(final int position) {
-        return R.layout.item_car_select_mobile;
+        return R.layout.item_car_select_wear;
     }
 }
 
