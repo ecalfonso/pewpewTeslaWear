@@ -59,11 +59,8 @@ public class HomeActivity extends AppCompatActivity {
     private CarAlertItemAdapter adapter;
 
     /* UI Handler State Machine Macros */
-    private static final int VEHICLE_ASLEEP = 0;
-    private static final int VEHICLE_AWAKE = 1;
-    private static final int VEHICLE_WAKE_FAIL = 2;
-    private static final int DATA_NOT_UPDATED = 3;
-    private static final int DATA_UPDATED = 4;
+    private static final int DATA_NOT_UPDATED = 0;
+    private static final int DATA_UPDATED = 1;
 
     /* Child listener to handle UI changes */
     private Handler uiHandler = null;
@@ -84,18 +81,6 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void handleMessage(@NonNull Message msg) {
                 switch (msg.what) {
-                    case VEHICLE_ASLEEP:
-                        wakeVehicleThread();
-                        break;
-                    case VEHICLE_AWAKE:
-                        updateVehicleDataThread();
-                        break;
-                    case VEHICLE_WAKE_FAIL:
-                        Toast.makeText(HomeActivity.this,
-                                "Unable to wake up vehicle!",
-                                Toast.LENGTH_SHORT).show();
-                        swipeRefreshLayout.setRefreshing(false);
-                        break;
                     case DATA_NOT_UPDATED:
                         Toast.makeText(getApplicationContext(),
                                 "Data NOT updated!",
@@ -133,7 +118,7 @@ public class HomeActivity extends AppCompatActivity {
 
         /* Swipe refresh layout */
         swipeRefreshLayout = findViewById(R.id.home_screen_swipe_refresh_layout);
-        swipeRefreshLayout.setOnRefreshListener(this::checkVehicleWakeStatusThread);
+        swipeRefreshLayout.setOnRefreshListener(this::updateVehicleDataThread);
 
         setCardViewOnClickListeners();
 
@@ -146,7 +131,7 @@ public class HomeActivity extends AppCompatActivity {
 
         /* Start data access */
         swipeRefreshLayout.setRefreshing(true);
-        checkVehicleWakeStatusThread();
+        updateVehicleDataThread();
     }
 
     /**
@@ -172,7 +157,7 @@ public class HomeActivity extends AppCompatActivity {
              */
             case R.id.home_screen_refresh_button:
                 swipeRefreshLayout.setRefreshing(true);
-                checkVehicleWakeStatusThread();
+                updateVehicleDataThread();
                 return true;
             case R.id.home_menu_car_info:
                 // Load Info activity
@@ -220,62 +205,6 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
-    private void wakeVehicleThread() {
-        Thread t = new Thread() {
-            @Override
-            public void run() {
-                Message msg = new Message();
-                msg.what = VEHICLE_WAKE_FAIL;
-
-                try {
-                    tApi.waitUntilVehicleAwake();
-                    tApi.reset();
-                    tApi.getVehicleSummary();
-
-                    if (tApi.respCode == HttpURLConnection.HTTP_OK) {
-                        if (tApi.resp.getJSONObject("response")
-                                .getString("state")
-                                .matches("online")) {
-                            msg.what = VEHICLE_AWAKE;
-                        }
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                } finally {
-                    uiHandler.sendMessage(msg);
-                }
-            }
-        };
-        t.start();
-    }
-
-    private void checkVehicleWakeStatusThread() {
-        Thread t = new Thread() {
-            @Override
-            public void run() {
-                Message msg = new Message();
-                msg.what = VEHICLE_ASLEEP;
-
-                try {
-                    tApi.getVehicleSummary();
-
-                    if (tApi.respCode == HttpURLConnection.HTTP_OK) {
-                        if (tApi.resp.getJSONObject("response")
-                                .getString("state")
-                                .matches("online")) {
-                            msg.what = VEHICLE_AWAKE;
-                        }
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                } finally {
-                    uiHandler.sendMessage(msg);
-                }
-            }
-        };
-        t.start();
-    }
-
     private void updateVehicleDataThread() {
         Thread t = new Thread() {
             @Override
@@ -286,6 +215,9 @@ public class HomeActivity extends AppCompatActivity {
                 SharedPreferences.Editor editor = sharedPref.edit();
 
                 try {
+                    tApi.reset();
+                    tApi.waitUntilVehicleAwake();
+                    tApi.reset();
                     tApi.getVehicleData();
 
                     if (tApi.respCode == HttpURLConnection.HTTP_OK) {
