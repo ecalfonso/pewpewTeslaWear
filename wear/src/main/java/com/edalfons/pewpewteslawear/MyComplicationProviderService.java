@@ -28,16 +28,22 @@ public class MyComplicationProviderService extends ComplicationProviderService {
     private static final int DATA_UPDATED = 0;
     private static final int DATA_NOT_UPDATED = 1;
 
+    private static final String WEAR_COMPLICATION_UPDATE_MODULO = "WEAR_COMPLICATION_UPDATE_MODULO";
+    private static final int default_modulo = 2;
+
     private Handler handler;
 
     private SharedPreferences sharedPref;
+    private SharedPreferences.Editor editor;
+
     private TeslaApi teslaApi;
 
-    @SuppressLint("HandlerLeak")
+    @SuppressLint({"HandlerLeak", "CommitPrefEdits"})
     @Override
     public void onComplicationUpdate(int complicationId, int type, ComplicationManager manager) {
         sharedPref = getApplicationContext().getSharedPreferences(
                 getString(R.string.shared_pref_file_key), Context.MODE_PRIVATE);
+        editor = sharedPref.edit();
         teslaApi = new TeslaApi(sharedPref.getString("access_token", ""),
                 sharedPref.getString("default_car_id", ""));
 
@@ -66,25 +72,47 @@ public class MyComplicationProviderService extends ComplicationProviderService {
                 msg.what = DATA_NOT_UPDATED;
 
                 try {
-                    teslaApi.getVehicleSummary();
+                    int modulo = sharedPref.getInt(WEAR_COMPLICATION_UPDATE_MODULO, default_modulo);
 
-                    if (teslaApi.respCode == HttpURLConnection.HTTP_OK) {
-                        if (teslaApi.resp.getJSONObject("response").getString("state")
-                                .matches("online")) {
-                            teslaApi.reset();
-                            teslaApi.getVehicleData();
+                    JSONObject data = new JSONObject(sharedPref.getString(getString(R.string.default_car_vehicle_data), ""));
 
-                            if (teslaApi.respCode == HttpURLConnection.HTTP_OK) {
-                                SharedPreferences.Editor editor = sharedPref.edit();
-                                editor.putString(getString(R.string.default_car_vehicle_data),
-                                        teslaApi.resp.getJSONObject("response").toString());
+                    JSONObject charge_state = data.getJSONObject("charge_state");
+                    JSONObject vehicle_state = data.getJSONObject("vehicle_state");
+                    JSONObject drive_state = data.getJSONObject("drive_state");
 
-                                editor.apply();
+                    /*
+                     * If sentry_mode, charging, or not parked, update every 10 minutes
+                     * else update every 30 minutes if the car happens to be awake
+                     */
+                    if (vehicle_state.getBoolean("sentry_mode") ||
+                            charge_state.getString("charging_state").matches("Charging") ||
+                            !drive_state.isNull("shift_state") ||
+                            (modulo % default_modulo) == 0) {
+                        modulo = 0; /* Reset modulo */
 
-                                msg.what = DATA_UPDATED;
+                        teslaApi.getVehicleSummary();
+
+                        if (teslaApi.respCode == HttpURLConnection.HTTP_OK) {
+                            if (teslaApi.resp.getJSONObject("response").getString("state")
+                                    .matches("online")) {
+                                teslaApi.reset();
+                                teslaApi.getVehicleData();
+
+                                if (teslaApi.respCode == HttpURLConnection.HTTP_OK) {
+                                    editor.putString(getString(R.string.default_car_vehicle_data),
+                                            teslaApi.resp.getJSONObject("response").toString());
+
+                                    editor.apply();
+
+                                    msg.what = DATA_UPDATED;
+                                }
                             }
                         }
                     }
+
+                    modulo += 1;
+                    editor.putInt(WEAR_COMPLICATION_UPDATE_MODULO, modulo);
+                    editor.apply();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 } finally {
