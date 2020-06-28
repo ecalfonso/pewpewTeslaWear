@@ -14,6 +14,7 @@ import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -621,6 +622,11 @@ public class HomeActivity extends AppCompatActivity {
                                 break;
                             case DialogInterface.BUTTON_NEGATIVE:
                                 break;
+                        }
+
+                        InputMethodManager imm = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
+                        if (imm != null) {
+                            imm.hideSoftInputFromWindow(input.getWindowToken(), InputMethodManager.RESULT_UNCHANGED_SHOWN);
                         }
                     };
 

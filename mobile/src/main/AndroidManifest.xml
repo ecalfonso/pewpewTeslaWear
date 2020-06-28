@@ -14,7 +14,8 @@
         android:allowBackup="false">
         <activity android:name="com.edalfons.pewpewteslawear.CarSelectActivity" />
         <activity android:name="com.edalfons.pewpewteslawear.InfoActivity" />
-        <activity android:name="com.edalfons.pewpewteslawear.HomeActivity" />
+        <activity android:name="com.edalfons.pewpewteslawear.HomeActivity"
+            android:windowSoftInputMode="stateVisible|adjustPan"/>
         <activity android:name="com.edalfons.pewpewteslawear.LoginActivity" />
         <activity android:name="com.edalfons.pewpewteslawear.MainActivity">
             <intent-filter>
