@@ -26,6 +26,7 @@ public class TeslaApi {
     /* Notification Channel IDs */
     private final static String COMMAND_PASS_CHANNEL_ID = "cmd_pass_channel_id";
     private final static String COMMAND_FAIL_CHANNEL_ID = "cmd_fail_channel_id";
+    private final static String WAKEUP_VEHICLE_CHANNEL_ID = "wakeup_vehicle_channel_id";
 
     /* Command enumerations */
     public final static int CMD_LOCK = 0;
@@ -303,6 +304,41 @@ public class TeslaApi {
         int i;
 
         try {
+            int notification_id = (int)SystemClock.uptimeMillis();
+            NotificationCompat.Builder builder;
+            assert this.ctx != null;
+            NotificationManager notificationManager = this.ctx.getSystemService(NotificationManager.class);
+
+            this.reset();
+            this.getVehicleSummary();
+
+            if (this.resp.getJSONObject("response")
+                    .getString("state")
+                    .matches("online")) {
+                return;
+            }
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                /* Register successful notification channel */
+                CharSequence name = this.ctx.getString(R.string.notification_channel_vehicle_wakeup_name);
+                NotificationChannel channel = new NotificationChannel(WAKEUP_VEHICLE_CHANNEL_ID, name,
+                        NotificationManager.IMPORTANCE_LOW);
+                assert notificationManager != null;
+                notificationManager.createNotificationChannel(channel);
+            }
+
+            builder = new NotificationCompat.Builder(this.ctx, WAKEUP_VEHICLE_CHANNEL_ID)
+                    .setContentTitle("Waking up vehicle")
+                    .setSmallIcon(R.drawable.notification_icon)
+                    .setShowWhen(true);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                builder.setPriority(NotificationManager.IMPORTANCE_LOW);
+            }
+
+            /* Display notification */
+            assert notificationManager != null;
+            notificationManager.notify(notification_id, builder.build());
+
             this.reset();
             this.wakeupVehicle();
 
@@ -318,6 +354,9 @@ public class TeslaApi {
 
                 Thread.sleep(1000);
             }
+
+            /* Cancel notification */
+            notificationManager.cancel(notification_id);
         } catch (InterruptedException | JSONException e) {
             e.printStackTrace();
         }

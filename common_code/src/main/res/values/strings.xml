@@ -15,4 +15,5 @@
     <!-- Notifications -->
     <string name="notification_channel_command_success_name">Command success notifications</string>
     <string name="notification_channel_command_failure_name">Command failure notifications</string>
+    <string name="notification_channel_vehicle_wakeup_name">Notification during vehicle wakeup loop</string>
 </resources>
