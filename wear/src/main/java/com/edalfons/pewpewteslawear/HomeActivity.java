@@ -318,9 +318,21 @@ public class HomeActivity extends WearableActivity {
                 drive_charge_tv.setText(String.format(getString(R.string.drive_state), car_drive_state));
             }
 
+            /* timestamp */
             final TextView last_update_tv = findViewById(R.id.last_updated_tv);
+            Date now = new java.util.Date();
             Date timestamp_date = new java.util.Date(vehicle_state.getLong("timestamp"));
-            SimpleDateFormat timestamp_sdf = new java.text.SimpleDateFormat("MMM d @ h:mma");
+            SimpleDateFormat timestamp_sdf = new java.text.SimpleDateFormat("d");
+
+            /* Same day of the month, only print time */
+            if (timestamp_sdf.format(timestamp_date).matches(timestamp_sdf.format(now))) {
+                timestamp_sdf = new java.text.SimpleDateFormat("h:mm a");
+            }
+            /* Any other date, print month day and time */
+            else {
+                timestamp_sdf = new java.text.SimpleDateFormat("MMM d @ h:mm a");
+            }
+
             timestamp_sdf.setTimeZone(java.util.TimeZone.getDefault());
             last_update_tv.setText(String.format(getString(R.string.last_updated),
                     timestamp_sdf.format(timestamp_date)));

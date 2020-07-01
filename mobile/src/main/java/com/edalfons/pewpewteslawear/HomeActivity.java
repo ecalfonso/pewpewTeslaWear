@@ -343,8 +343,19 @@ public class HomeActivity extends AppCompatActivity {
 
             /* Time stamp */
             final TextView last_update_tv = findViewById(R.id.main_card_last_updated);
+            Date now = new java.util.Date();
             Date timestamp_date = new java.util.Date(vehicle_state.getLong("timestamp"));
-            sdf = new java.text.SimpleDateFormat("MMM d @ h:mma");
+            sdf = new java.text.SimpleDateFormat("d");
+
+            /* Same day of the month, only print time */
+            if (sdf.format(timestamp_date).matches(sdf.format(now))) {
+                sdf = new java.text.SimpleDateFormat("h:mm a");
+            }
+            /* Any other date, print month day and time */
+            else {
+                sdf = new java.text.SimpleDateFormat("MMM d @ h:mm a");
+            }
+
             sdf.setTimeZone(java.util.TimeZone.getDefault());
             last_update_tv.setText(String.format(getString(R.string.home_screen_main_card_last_updated), sdf.format(timestamp_date)));
 

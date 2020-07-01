@@ -123,6 +123,7 @@ public class MyComplicationProviderService extends ComplicationProviderService {
         t.start();
     }
 
+    @SuppressLint("SimpleDateFormat")
     private void UpdateComplication(int complicationId, int type, ComplicationManager manager) {
         try {
             JSONObject data = new JSONObject(sharedPref.getString(getString(R.string.default_car_vehicle_data), ""));
@@ -132,9 +133,17 @@ public class MyComplicationProviderService extends ComplicationProviderService {
             String complicationText = String.format(Locale.getDefault(), "%d%%",
                     charge_state.getInt("battery_level"));
 
+            Date now = new java.util.Date();
             Date date = new java.util.Date(vehicle_state.getLong("timestamp"));
-            @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf =
-                    new java.text.SimpleDateFormat("h:mma");
+            SimpleDateFormat sdf = new java.text.SimpleDateFormat("d");
+
+            /*  */
+            if (sdf.format(date).matches(sdf.format(now))) {
+                sdf = new java.text.SimpleDateFormat("h:mm a");
+            } else{
+                sdf = new java.text.SimpleDateFormat("MMM d");
+            }
+
             sdf.setTimeZone(java.util.TimeZone.getDefault());
 
             ComplicationData complicationData;
