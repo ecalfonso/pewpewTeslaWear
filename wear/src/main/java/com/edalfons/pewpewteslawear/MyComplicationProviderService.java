@@ -69,7 +69,7 @@ public class MyComplicationProviderService extends ComplicationProviderService {
             @Override
             public void run() {
                 Message msg = new Message();
-                msg.what = DATA_NOT_UPDATED;
+                msg.what = DATA_UPDATED;
 
                 try {
                     int modulo = sharedPref.getInt(WEAR_COMPLICATION_UPDATE_MODULO, default_modulo);
@@ -103,8 +103,6 @@ public class MyComplicationProviderService extends ComplicationProviderService {
                                             teslaApi.resp.getJSONObject("response").toString());
 
                                     editor.apply();
-
-                                    msg.what = DATA_UPDATED;
                                 }
                             }
                         }
@@ -114,6 +112,7 @@ public class MyComplicationProviderService extends ComplicationProviderService {
                     editor.putInt(WEAR_COMPLICATION_UPDATE_MODULO, modulo);
                     editor.apply();
                 } catch (JSONException e) {
+                    msg.what = DATA_NOT_UPDATED;
                     e.printStackTrace();
                 } finally {
                     handler.sendMessage(msg);
@@ -125,6 +124,8 @@ public class MyComplicationProviderService extends ComplicationProviderService {
 
     @SuppressLint("SimpleDateFormat")
     private void UpdateComplication(int complicationId, int type, ComplicationManager manager) {
+        ComplicationData complicationData = null;
+
         try {
             JSONObject data = new JSONObject(sharedPref.getString(getString(R.string.default_car_vehicle_data), ""));
             JSONObject charge_state = data.getJSONObject("charge_state");
@@ -146,8 +147,6 @@ public class MyComplicationProviderService extends ComplicationProviderService {
 
             sdf.setTimeZone(java.util.TimeZone.getDefault());
 
-            ComplicationData complicationData;
-
             Intent app_intent = new Intent(getApplicationContext(), MainActivity.class);
             PendingIntent pi = PendingIntent.getActivity(this, 0, app_intent, 0);
 
@@ -161,13 +160,15 @@ public class MyComplicationProviderService extends ComplicationProviderService {
                                 .setShortTitle(ComplicationText.plainText(complicationText))
                                 .setTapAction(pi)
                                 .build();
-
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } finally {
+            if (complicationData != null) {
                 manager.updateComplicationData(complicationId, complicationData);
             } else {
                 manager.noUpdateRequired(complicationId);
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
         }
     }
 }
