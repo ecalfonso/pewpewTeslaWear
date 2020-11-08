@@ -21,7 +21,6 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 
-@SuppressWarnings("unused")
 public class TeslaApi {
     /* Notification Channel IDs */
     private final static String COMMAND_PASS_CHANNEL_ID = "cmd_pass_channel_id";
@@ -275,6 +274,26 @@ public class TeslaApi {
                 httpConn.disconnect();
             }
         }
+    }
+
+    public String getVehicleWakeStatus() {
+        HttpURLConnection httpConn = null;
+
+        try {
+            this.reset();
+            this.getVehicleSummary();
+
+            return this.resp.getJSONObject("response").getString("state");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } finally {
+            if (httpConn != null) {
+                httpConn.disconnect();
+            }
+        }
+
+        /* We shouldn't hit this case, if we do return offline */
+        return "offline";
     }
 
     private void wakeupVehicle() {

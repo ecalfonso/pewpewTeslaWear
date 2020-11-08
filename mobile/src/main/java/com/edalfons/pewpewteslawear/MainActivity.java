@@ -24,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int API_CHECK_FAIL = 1;
     private static final int CREDENTIAL_FAIL = 2;
     private static final int DEFAULT_CAR_ID_FAIL= 3;
+    private static final int DEFAULT_CAR_OFFLINE = 4;
 
     /* Child listener to handle UI changes */
     private Handler uiHandler = null;
@@ -47,6 +48,8 @@ public class MainActivity extends AppCompatActivity {
                         HomeActivity.class);
                 Intent car_select_activity_intent = new Intent(getApplicationContext(),
                         CarSelectActivity.class);
+                Intent vehicle_offline_activity_intent = new Intent(getApplicationContext(),
+                        VehicleOfflineActivity.class);
 
                 switch (msg.what){
                     case API_CHECK_FAIL:
@@ -63,6 +66,10 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case DEFAULT_CAR_ID_FAIL:
                         startActivity(car_select_activity_intent);
+                        finish(); // Close splash screen activity
+                        break;
+                    case DEFAULT_CAR_OFFLINE:
+                        startActivity(vehicle_offline_activity_intent);
                         finish(); // Close splash screen activity
                         break;
                 }
@@ -109,7 +116,12 @@ public class MainActivity extends AppCompatActivity {
 
                     /* Token is good and id_s exists */
                     if (tApi.respCode == HttpURLConnection.HTTP_OK) {
-                        msg.what = API_CHECK_PASS;
+                        /* API call can be good, but car is offline */
+                        if (tApi.getVehicleWakeStatus().matches("offline")) {
+                            msg.what = DEFAULT_CAR_OFFLINE;
+                        } else {
+                            msg.what = API_CHECK_PASS;
+                        }
                     }
                     /* HTTP 404 Not Found = API is good, id_s doesn't exist */
                     else if (tApi.respCode == HttpURLConnection.HTTP_NOT_FOUND) {
