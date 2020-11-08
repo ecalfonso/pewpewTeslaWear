@@ -29,7 +29,7 @@ public class MyComplicationProviderService extends ComplicationProviderService {
     private static final int DATA_NOT_UPDATED = 1;
 
     private static final String WEAR_COMPLICATION_UPDATE_MODULO = "WEAR_COMPLICATION_UPDATE_MODULO";
-    private static final int default_modulo = 2;
+    private static final int default_modulo = 6;
 
     private Handler handler;
 
@@ -81,7 +81,7 @@ public class MyComplicationProviderService extends ComplicationProviderService {
                     JSONObject drive_state = data.getJSONObject("drive_state");
 
                     /*
-                     * If sentry_mode, charging, or not parked, update every 10 minutes
+                     * If sentry_mode, charging, or not parked, update every 5 minutes
                      * else update every 30 minutes if the car happens to be awake
                      */
                     if (vehicle_state.getBoolean("sentry_mode") ||
