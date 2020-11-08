@@ -140,7 +140,7 @@ public class MyComplicationProviderService extends ComplicationProviderService {
 
             /*  */
             if (sdf.format(date).matches(sdf.format(now))) {
-                sdf = new java.text.SimpleDateFormat("h:mm a");
+                sdf = new java.text.SimpleDateFormat("h:mma");
             } else{
                 sdf = new java.text.SimpleDateFormat("MMM d");
             }
