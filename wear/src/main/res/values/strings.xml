@@ -1,9 +1,10 @@
 <resources>
     <string name="app_name">pewpewTeslaWear</string>
 
-    <!-- Tesla API Down Screen -->
+    <!-- Tesla API Down / Vehicle Offline Screen -->
     <string name="title_activity_tesla_api_unaccessible">TeslaApiUnaccessible</string>
     <string name="tesla_api_unaccesible_text">Tesla API is down!</string>
+    <string name="vehicle_offline_text">%s\nis offline!</string>
 
     <!-- Login Screen -->
     <string name="title_activity_login">LoginActivity</string>
