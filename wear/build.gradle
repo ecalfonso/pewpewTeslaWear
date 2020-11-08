@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 30
     buildToolsVersion "29.0.3"
 
     defaultConfig {
         applicationId 'com.edalfons.pewpewteslawear'
         minSdkVersion 28
-        targetSdkVersion 29
+        targetSdkVersion 30
         versionCode 1
         versionName '1.0.6'
     }
@@ -32,13 +32,13 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation 'com.google.android.support:wearable:2.7.0'
+    implementation 'com.google.android.support:wearable:2.8.1'
     implementation 'com.google.android.gms:play-services-wearable:17.0.0'
     implementation 'androidx.percentlayout:percentlayout:1.0.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
-    implementation 'androidx.wear:wear:1.0.0'
-    compileOnly 'com.google.android.wearable:wearable:2.7.0'
+    implementation 'androidx.wear:wear:1.1.0'
+    compileOnly 'com.google.android.wearable:wearable:2.8.1'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation project(path: ':common_code')
 }
