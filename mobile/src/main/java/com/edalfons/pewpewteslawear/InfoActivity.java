@@ -3,6 +3,7 @@ package com.edalfons.pewpewteslawear;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -56,6 +57,20 @@ public class InfoActivity extends AppCompatActivity {
             });
 
             sw_version_tv.setText(sw_version);
+
+            final TextView vehicle_data_tv = findViewById(R.id.info_screen_vehicle_data_textview_id);
+            final Button vehicle_data_button = findViewById(R.id.info_screen_vehicle_data_button);
+            vehicle_data_button.setOnClickListener(v -> {
+                try {
+                    JSONObject vehicle_data = new JSONObject(sharedPref.getString(getString(R.string.default_car_vehicle_data), ""));
+                    vehicle_data_tv.setText(vehicle_data.toString(4));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                /* Can only click this once */
+                vehicle_data_button.setClickable(false);
+            });
         } catch (JSONException e) {
             e.printStackTrace();
         }

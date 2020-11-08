@@ -83,6 +83,7 @@
     <string name="info_screen_sw_version_title">SW Version:</string>
     <string name="info_screen_sw_version">2020.1.2.3 abc123</string>
     <string name="info_screen_tap_to_reveal">Tap to reveal</string>
+    <string name="info_screen_vehicle_data_button">Get Vehicle Data</string>
 
     <!-- Misc -->
     <string name="logout_button">LOGOUT</string>
