@@ -75,10 +75,7 @@
     <string name="home_screen_menu_item4_prompt">Are you sure you want to log out?</string>
 
     <!-- Info Screen -->
-    <string name="info_screen_access_token_title">Current Access Token:</string>
-    <string name="info_screen_access_token">No access token!</string>
-    <string name="info_screen_refresh_token_title">Current Refresh Token:</string>
-    <string name="info_screen_refresh_token">No refresh token!</string>
+    <string name="info_screen_vehicle_name_title">%s</string>
     <string name="info_screen_odometer_title">Odometer:</string>
     <string name="info_screen_odometer">%d %s</string>
     <string name="info_screen_vin_title">VIN:</string>

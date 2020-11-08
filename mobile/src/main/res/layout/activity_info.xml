@@ -26,71 +26,23 @@
             android:clickable="false">
 
             <TextView
-                android:id="@+id/info_screen_access_token_title_tv"
+                android:id="@+id/info_screen_vehicle_name_title_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/info_screen_access_token_title"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:text="@string/info_screen_vehicle_name_title"
+                android:textAppearance="@style/TextAppearance.AppCompat.Display1"
                 android:textIsSelectable="false"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/info_screen_access_token_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:clickable="true"
-                android:contextClickable="true"
-                android:focusable="true"
-                android:selectAllOnFocus="true"
-                android:text="@string/info_screen_access_token"
-                android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/info_screen_access_token_title_tv" />
-
-            <TextView
-                android:id="@+id/info_screen_refresh_token_title_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="@string/info_screen_refresh_token_title"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                android:textIsSelectable="false"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/info_screen_access_token_tv" />
-
-            <TextView
-                android:id="@+id/info_screen_refresh_token_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:clickable="true"
-                android:focusable="true"
-                android:selectAllOnFocus="true"
-                android:text="@string/info_screen_refresh_token"
-                android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/info_screen_refresh_token_title_tv" />
-
-            <View
-                android:id="@+id/divider2"
-                android:layout_width="377dp"
-                android:layout_height="1dp"
-                android:layout_margin="16dp"
-                android:background="?android:attr/listDivider"
-                android:padding="16dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/info_screen_refresh_token_tv" />
-
-            <TextView
                 android:id="@+id/info_screen_odometer_title_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
                 android:text="@string/info_screen_odometer_title"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/divider2" />
+                app:layout_constraintTop_toBottomOf="@+id/info_screen_vehicle_name_title_tv" />
 
             <TextView
                 android:id="@+id/info_screen_odometer_tv"
